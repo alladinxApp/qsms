@@ -1,0 +1,14 @@
+php_flag short_open_tag on
+php_flag register_globals on
+#AddType application/x-httpd-php .html .htm
+#php_value SMTP smtp.server.com
+php_value error_reporting 0
+#AddCharset ISO-8859-1 .html .php
+
+#RewriteEngine On
+
+#RewriteCond %{REQUEST_FILENAME} !-d
+#RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-l
+
+#RewriteRule ^(.+)$ index.html?url=$1 [QSA,L]

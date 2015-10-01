@@ -1,0 +1,147 @@
+body{
+	background:url(../images/back_login.gif);
+	margin:0;
+	font-family:Georgia, seri;
+	size:12px;	
+}
+
+#main{
+	background:/*#CECECE;*/ #FFFFFF;
+	width:1100px;
+	margin:0 auto;
+	padding-top:14px;
+	padding-left:12px;
+	padding-right:12px;
+	padding-bottom:14px;
+	height:823px;
+	border-radius:15px;
+}
+
+/*#top{
+	margin-top:0;
+	background:#03327e;
+	width:100%;
+	}
+#top div{
+	width:1050px;
+	color:#FFF;
+	text-align:right;
+	margin:0 auto;
+	padding:10px;
+	background:#03327e;
+	font-family:Arial, Helvetica, sans-serif;
+	font-size:14px;
+	height: 20px;
+	}*/
+
+#pic_menu{
+	height:55px;
+	padding:5px;
+	float: right;
+	margin-right: 25px;
+	margin-top: 25px;
+}
+
+#pic_menu li{
+	position: relative;
+	list-style: none;
+	float: left;
+	display: block;
+}
+
+	
+
+#mmenu {	
+		/*width:850px;*/
+		height:33px;
+		margin: -42px 25px;
+		padding:2px;
+		font-size:13px;
+		vertical-align:top;
+		float:right;
+}
+
+#mmenu li:hover{
+	/*background:#000066;*/
+	color:#FF0;
+	
+}
+
+#li_menu{
+		width:100px;
+		text-align:center;
+		padding:0px;
+		margin:0px;
+	}
+
+#mmenu li {
+	position: relative;
+	list-style: none;
+	float: left;
+	display: block;
+	height: 34px;
+}
+
+/* Links */
+
+#mmenu li a {
+	display: block;
+	/*padding: 0 14px;*/
+	line-height: 28px;
+	text-decoration: none;
+	
+	border-left: 1px solid #CCC;
+	border-right: 1px solid #9000;
+
+	font-family: Helvetica, Arial, sans-serif;
+	font-weight: bold;
+	font-size: 13px;
+
+	color: /*#FFFFFF*/ #000000;
+	/*text-shadow: 1px 1px 1px rgba(0,0,0,.6);*/
+
+	-webkit-transition: color .2s ease-in-out;
+	-moz-transition: color .2s ease-in-out;
+	-o-transition: color .2s ease-in-out;
+	-ms-transition: color .2s ease-in-out;
+	transition: color .2s ease-in-out;
+}
+
+#mmenu li:first-child a { border-left: none; }
+#mmenu li:last-child a{ border-right: none; }
+
+#mmenu li:hover > a { color: /*#FFFF00;*/ #d00409; }
+
+
+
+#main2{
+	background:#090dda;
+	padding:0;
+	margin-top: 5px;
+	width:880px;
+	float:right;
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;	
+	height: 680px;
+}
+
+#contents{
+	background:#FFFFFF;
+	border-top-right-radius:10px;
+	border-bottom-right-radius:10px;
+	height:650px;
+	margin: 15px;
+	width:850px;	
+}
+
+#left{
+	background:#FFFFFF;
+	border-top-right-radius:0px;
+	border-bottom-right-radius:0px;
+	height:50px;
+	margin: 10px;
+	width:20px;	
+}#left {
+	height: 200px;
+	width: 200px;
+}

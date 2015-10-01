@@ -1,0 +1,45 @@
+/*#edodatki_widget .widget_calendar #calendar_header .next,
+#edodatki_widget .widget_calendar #calendar_header .prev,
+#edodatki_widget .widget_calendar > div,*/
+#edodatki_widget .widget_calendar {
+    /*background-image: url(../images/calendarbg.png);*/
+    background:/*#CECECE;*/ #193c76;
+    border-radius:8px;
+	border: 1px solid #d2d2d2;
+	padding-bottom: 2px;	
+}
+	
+
+#edodatki_widget .widget_calendar {
+    color: #000;
+}
+
+#edodatki_widget .widget_calendar #calendar_header > span {
+    color: #fff;
+}
+
+#edodatki_widget .widget_calendar table td.other {
+    color: #d0d0d0;
+}
+
+#edodatki_widget .widget_calendar table td.today {
+    /*background: #e6e6e6;*/
+    background: #cccccc;
+    color: #ff0000;
+}
+
+#edodatki_widget .widget_calendar table th{
+	background: #14469a;
+    border: 1px solid #e1e1e1;
+    color: #fff;
+}
+
+#edodatki_widget .widget_calendar table td {
+    background: #eaeaff;
+    border: 1px solid #e1e1e1;
+    color: #000;
+}
+
+#edodatki_widget .widget_calendar a {
+    color: #000;
+}

@@ -1,0 +1,105 @@
+#edodatki_widget .widget_calendar * {
+    font: normal 12px/12px Arial;
+}
+
+#edodatki_widget .widget_calendar {
+    font: normal 12px/12px Arial;
+    background: transparent no-repeat left top;
+    margin: auto;
+    width: /*168px;*/ 210px;
+    position: relative;
+}
+
+#edodatki_widget .widget_calendar > span {
+    font-weight: bold;
+    padding: 12px 0 0 15px;
+    display: block;
+}
+
+#edodatki_widget .widget_calendar > div {
+    background: transparent no-repeat right bottom;
+    margin-top: /*15px;*/18px;
+}
+
+#edodatki_widget .widget_calendar #calendar_header {
+    overflow: hidden;
+    margin: 0 0 5px 0;
+}
+
+#edodatki_widget .widget_calendar #calendar_header > span {
+    font-weight: bold;
+    text-align: center;
+    display: block;
+    margin: 0 10px;
+    /*background: #92bbff;*/
+    ui-bg-blue
+    height: 20px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-transform: uppercase;
+   /* background-image: url(../images/ui-bg-gray.png);*/
+}
+
+#edodatki_widget .widget_calendar #calendar_header .prev {
+    float: left;
+    width: /*15px;*/ 18px;
+    height: /*15px;*/ 18px;
+    /*text-indent: -9999px;
+    background: transparent no-repeat 0px -82px;*/
+    outline: 0;
+    margin: 5px;
+}
+
+#edodatki_widget .widget_calendar #calendar_header .next {
+    float: right;
+    width: /*15px;*/ 18px;
+    height: /*15px;*/ 18px;
+    /*text-indent: -9999px;
+    background: transparent no-repeat -15px -82px;*/
+    outline: 0;
+    margin: 5px;
+}
+
+#edodatki_widget .widget_calendar table {
+    border-spacing: 1px;
+    border-collapse: separate;
+    margin: 0 auto 5px;
+    border: 0;
+}
+
+#edodatki_widget .widget_calendar table td.today {
+    font-weight: bold;
+    background: #cccccc;
+    color: #ff0000;
+}
+
+#edodatki_widget .widget_calendar table th,
+#edodatki_widget .widget_calendar table td {
+    padding: 3px 2px;
+    text-align: center;
+}
+
+#edodatki_widget .widget_calendar table th {
+    font-weight: bold;
+    padding: 3px 2px;
+}
+
+#edodatki_widget .widget_calendar a {
+    display: block;
+    text-align: left;
+    text-decoration: none;
+    font: normal 9px/9px Tahoma;
+    padding-bottom: /*3px;*/ 5px;
+    margin-left: 10px;
+}
+
+#edodatki_widget .widget_calendar a.pin {
+    display: block;
+    position: absolute;
+    top: 11px;
+    right: 7px;
+    width: /*16px;*/ 18px;
+    height: /*16px;*/ 18px;
+    text-indent: -9999px;
+    outline: 0;
+}
