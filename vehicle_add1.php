@@ -254,9 +254,6 @@
 			var model = document.getElementById("model");
 			var color = document.getElementById("color");
 			var variant = document.getElementById("variant");
-			var engineno = document.getElementById("engineno");
-			var chassisno = document.getElementById("chassisno");
-			var serialno = document.getElementById("serialno");
 			var conductionsticker = document.getElementById("conductionsticker");
 			
 			if(customer_id.value == ""){
@@ -286,18 +283,6 @@
 			}else if(variant.value == ""){
 				alert("Variant is required! Please enter variant.");
 				variant.focus();
-				return false;
-			}else if(engineno.value == ""){
-				alert("Engine no is required! Please enter engine no.");
-				engineno.focus();
-				return false;
-			}else if(chassisno.value == ""){
-				alert("Chassis no is required! Please enter chassis no.");
-				chassisno.focus();
-				return false;
-			}else if(serialno.value == ""){
-				alert("Serial no is required! Please enter serial no.");
-				serialno.focus();
 				return false;
 			}else{
 				return true;
