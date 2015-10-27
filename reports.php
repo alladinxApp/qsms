@@ -42,7 +42,7 @@
         <td width="15">&nbsp;</td>
         <td width="92"><a href="technician_performance_report.php">TECHNICIAN PERFORMANCE REPORT</a></td>
         <td width="15">&nbsp;</td>
-        <td width="92">&nbsp;</td>
+        <td width="92"><a href="invoice_report.php">INVOICE REPORT</a></td>
         <td width="15">&nbsp;</td>
         <td width="92">&nbsp;</td>
         <td width="15">&nbsp;</td>

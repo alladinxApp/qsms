@@ -694,6 +694,36 @@
 					$data = trim($ln);
 					$filename = "technician_performance_report" . $dt . ".csv";
 				break;
+			case "invoicereport":
+					$sql_invoice = "SELECT * FROM v_invoice 
+			 			WHERE v_invoice.billing_date between '$dtfrom' AND '$dtto'
+			 			ORDER BY v_invoice.billing_date";
+					$qry_invoice = mysql_query($sql_invoice);
+
+					$ln .= "INVOICE REPORT\r\n\r\n";
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n\r\n";
+					$ln .= "Posting Date,Billing Ref#,Customer Code,Customer Name,Item No,Item Desc,Unit Price,Tax Code,Wtax Liable,Line Total,Gross Total,Warehouse,Location,Branch,Cost Center,Vehicle,Conduction Sticker,Maker,Color,Year,Variants\r\n";
+
+					while($row = mysql_fetch_array($qry_invoice)){
+						$ln .= dateFormat($row['billing_date'],"F d Y") 
+								. "," . $row['billing_refno'] 
+								. "," . $row['customer_id']
+								. "," . $row['custname'] 
+								. "," . $row['parts_id'] 
+								. "," . $row['parts']
+								. "," . number_format($row['amount'],2) . ",,,," . number_format($row['gross_total'],2) . ",,,,," . $row['plate_no']
+								. "," . $row['conduction_sticker']
+								. "," . $row['make']
+								. "," . $row['color']
+								. "," . $row['year']
+								. "," . $row['variant']
+								. "\r\n";
+					}
+
+					$data = trim($ln);
+					$filename = "invoice_report" . $dt . ".csv";
+				break;
 			default: echo 'INVALID URL!'; break;
 		}
 
