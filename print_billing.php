@@ -74,10 +74,16 @@
 	$row_billingmst = mysql_fetch_array($qry_billingmst);
 	$num_billingmst = mysql_num_rows($qry_billingmst);
 	
+	$compinfo = array("companyname" => 'FAST QUICK SERVICE'
+					,"companyaddress" => 'Alabang, Muntinlupa City'
+					,"companyno" => '(02)801-6291 / (02)587-5305'
+					,"mobileno" => '(+63)917-578-8792'
+					,"tin" => '108-558-118-000');
+	
 	$pdf = new PrintBilling;
 	
 	// Data loading
-	$pdf->setCompanyInfo(array("companyname" => 'FAST QUICK SERVICE',"companyaddress" => 'Alabang, Muntinlupa City',"companyno" => '784-3278'));
+	$pdf->setCompanyInfo($compinfo);
 	$pdf->setVehicleInfo($row_vehicle);
 	$pdf->setCustomerInfo($row_custinfo);
 	$pdf->setServiceMaster($row_wo);
