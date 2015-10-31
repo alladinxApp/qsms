@@ -78,7 +78,6 @@
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(138,4,$this->customer['address'] . ' ' . $this->customer['city'] . ' ' . $this->customer['province'] . ' ' . $this->customer['zipcode'],0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
-			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(48,4,$this->customer['tin'],0,0,'L');
 			$this->Ln();
 			$this->Cell(190,8,null,0,0,'L');
