@@ -37,6 +37,7 @@
 			// 	$this->discount += $master['discounted_price'];
 			// }
 			$this->totalamount = $master['total_amount'];
+			$this->odometer = $master['odometer'];
 		}
 		public function Header(){
 			// $this->SetFont('Courier','B',16);
@@ -93,7 +94,7 @@
 			$this->SetFont('Courier','B',9);
 			$this->Cell(20,4,'Mileage','TRBL',0,'L');
 			$this->SetFont('Courier','',8);
-			$this->Cell(75,4,null,'TRBL',0,'L');
+			$this->Cell(75,4,$this->odometer,'TRBL',0,'L');
 			$this->Ln();
 			
 			$this->SetFont('Courier','B',9);

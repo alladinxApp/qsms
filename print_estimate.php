@@ -30,12 +30,14 @@
 		$discountedprice = $rowwo_mst['discounted_price'];
 		$subtotal = $rowwo_mst['subtotal_amount'];
 		$total_amount = $rowwo_mst['total_amount'];
+		$odometer = $rowwo_mst['odometer'];
 	}
 	
 	$servicemst = array("discount" => $discount,
 						"discounted_price" => $discountedprice,
 						"subtotal" => $subtotal_amount,
-						"total_amount" => $total_amount);
+						"total_amount" => $total_amount,
+						"odometer" => $odometer);
 	
 	$sql_servicedtl = "SELECT * FROM tbl_service_detail WHERE estimate_refno = '$estimaterefno'";
 	$qry_servicedtl = mysql_query($sql_servicedtl);
@@ -83,7 +85,7 @@
 	
 	// Data loading
 	//$pdf->setImageLogo($image);
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','784-3278');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','801-6291');
 	$pdf->setEstimateRefNo($estimaterefno,$transdate);
 	//$pdf->setAccessoryData($qrywo_dtl_accessory);
 	//$pdf->setJobData($qrywo_dtl_job);
