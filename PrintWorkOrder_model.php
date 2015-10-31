@@ -12,7 +12,7 @@
 		public function setCustomerInfo($customer){
 			$this->customerid = $customer['customer_id'];
 			$this->customername = $customer['customer_name'];
-			$this->address = $customer['address'];
+			$this->address = $customer['address'] . 'asdfasdfasdfasdfasdfasdfasdfasdfasdf';
 			$this->business = $customer['business'];
 			$this->fax = $customer['fax'];
 			$this->business = $customer['business'];
@@ -83,24 +83,31 @@
 			$this->Ln();
 			$this->Cell(95,4,null,"RL",0,'C');
 			$this->SetFont('Courier','B',8);
-			$this->Cell(33,4,'     Home',"TLB",0,'L');
-			$this->Cell(2,4,':',"TB",0,'C');
+			$this->Cell(23,4,'  Home',"TL",0,'L');
+			$this->Cell(2,4,':',"T",0,'C');
 			$this->SetFont('Courier','',8);
-			$this->Cell(60,4,$this->address,"TRB",0,'L');
+			$this->Cell(70,4,substr($this->address,0,40),"TR",0,'L');
 			$this->Ln();
 			$this->Cell(95,4,null,"RL",0,'C');
 			$this->SetFont('Courier','B',8);
-			$this->Cell(33,4,'     Business',"TLB",0,'L');
+			$this->Cell(23,4,'',"LB",0,'L');
+			$this->Cell(2,4,'',"B",0,'C');
+			$this->SetFont('Courier','',8);
+			$this->Cell(70,4,substr($this->address,40,80),"RB",0,'L');
+			$this->Ln();
+			$this->Cell(95,4,null,"RL",0,'C');
+			$this->SetFont('Courier','B',8);
+			$this->Cell(23,4,'  Business',"TLB",0,'L');
 			$this->Cell(2,4,':',"TB",0,'C');
 			$this->SetFont('Courier','',8);
-			$this->Cell(60,4,$this->business,"TRB",0,'L');
+			$this->Cell(70,4,$this->business,"TRB",0,'L');
 			$this->Ln();
 			$this->Cell(95,4,null,"RLB",0,'C');
 			$this->SetFont('Courier','B',8);
-			$this->Cell(33,4,'     Facsimile',"TLB",0,'L');
+			$this->Cell(23,4,'  Facsimile',"TLB",0,'L');
 			$this->Cell(2,4,':',"TB",0,'C');
 			$this->SetFont('Courier','',8);
-			$this->Cell(60,4,$this->fax,"TRB",0,'L');
+			$this->Cell(70,4,$this->fax,"TRB",0,'L');
 			$this->Ln();
 			$this->SetFont('Courier','B',8);
 			$this->Cell(38,4,'Appointment/Arrival',"TRL",0,'L');
@@ -236,21 +243,31 @@
 			$this->Cell(35,2,null,"RLT",0,'R');
 			$this->Ln();
 			$this->SetFont('Courier','',8);
+
+			$total = 0;
 			for($i=0;$i<count($this->detail);$i++){
 				// $this->Cell(45,4,$this->customername,"RL",0,'L');
 				$this->Cell(60,4,$this->detail[$i]['desc'],"RL",0,'L');
 				$this->Cell(35,4,'',"RL",0,'C');
 				$this->Cell(35,4,$this->detail[$i]['id'],"RL",0,'C');
 				$this->Cell(25,4,$this->detail[$i]['qty'],"RL",0,'C');
-				$this->Cell(35,4,$this->detail[$i]['amount'],"RL",0,'R');
+				$this->Cell(35,4,number_format($this->detail[$i]['amount'],2),"RL",0,'R');
 				$this->Ln();
+				$total += $this->detail[$i]['amount'];
 			}
+
 			$this->Cell(60,2,null,"RLB",0,'C');
 			// $this->Cell(45,2,null,"RLB",0,'L');
 			$this->Cell(35,2,'',"RLB",0,'C');
 			$this->Cell(35,2,null,"RLB",0,'C');
 			$this->Cell(25,2,null,"RLB",0,'C');
 			$this->Cell(35,2,null,"RLB",0,'R');
+			$this->Ln();
+
+			$this->Cell(190,4,'',0,0,'R');
+			$this->Ln();
+			$this->SetFont('Courier','B',10);
+			$this->Cell(190,4,"Grand Total >>>>>>>>>> " . number_format($total,2),0,0,'R');
 			$this->Ln();
 		}
 		public function Footer(){

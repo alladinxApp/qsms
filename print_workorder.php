@@ -111,7 +111,7 @@
 	$pdf = new PrintWorkOrder;
 	
 	// Data loading
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','784-3278');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','801-6291');
 	$pdf->setWOMST($servicemst);
 	$pdf->setJCMST($row_jc);
 	$pdf->setServiceAdvisor($_SESSION['username']);
