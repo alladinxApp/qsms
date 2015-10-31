@@ -41,8 +41,8 @@ echo "<td><center>$row[parts_lowstock]</center></td>";
 echo "<td><center>$row[part_onhand]</center></td>";
 echo "<td><center>$row[partstatus]</center></td>";    
 echo "<td width='110px'><center>
-			<a href='parts_edit.php?partid=$row[parts_id]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
-			<a href='parts_delete.php?partid=$row[parts_id]'><img src='images/delete.png' /></a>
+			<a href='parts_edit.php?partsid=$row[parts_id]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
+			<a href='parts_delete.php?partsid=$row[parts_id]'><img src='images/delete.png' /></a>
 		</center></td>"; 
 
 echo "</tr>";
