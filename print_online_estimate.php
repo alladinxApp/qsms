@@ -28,7 +28,7 @@
 	$pdf = new PrintEstimate;
 	
 	// Data loading
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','784-3278');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','801-6291');
 	$pdf->setMaster($row_mst);
 	$pdf->setDetails($row_dtl);
 	
