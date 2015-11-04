@@ -47,7 +47,7 @@
 	div.divEstimateList a:hover{ color: #ccc; text-decoration: none; }
 </style>
 <body>
-	<table><tr><td><a href="billing_print.php?billingrefno=<?=$billingrefno;?>" target="_blank"><img src="images/reports.jpg" border="0" style="pointer: cursor;" width="30" /></a></td></tr></table>
+	<table><tr><td><a href="billing_print.php?billingrefno=<?=$billingrefno;?>" target="_blank"><img src="images/bill_statement.png" border="0" style="pointer: cursor;" width="130" /></a></td></tr></table>
 	<fieldset form="form_estimate_list" name="form_estimate_list">
 	<p id="title">Billing for Posting</p>
 	<div class="divEstimateList">
