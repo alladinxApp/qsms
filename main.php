@@ -75,7 +75,7 @@
     <header>
     	<div class="main zerogrid">
         	<div class="prev-indent-bot2">
-                <h1><a href="main.php"><img src="images2/logo.png" /></a></h1>
+                <h1><a href="main.php"><img src="images2/logo1.png" /></a></h1>
                 <nav>
                     <ul class="menu">
                         <li><a class="active" href="main.php">home</a></li>
