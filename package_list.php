@@ -57,7 +57,7 @@
 
 <div class="title">PACKAGE LIST</div> 
 
-Search by Package Name: <input type="text" name="txtsearchpac" id="txtsearchpac" name="search" placeholder="Enter Package Name" /><input type="button" value="Search" onclick="SearchEmployee();" />
+Search by Package Name: <input type="text" name="txtsearchpac" id="txtsearchpac" name="search" placeholder="Enter Package Name" /><input type="button" value="Search" onClick="SearchEmployee();" />
 
 
 <?Php
@@ -99,9 +99,9 @@ $nume=$count->rowCount();
 /////////// Now let us print the table headers ////////////////
 //$bgcolor="#f1f1f1";
 echo "<span id='divSearchPackage'><TABLE><tr>";
-echo "<th width='75px'><a href='$page_name?column_name=package_id'>Package ID</a></th>";
-echo "<th width='120px'><a href='$page_name?column_name=package_name'>Package Name</a></th>";
-echo "<th width='250px'><a href='$page_name?column_name=status'>Status</th>";
+echo "<th width='25px'><a href='$page_name?column_name=package_id'>Package ID</a></th>";
+echo "<th width='320px'><a href='$page_name?column_name=package_name'>Package Name</a></th>";
+echo "<th width='150px'><a href='$page_name?column_name=status'>Status</th>";
 echo "<th><a href='$page_name?column_name=button'></th>";
 
 
@@ -122,9 +122,9 @@ echo "<tr >";
 echo "<td><center>$row[package_id]</td>"; 
 echo "<td><center>$row[package_name]</center></td>"; 
 echo "<td><center>$row[status]</center></td>"; 
-echo "<td width='110px'><center>
+echo "<td width='210px'><center>
 		<a href='package_edit.php?pacid=$row[package_id]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
-		<a href='package_detail.php?pacid=$row[package_id]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
+		<a href='package_detail.php?pacid=$row[package_id]'><img src='images/access.png' /></a> &nbsp;&nbsp; 
 		<a href='package_delete.php?pacid=$row[package_id]'><img src='images/delete.png' /></a>
 	</center></td>"; 
 
