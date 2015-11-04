@@ -57,7 +57,7 @@
 
 <div class="title">USERS LIST</div> 
 
-Search by User Name: <input type="text" name="txtsearchuser" id="txtsearchuser" name="search" placeholder="Enter User Name" /><input type="button" value="Search" onclick="SearchEmployee();" />
+Search by User Name: <input type="text" name="txtsearchuser" id="txtsearchuser" name="search" placeholder="Enter User Name" /><input type="button" value="Search" onClick="SearchEmployee();" />
 
 
 <?Php
@@ -124,7 +124,7 @@ echo "<td><center>$row[name]</center></td>";
 echo "<td><center>$row[status_desc]</center></td>"; 
 echo "<td width='110px'><center>
 		<a href='user_edit.php?username=$row[username]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
-		<a href='user_access.php?username=$row[username]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
+		<a href='user_access.php?username=$row[username]'><img src='images/access1.png' /></a> &nbsp;&nbsp; 
 		<a href='user_delete.php?username=$row[username]'><img src='images/delete.png' /></a>
 	</center></td>"; 
 
