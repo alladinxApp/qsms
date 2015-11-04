@@ -38,7 +38,7 @@
         <td width="15">&nbsp;</td>
         <td width="92"><a href="material_list.php"><img src="images/material.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="accessory_list.php"><img src="images/accessory.png" width="78" height="93"></a></td>
+        <td width="92"><a href="accessory_list.php"><img src="images/lubricants.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
         <td width="92"><a href="wocategory_list.php"><img src="images/category.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
@@ -50,12 +50,12 @@
         <td width="15">&nbsp;</td>
       	<td width="92"><a href="users_list.php"><img src="images/users.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="package_list.php">PACKAGE</a></td>
+        <td width="92"><a href="package_list.php"><img src="images/package.png" width="78" height="93"></a></td>
       </tr>
 
       <tr>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="configuration.php">CONFIGURATION</a></td>
+        <td width="92"><a href="configuration.php"><img src="images/vat.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
         <td width="92">&nbsp;</td>
         <td width="15">&nbsp;</td>
