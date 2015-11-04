@@ -105,7 +105,8 @@
 	div.divCheckInOutTable table td{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; }
 </style>
 <body>
-	<table><tr><td><a href="workorder_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/reports.jpg" border="0" style="pointer: cursor;" width="30" /><br />Print Work Order</div></a></td></tr><table>
+	<table><tr><td><a href="workorder_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank">
+	<div style="width:100px; height:50px; text-align: center;"><img src="images/print_wo.png" border="0" style="pointer: cursor;" width="59" /></div></a></td></tr><table>
 	<fieldset form="form_estimate" name="form_estimate">
 	<legend><p id="title">REFERENCES</p></legend>
 	<table>
@@ -199,7 +200,7 @@
 			<td class ="input" style="text-align: center;">
 			<? 	if(($jobstart != null || $jobstart != "" || !empty($jobstart)) &&
 					($jobend == null || $jobend == "" || empty($jobend))){ ?>
-			<img src="images/STOP.png" width="169" height="50" onClick="StopJob('<?=$worefno;?>');" style="cursor: pointer;">
+			<img src="images/complete.png" width="163" height="49" onClick="StopJob('<?=$worefno;?>');" style="cursor: pointer;">
 			<? }if($jobstatus == '2' ){ echo '<img src="images/STOP.png" width="169" height="50"'; }?>
 			</td>
 			<? if($jobstart != null && $jobstart != "" && $jobstatus == 1) { ?>
