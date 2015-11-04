@@ -20,7 +20,7 @@
 		<tr>
 			<td width="150">Date</td>
 			<td width="10" align="center">:</td>
-			<td align="center" width="20">from</td>
+			<td align="center" width="20"><div align="left">from</div></td>
 			<td width="125"><input type="text" id="txtdatefrom" name="txtdatefrom" readonly class="date-pick" style="width: 100"></td>
 			<td align="center" width="20">to</td>
 			<td width="125"><input type="text" id="txtdateto" name="txtdateto" readonly class="date-pick" style="width: 100"></td>
