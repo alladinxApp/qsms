@@ -57,7 +57,7 @@
         			</div>
                     
         			<div id="logo">
-        			<a href="main.php"><img src="images/logo2.jpg" /></a>
+        			<a href="main.php"><img src="images2/logo1.png" width="255" height="41" /></a>
         		    </div>
         		    
         		    <p class="login">Login</p>
