@@ -123,7 +123,7 @@
 </style>
 <body>
 	<? if($transstatus == '4' || $transstatus == '9'){ ?>
-	<table><tr><td valign="middle"><a href="estimate_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/reports.jpg" border="0" style="pointer: cursor; width: 30px;" /><br />Print Estimate</div></a></td></tr></table>
+	<table><tr><td valign="middle"><a href="estimate_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_est.png" width="67" height="47" style="pointer: cursor; width: 67px;" border="0" /></div></a></td></tr></table>
 	<? } ?>
 	<fieldset form="form_estimate" name="form_estimate">
 	<legend><p id="title">REFERENCE NUMBER</p></legend>
