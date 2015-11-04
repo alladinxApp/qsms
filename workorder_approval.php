@@ -147,8 +147,9 @@
 <body>
 	<? if(!empty($empid)){ ?>
 	<table><tr>
-		<td><a href="workorder_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/reports.jpg" border="0" style="pointer: cursor;" width="30" /><br />Print Work Order</div></a></td>
-		<td><a href="workorder_cancel.php?worefno=<?=$worefno;?>">CANCEL</a></td></tr><table>
+		<td><a href="workorder_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank">
+	  <div style="width:100px; height:50px; text-align: center;"><img src="images/print_wo.png" width="59" height="48" style="pointer: cursor; width: 59px;" border="0" /></div></a></td>
+		<td><a href="workorder_cancel.php?worefno=<?=$worefno;?>"><img src="images/cancel.jpg" width="55" height="58" style="pointer: cursor; width: 59px;" border="0" /></a></td></tr><table>
 	<? } ?>
 	
 	<fieldset form="form_estimate" name="form_estimate">
