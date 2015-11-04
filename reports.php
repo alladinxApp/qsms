@@ -26,23 +26,23 @@
         <td width="15">&nbsp;</td>
 		    <td width="92"><a href="customer_summary_report.php"><img src="images/summary_customers.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
-		    <td width="92"><a href="history_report.php">HISTORY REPORT</a></td>
+		    <td width="92"><a href="history_report.php"><img src="images/history_rep.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="service_type_summary_report.php">SERVICE TYPE SUMMARY REPORT</a></td>
+        <td width="92"><a href="service_type_summary_report.php"><img src="images/typesum_rep.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="repair_history_summary_report.php">REPAIR HISTORY REPORT</a></td>
+        <td width="92"><a href="repair_history_summary_report.php"><img src="images/repair_hist_sum.png" width="87" height="99"></a></td>
         <td width="15">&nbsp;</td>
       </tr>
 
       <tr>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="employee_compensation_report.php">EMPLOYEE COMPENSATION REPORT</a></td>
+        <td width="92"><a href="employee_compensation_report.php"><img src="images/compensation.png" width="94" height="97"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="low_stock_report.php">LOW STOCK REPORT</a></td>
+        <td width="92"><a href="low_stock_report.php"><img src="images/lowstock.png" width="64" height="87"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="technician_performance_report.php">TECHNICIAN PERFORMANCE REPORT</a></td>
+        <td width="92"><a href="technician_performance_report.php"><img src="images/performance.png" width="94" height="97"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="invoice_report.php">INVOICE REPORT</a></td>
+        <td width="92"><a href="invoice_report.php"><img src="images/invoice_rep.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
         <td width="92">&nbsp;</td>
         <td width="15">&nbsp;</td>
