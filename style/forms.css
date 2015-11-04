@@ -84,7 +84,7 @@ a{
 }*/
 
 input[type="submit"]{ 
-	background-image:url(../images/save.jpg); 
+	background-image:url(../images/submit.jpg); 
 	width: 56px;
 	height: 59px;
 	border: 0;
