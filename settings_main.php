@@ -29,7 +29,7 @@
 <div id="main">
 	
         <div id="lmain">
-                <a href="#" title="logo" ><img src="images/logo.jpg" /></a>
+                <a href="#" title="logo" ><img src="images/logo1.png" /></a>
                 
             <div id="pic_menu">
             	<ul>
@@ -37,7 +37,7 @@
                 <li id="li_menu"><a href=""><img src="images/settings.jpg" /></a></li>                   
                 <li id="li_menu"><a href="login.php"><img src="images/logout.jpg" hspace="15px" /></a></li>    
            		</ul>
-         	</div><!--end of pic_menu -->
+       	  </div><!--end of pic_menu -->
                
          	<div id="mmenu">
                 
@@ -51,9 +51,9 @@
                 <li id="li_menu"><a href="">Settings</a></li>
                 <li id="li_menu"><a href="login.php">Logout</a></li>    
       			</ul>
-                </div><!--end of menu--> 
+          </div><!--end of menu--> 
       
-        </div><!--end of lmaim -->
+  </div><!--end of lmaim -->
         
        <!--<div>
         
