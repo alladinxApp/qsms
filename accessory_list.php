@@ -55,9 +55,9 @@
 
 <div class="button"><a href="accessory_add.php"><img src="images/add.jpg" /></a></div>
 
-<div class="title">ACCESSORY ITEMS LIST</div> 
+<div class="title">lUBRICANTS ITEMS LIST</div> 
 
-Search by Color: <input type="text" name="txtsearchaccessory" id="txtsearchaccessory" name="search" placeholder="Enter Accessory" /><input type="button" value="Search" onclick="SearchAccessory();" />
+Search by Color: <input type="text" name="txtsearchaccessory" id="txtsearchaccessory" name="search" placeholder="Enter Accessory" /><input type="button" value="Search" onClick="SearchAccessory();" />
 
 <?Php
 
