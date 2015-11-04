@@ -51,7 +51,7 @@
     <header>
     	<div class="main zerogrid">
         	<div class="prev-indent-bot2">
-                <h1><a href="index.php"><img src="images/logo.png" /></a></h1>
+                <h1><a href="index.php"><img src="images2/logo1.png" /></a></h1>
                 <nav>
                     <ul class="menu">
                         <li><a class="active" href="index.php">home</a></li>
