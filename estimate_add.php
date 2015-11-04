@@ -496,7 +496,7 @@
 		<tr>
 			<td class ="label"><label name="lbl_customer_id">Customer Code:</label>
 			<td class ="input">
-			<select name="customer_id" id="customer_id" onchange="getCustInfo(this.value);" style="width: 235px;">
+			<select name="customer_id" id="customer_id" onChange="getCustInfo(this.value);" style="width: 235px;">
 				<option value=""></option>
 				<? 
 					foreach($result as $row){ 
@@ -513,7 +513,7 @@
 			<td></td>
 			<td class ="label"><label name="lbl_customer">Customer Name:</label></td>
 			<td class ="input">
-			<select name="customer" id="customer" onchange="getCustInfo(this.value);" style="width: 235px;">
+			<select name="customer" id="customer" onChange="getCustInfo(this.value);" style="width: 235px;">
 				<option value=""></option>
 				<?
 					foreach($result1 as $row1){ 
@@ -532,7 +532,7 @@
 			<td class ="label"><label name="lbl_custadd">Address:</label></td>
 			<td class ="input"><input type="text" name="customer_address" id="customer_address" value="<?=$custaddr;?>" readonly style="width:235px"> </td>
 			<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-			<td class ="label"><label name="lbl_customer"><a href="customer_add1.php">Add new Customer</a></label></td>
+			<td class ="label"><label name="lbl_customer"><a href="customer_add1.php"><img src="images/addC.png" width="122" height="28" alt="Add Customer"></a></label></td>
 		</tr>
 	</table>
 	<input type="hidden" name="custType" id="custType" value="1" />
@@ -548,14 +548,14 @@
 			<td class ="label"><label name="lbl_plateno">Plate Number:</label></td>
 			<td class ="input"><span id="divPlateNos">
 				<? if(empty($customerid)){ ?>
-				<select name="plateno" id="plateno" onchange="return getCustVehicleInfo(this.value);" style="width: 235px;">
+				<select name="plateno" id="plateno" onChange="return getCustVehicleInfo(this.value);" style="width: 235px;">
 					<option value=""></option>
 					<? foreach($resplatenos as $row){ ?>
 					<option value="<?=$row['vehicle_id'];?>"><?=$row['plate_no'];?></option>
 					<? }?>
 				</select>
 				<? }else{ ?>
-				<select name="plateno" id="plateno" onchange="return getCustVehicleInfo(this.value);" style="width: 235px;">
+				<select name="plateno" id="plateno" onChange="return getCustVehicleInfo(this.value);" style="width: 235px;">
 					<option value=""></option>
 					<? 
 						foreach($resplateno as $row){ 
@@ -658,7 +658,8 @@
 			<td class ="input"><input type="text" name="odometer" id="odometer" value="" style="width:235px" id=""></td>
 			<td></td>
 			<td></td>
-			<td class ="label" style="text-align: left;"><span id="newVehicleLink"><label name="lbl_customer"><a href="vehicle_add1.php<?=$newVehicleLink;?>">Add new Vehicle</a></label></span></td>
+			<td class ="label" style="text-align: left;"><span id="newVehicleLink">
+			<label name="lbl_customer"><a href="vehicle_add1.php<?=$newVehicleLink;?>"><img src="images/addV.png" width="123" height="19" alt="Add Customer"></a></label></span></td>
 		</tr>
 	</table>
 	<input type="hidden" name="vehicleType" id="vehicleType" value="1" />
@@ -668,7 +669,7 @@
 	<table>
 		<tr>
     		<td>Please select Package: 
-    			<select name="txtpackage" id="txtpackage" onchange="return AddCost('package',this.value);">
+    			<select name="txtpackage" id="txtpackage" onChange="return AddCost('package',this.value);">
     				<option value="">select Package</option>
     				<? foreach($respackage as $rowpackage){ ?>
     				<option value="<?=$rowpackage['package_id'];?>"><?=$rowpackage['package_name'];?></option>
@@ -746,25 +747,25 @@
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="center"><select name="job" id="job" style="width: 120px;" onchange="return AddCost('job',this.value);">
+			<td><div align="center"><select name="job" id="job" style="width: 120px;" onChange="return AddCost('job',this.value);">
 				<option value=""></option>
 				<? foreach($resjob as $rowjob){ ?>
 				<option value="<?=$rowjob['job_id'];?>"><?=$rowjob['job'];?></option>
 				<? } ?>
 			</select></div></td>
-			<td><div align="center"><select name="parts" id="parts" style="width: 120px;" onchange="return AddCost('parts',this.value);">
+			<td><div align="center"><select name="parts" id="parts" style="width: 120px;" onChange="return AddCost('parts',this.value);">
 				<option value=""></option>
 				<? foreach($resparts as $rowparts){ ?>
 				<option value="<?=$rowparts['parts_id'];?>"><?=$rowparts['parts'];?></option>
 				<? } ?>
 			</select></div></td>
-			<td><div align="center"><select name="material" id="material" style="width: 120px;" onchange="return AddCost('material',this.value);">
+			<td><div align="center"><select name="material" id="material" style="width: 120px;" onChange="return AddCost('material',this.value);">
 				<option value=""></option>
 				<? foreach($resmaterial as $rowmaterial){ ?>
 				<option value="<?=$rowmaterial['material_id'];?>"><?=$rowmaterial['material'];?></option>
 				<? } ?>
 			</select></div></td>
-			<td><div align="center"><select name="accessory" id="accessory" style="width: 120px;" onchange="return AddCost('accessory',this.value);">
+			<td><div align="center"><select name="accessory" id="accessory" style="width: 120px;" onChange="return AddCost('accessory',this.value);">
 				<option value=""></option>
 				<? foreach($resaccessory as $rowaccessory){ ?>
 				<option value="<?=$rowaccessory['accessory_id'];?>"><?=$rowaccessory['accessory'];?></option>
@@ -835,7 +836,7 @@
 		<input type="hidden" value="<?=getVatValue();?>" name="vatValue" id="vatValue" />
 		<input type="hidden" value="1" name="save" />
 		<input type="submit" value="" name="btnsave" style="cursor: pointer;" />
-		<a href="#" onclick="return CancelEstimateCost();"><input type="button" value="" style="cursor: pointer;" /></a>
+		<a href="#" onClick="return CancelEstimateCost();"><input type="button" value="" style="cursor: pointer;" /></a>
 		<br /><br />
 	</p>
 	</form>
