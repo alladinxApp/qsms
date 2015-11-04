@@ -315,7 +315,7 @@
 	<table>
 		<tr>
 			<td valign="middle">
-				<a href="estimate_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/reports.jpg" border="0" style="pointer: cursor; width: 30px;" /><br />Print Estimate</div></a>
+				<a href="estimate_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_est.png" width="67" height="47" style="pointer: cursor; width: 67px;" border="0" /></div></a>
 			</td>
 		</tr>
 	</table>
@@ -401,7 +401,7 @@
 	<table>
 		<tr>
     		<td>Please select Package: 
-    			<select name="txtpackage" id="txtpackage" onchange="return AddCost('package',this.value,'<?=$estimaterefno;?>');">
+    			<select name="txtpackage" id="txtpackage" onChange="return AddCost('package',this.value,'<?=$estimaterefno;?>');">
     				<option value="">select Package</option>
     				<? foreach($respackage as $rowpackage){ ?>
     				<option value="<?=$rowpackage['package_id'];?>"><?=$rowpackage['package_name'];?></option>
@@ -437,7 +437,7 @@
 					echo $qty . ' ' . $rowtempjob['job_name'] . '<br />' . $rowtempjob['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onclick="RemoveCost('<?=$rowtempjob[estimate_refno];?>','<?=$rowtempjob[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<a href="#" onClick="RemoveCost('<?=$rowtempjob[estimate_refno];?>','<?=$rowtempjob[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
 				<?
 						$subtotal += $rowtempjob['amount'];
 					}
@@ -454,7 +454,7 @@
 						echo $qty . ' ' . $rowtempparts['parts_name'] . '<br />' . $rowtempparts['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onclick="RemoveCost('<?=$rowtempparts[estimate_refno];?>','<?=$rowtempparts[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<a href="#" onClick="RemoveCost('<?=$rowtempparts[estimate_refno];?>','<?=$rowtempparts[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
 				<?
 						$subtotal += $rowtempparts['amount'];
 					}
@@ -472,7 +472,7 @@
 						echo $qty . ' ' . $rowtempmaterial['material_name'] . '<br />' . $rowtempmaterial['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onclick="RemoveCost('<?=$rowtempmaterial[estimate_refno];?>','<?=$rowtempmaterial[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<a href="#" onClick="RemoveCost('<?=$rowtempmaterial[estimate_refno];?>','<?=$rowtempmaterial[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
 				<?
 						$subtotal += $rowtempmaterial['amount'];
 					}
@@ -489,7 +489,7 @@
 						echo $qty . ' ' . $rowtempaccessory['accessory_name'] . '<br />' . $rowtempaccessory['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onclick="RemoveCost('<?=$rowtempaccessory[estimate_refno];?>','<?=$rowtempaccessory[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<a href="#" onClick="RemoveCost('<?=$rowtempaccessory[estimate_refno];?>','<?=$rowtempaccessory[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
 				<?
 						$subtotal += $rowtempaccessory['amount'];
 					}
@@ -497,25 +497,25 @@
 			</div></td>
 		</tr>
 		<tr>
-			<td><div align="center"><select name="job" id="job" style="width: 120px;" onchange="return AddCost('job',this.value,'<?=$estimaterefno;?>');">
+			<td><div align="center"><select name="job" id="job" style="width: 120px;" onChange="return AddCost('job',this.value,'<?=$estimaterefno;?>');">
 				<option value=""></option>
 				<? foreach($resjob as $rowjob){ ?>
 				<option value="<?=$rowjob['job_id'];?>"><?=$rowjob['job'];?></option>
 				<? } ?>
 			</select></div></td>
-			<td><div align="center"><select name="parts" id="parts" style="width: 120px;" onchange="return AddCost('parts',this.value,'<?=$estimaterefno;?>');">
+			<td><div align="center"><select name="parts" id="parts" style="width: 120px;" onChange="return AddCost('parts',this.value,'<?=$estimaterefno;?>');">
 				<option value=""></option>
 				<? foreach($resparts as $rowparts){ ?>
 				<option value="<?=$rowparts['parts_id'];?>"><?=$rowparts['parts'];?></option>
 				<? } ?>
 			</select></div></td>
-			<td><div align="center"><select name="material" id="material" style="width: 120px;" onchange="return AddCost('material',this.value,'<?=$estimaterefno;?>');">
+			<td><div align="center"><select name="material" id="material" style="width: 120px;" onChange="return AddCost('material',this.value,'<?=$estimaterefno;?>');">
 				<option value=""></option>
 				<? foreach($resmaterial as $rowmaterial){ ?>
 				<option value="<?=$rowmaterial['material_id'];?>"><?=$rowmaterial['material'];?></option>
 				<? } ?>
 			</select></div></td>
-			<td><div align="center"><select name="accessory" id="accessory" style="width: 120px;" onchange="return AddCost('accessory',this.value,'<?=$estimaterefno;?>');">
+			<td><div align="center"><select name="accessory" id="accessory" style="width: 120px;" onChange="return AddCost('accessory',this.value,'<?=$estimaterefno;?>');">
 				<option value=""></option>
 				<? foreach($resaccessory as $rowaccessory){ ?>
 				<option value="<?=$rowaccessory['accessory_id'];?>"><?=$rowaccessory['accessory'];?></option>
