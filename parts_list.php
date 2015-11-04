@@ -58,7 +58,7 @@
 
 <div class="title">PARTS LIST</div> 
 
-Search by Parts: <input type="text" name="txtsearchparts" id="txtsearchparts" name="search" placeholder="Enter Parts" /><input type="button" value="Search" onclick="SearchParts();" />
+Search by Parts: <input type="text" name="txtsearchparts" id="txtsearchparts" name="search" placeholder="Enter Parts" /><input type="button" value="Search" onClick="SearchParts();" />
 
 <?Php
 
@@ -153,7 +153,7 @@ if($this1 < $nume) {
 print "<a href='$page_name?start=$next&column_name=$column_name'>>> NEXT</a>";} 
 echo "</td></tr></table>";
 ?>
-<p><a href="#" onClick="exportParts();">EXPORT PARTS</a></p>
+<p><a href="#" onClick="exportParts();"><img src='images/export.png' /></a></p>
 <script type="text/javascript">
 	function exportParts(){
 		window.open("export_parts.php");
