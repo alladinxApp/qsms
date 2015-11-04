@@ -1,5 +1,5 @@
 <div id="lmain">
-		<a href="main.php" title="logo" ><img src="images/logo.jpg" /></a>
+		<a href="main.php" title="logo" ><img src="images/logo1.png" /></a>
 		
 	<div id="pic_menu">
 		<ul>
