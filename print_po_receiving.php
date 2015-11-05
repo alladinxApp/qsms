@@ -63,7 +63,7 @@
 	
 	// Data loading
 	$pdf->setImageLogo($image);
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','784-3278');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setPORefNo($porefno,$transdate);
 	$pdf->setAccessoryData($qrywo_dtl_accessory);
 	$pdf->setJobData($qrywo_dtl_job);

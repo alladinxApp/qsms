@@ -45,7 +45,11 @@
 			$this->SetFont('Courier','',8);
 			$this->Cell(190,4,$this->companyaddress,0,0,'C');
 			$this->Ln();
-			$this->Cell(190,4,'Tel No. ' . $this->companyno,0,0,'C');
+			// $this->Cell(190,4,'Tel No. ' . $this->companyno,0,0,'C');
+			$this->Cell(45,4,'',0,0,'C');
+			$this->Cell(100,4,'Tel No. ' . $this->companyno,0,0,'C');
+			$this->SetFont('Courier','B',20);
+			$this->Cell(45,6,$this->mst['wo_refno'],0,0,'R');
 			$this->Ln();
 		}
 		public function ImprovedTable(){
@@ -254,20 +258,82 @@
 				$this->Cell(35,4,number_format($this->detail[$i]['amount'],2),"RL",0,'R');
 				$this->Ln();
 				$total += $this->detail[$i]['amount'];
+
+				switch($this->detail[$i]['type']){
+					case "job":
+							$this->labor = $this->detail[$i]['amount'];
+						break;
+					case "parts":
+							$this->parts = $this->detail[$i]['amount'];
+						break;
+					case "material":
+							$this->sublet = $this->detail[$i]['amount'];
+						break;
+					case "accessory":
+							$this->lubricants = $this->detail[$i]['amount'];
+						break;
+					default: break;
+				}
+
+				$this->totallabor += $this->labor;
+				$this->totallubricants += $this->lubricants;
+				$this->totalsublet += $this->sublet;
+				$this->totalparts += $this->parts;
 			}
 
 			$this->Cell(60,2,null,"RLB",0,'C');
-			// $this->Cell(45,2,null,"RLB",0,'L');
 			$this->Cell(35,2,'',"RLB",0,'C');
 			$this->Cell(35,2,null,"RLB",0,'C');
 			$this->Cell(25,2,null,"RLB",0,'C');
 			$this->Cell(35,2,null,"RLB",0,'R');
 			$this->Ln();
 
-			$this->Cell(190,4,'',0,0,'R');
+			// $this->Cell(190,4,'',0,0,'R');
+			// $this->Ln();
+			// $this->SetFont('Courier','B',10);
+			// $this->Cell(190,4,"Grand Total >>>>>>>>>> " . number_format($total,2),0,0,'R');
+			// $this->Ln();
+			$this->SetFont('Courier','B',9);
+			$this->Cell(70,4,'TOTAL','TRBL',0,'R');
+			$this->Cell(30,4,number_format($this->totallabor,2),'TRBL',0,'R');
+			$this->Cell(30,4,number_format($this->totallubricants,2),'TRBL',0,'R');
+			$this->Cell(30,4,number_format($this->totalsublet,2),'TRBL',0,'R');
+			$this->Cell(30,4,number_format($this->totalparts,2),'TRBL',0,'R');
 			$this->Ln();
-			$this->SetFont('Courier','B',10);
-			$this->Cell(190,4,"Grand Total >>>>>>>>>> " . number_format($total,2),0,0,'R');
+			
+			$this->grandtotal += $this->totallabor;
+			$this->grandtotal += $this->totallubricants;
+			$this->grandtotal += $this->totalsublet;
+			$this->grandtotal += $this->totalparts;
+			
+			$this->Cell(130,4,"SUB TOTAL",'TRBL',0,'R');
+			$this->Cell(60,4,number_format($this->grandtotal,2),'TRBL',0,'R');
+			$this->Ln(10);
+			
+			$this->Cell(160,4,"Total Labor",0,0,'R');
+			$this->Cell(30,4,number_format($this->totallabor,2),'TRBL',0,'R');
+			$this->Ln();
+			$this->Cell(160,4,"Total Parts",0,0,'R');
+			$this->Cell(30,4,number_format($this->totalparts,2),'TRBL',0,'R');
+			$this->Ln();
+			$this->Cell(160,4,"Total Lubricants",0,0,'R');
+			$this->Cell(30,4,number_format($this->totallubricants,2),'TRBL',0,'R');
+			$this->Ln();
+			$this->Cell(160,4,"Total Sublet/Others",0,0,'R');
+			$this->Cell(30,4,number_format($this->totalsublet,2),'TRBL',0,'R');
+			$this->Ln();
+			
+			$this->vat = $this->grandtotal * 0.12;
+			$this->totalamount = ($this->grandtotal - $this->mst['discount']) + $this->vat;
+			
+			$this->Cell(160,4,"Discount",0,0,'R');
+			$this->Cell(30,4,number_format($this->mst['discount'],2),'TRBL',0,'R');
+			$this->Ln();
+			$this->Cell(160,4,"VAT 12%",0,0,'R');
+			$this->Cell(30,4,number_format($this->vat,2),'TRBL',0,'R');
+			$this->Ln();
+			$this->Cell(160,4,"Grand Total",0,0,'R');
+			$this->Cell(30,4,number_format($this->totalamount,2),'TRBL',0,'R');
 			$this->Ln();
 		}
 		public function Footer(){

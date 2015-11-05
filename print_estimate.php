@@ -37,7 +37,8 @@
 						"discounted_price" => $discountedprice,
 						"subtotal" => $subtotal_amount,
 						"total_amount" => $total_amount,
-						"odometer" => $odometer);
+						"odometer" => $odometer,
+						"estrefno" => $estimaterefno);
 	
 	$sql_servicedtl = "SELECT * FROM tbl_service_detail WHERE estimate_refno = '$estimaterefno'";
 	$qry_servicedtl = mysql_query($sql_servicedtl);
@@ -85,7 +86,7 @@
 	
 	// Data loading
 	//$pdf->setImageLogo($image);
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','801-6291');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setEstimateRefNo($estimaterefno,$transdate);
 	//$pdf->setAccessoryData($qrywo_dtl_accessory);
 	//$pdf->setJobData($qrywo_dtl_job);
@@ -101,6 +102,6 @@
 	$pdf->AddPage();
 	$pdf->ImprovedTable();
 	// I = WEB VIEW, D = DOWNLOAD PDF FILE
-	$pdf->Output($estimaterefno . '.pdf','D');
+	$pdf->Output($estimaterefno . '.pdf','I');
 	$_SESSION['estimaterefno'] = null;
 ?>

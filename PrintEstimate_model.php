@@ -33,6 +33,7 @@
 			if(!empty($master['discount']) && $master['discount'] > 0){
 				$this->discount += $master['discount'];
 			}
+			$this->estrefno = $master['estrefno'];
 			// if(!empty($master['discounted_price']) && $master['discounted_price'] > 0){
 			// 	$this->discount += $master['discounted_price'];
 			// }
@@ -54,7 +55,10 @@
 			$this->Ln();
 			
 			$this->SetFont('Courier','B',8);
-			$this->Cell(190,4,'JOB QUOTATION',0,0,'C');
+			$this->Cell(45,4,'',0,0,'C');
+			$this->Cell(100,4,'JOB QUOTATION',0,0,'C');
+			$this->SetFont('Courier','B',20);
+			$this->Cell(45,6,$this->estrefno,0,0,'R');
 			$this->Ln();
 			
 			$this->SetFont('Courier','B',9);
@@ -197,6 +201,7 @@
 			$this->Ln();
 			
 			$this->vat = $this->grandtotal * 0.12;
+			$this->totalamount = ($this->grandtotal - $this->discount) + $this->vat;
 			
 			$this->Cell(160,4,"Discount",0,0,'R');
 			$this->Cell(30,4,number_format($this->discount,2),'TRBL',0,'R');

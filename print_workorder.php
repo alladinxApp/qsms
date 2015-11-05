@@ -55,7 +55,7 @@
 	}
 	
 	while($row_cust = mysql_fetch_assoc($qry_cust)){
-		$customername = $row_cust['firtname'] . ' ' . $row_cust['middlename'] . ' ' . $row_cust['lastname'];
+		$customername = $row_cust['firstname'] . ' ' . $row_cust['middlename'] . ' ' . $row_cust['lastname'];
 		$address = $row_cust['address'] . ' ' . $row_cust['city'];
 		$customer = array("customer_id" => $row_cust['cust_id'],
 						"customer_name" => $customername,
@@ -111,7 +111,7 @@
 	$pdf = new PrintWorkOrder;
 	
 	// Data loading
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','Alabang, Muntinlupa City','801-6291');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setWOMST($servicemst);
 	$pdf->setJCMST($row_jc);
 	$pdf->setServiceAdvisor($_SESSION['username']);
