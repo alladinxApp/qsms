@@ -125,7 +125,7 @@
 	}
 </script>
 <body>
-	<form method="post" name="parts_form" class="form" onSubmit="return ValidateMe();">
+	<form method="post" name="parts_form" class="form">
 	<fieldset form="form_parts" name="form_parts">
 	<legend><p id="title">Parts Item Masterfile</p></legend>
 	<table>
