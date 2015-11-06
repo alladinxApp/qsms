@@ -40,7 +40,7 @@
 	$sql_histdtl = "SELECT *,v_job.job FROM v_service_master,v_service_detail,v_job
 				WHERE v_service_master.customer_id = '$customerid' AND 
 					v_service_master.estimate_refno = v_service_detail.estimate_refno AND
-					v_service_master.trans_status = '6' AND v_service_detail.type = 'job' and
+					v_service_master.trans_status = '6' /*AND v_service_detail.type = 'job'*/ AND
 					v_service_detail.id = v_job.job_id";
 	$qry_histdtl = mysql_query($sql_histdtl);
 	
@@ -111,7 +111,7 @@
 	$pdf = new PrintWorkOrder;
 	
 	// Data loading
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','President Ave. BF Home Paranaque, City','801-6291');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','#100 President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setWOMST($servicemst);
 	$pdf->setJCMST($row_jc);
 	$pdf->setServiceAdvisor($_SESSION['username']);

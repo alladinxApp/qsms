@@ -75,7 +75,7 @@
 	$num_billingmst = mysql_num_rows($qry_billingmst);
 	
 	$compinfo = array("companyname" => 'FAST QUICK SERVICE'
-					,"companyaddress" => 'President Ave. BF Home Paranaque, City'
+					,"companyaddress" => '#100 President Ave. BF Home Paranaque, City'
 					,"companyno" => '(02)801-6291 / (02)587-5305'
 					,"mobileno" => '(+63)917-578-8792'
 					,"tin" => '108-558-118-000');

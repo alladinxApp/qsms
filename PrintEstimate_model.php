@@ -136,24 +136,28 @@
 							$this->lubricants = null;
 							$this->sublet = null;
 							$this->parts = null;
+							$this->totallabor += $this->labor;
 						break;
 					case "parts": 
 							$this->labor = null;
 							$this->lubricants = null;
 							$this->sublet = null;
 							$this->parts = $this->details[$i]['amount'];
+							$this->totalparts += $this->parts;
 						break;
 					case "material": 
 							$this->labor = null;
 							$this->lubricants = null;
 							$this->sublet = $this->details[$i]['amount'];
 							$this->parts = null;
+							$this->totalsublet += $this->sublet;
 						break;
 					case "accessory": 
 							$this->labor = null;
 							$this->lubricants = $this->details[$i]['amount'];
 							$this->sublet = null;
 							$this->parts = null;
+							$this->totallubricants += $this->lubricants;
 						break;
 					default: break;
 				}
@@ -163,11 +167,6 @@
 				$this->Cell(30,4,$this->sublet,'TRBL',0,'R');
 				$this->Cell(30,4,$this->parts,'TRBL',0,'R');
 				$this->Ln();
-				
-				$this->totallabor += $this->labor;
-				$this->totallubricants += $this->lubricants;
-				$this->totalsublet += $this->sublet;
-				$this->totalparts += $this->parts;
 			}
 			
 			$this->SetFont('Courier','B',9);

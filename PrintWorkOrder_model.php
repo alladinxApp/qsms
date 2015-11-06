@@ -12,7 +12,7 @@
 		public function setCustomerInfo($customer){
 			$this->customerid = $customer['customer_id'];
 			$this->customername = $customer['customer_name'];
-			$this->address = $customer['address'] . 'asdfasdfasdfasdfasdfasdfasdfasdfasdf';
+			$this->address = $customer['address'];
 			$this->business = $customer['business'];
 			$this->fax = $customer['fax'];
 			$this->business = $customer['business'];
@@ -261,24 +261,27 @@
 
 				switch($this->detail[$i]['type']){
 					case "job":
+							$this->labor = 0.00;
 							$this->labor = $this->detail[$i]['amount'];
+							$this->totallabor += $this->labor;
 						break;
 					case "parts":
+							$this->parts = 0.00;
 							$this->parts = $this->detail[$i]['amount'];
+							$this->totalparts += $this->parts;
 						break;
 					case "material":
+							$this->sublet = 0.00;
 							$this->sublet = $this->detail[$i]['amount'];
+							$this->totalsublet += $this->sublet;
 						break;
 					case "accessory":
+							$this->lubricants = 0.00;
 							$this->lubricants = $this->detail[$i]['amount'];
+							$this->totallubricants += $this->lubricants;
 						break;
 					default: break;
 				}
-
-				$this->totallabor += $this->labor;
-				$this->totallubricants += $this->lubricants;
-				$this->totalsublet += $this->sublet;
-				$this->totalparts += $this->parts;
 			}
 
 			$this->Cell(60,2,null,"RLB",0,'C');
@@ -293,13 +296,13 @@
 			// $this->SetFont('Courier','B',10);
 			// $this->Cell(190,4,"Grand Total >>>>>>>>>> " . number_format($total,2),0,0,'R');
 			// $this->Ln();
-			$this->SetFont('Courier','B',9);
-			$this->Cell(70,4,'TOTAL','TRBL',0,'R');
-			$this->Cell(30,4,number_format($this->totallabor,2),'TRBL',0,'R');
-			$this->Cell(30,4,number_format($this->totallubricants,2),'TRBL',0,'R');
-			$this->Cell(30,4,number_format($this->totalsublet,2),'TRBL',0,'R');
-			$this->Cell(30,4,number_format($this->totalparts,2),'TRBL',0,'R');
-			$this->Ln();
+			// $this->SetFont('Courier','B',9);
+			// $this->Cell(155,4,'TOTAL','TRBL',0,'R');
+			// $this->Cell(35,4,number_format($this->totallabor,2),'TRBL',0,'R');
+			// $this->Cell(35,4,number_format($this->totallubricants,2),'TRBL',0,'R');
+			// $this->Cell(25,4,number_format($this->totalsublet,2),'TRBL',0,'R');
+			// $this->Cell(35,4,number_format($this->totalparts,2),'TRBL',0,'R');
+			// $this->Ln();
 			
 			$this->grandtotal += $this->totallabor;
 			$this->grandtotal += $this->totallubricants;
@@ -307,7 +310,7 @@
 			$this->grandtotal += $this->totalparts;
 			
 			$this->Cell(130,4,"SUB TOTAL",'TRBL',0,'R');
-			$this->Cell(60,4,number_format($this->grandtotal,2),'TRBL',0,'R');
+			$this->Cell(60,4,number_format($total,2),'TRBL',0,'R');
 			$this->Ln(10);
 			
 			$this->Cell(160,4,"Total Labor",0,0,'R');

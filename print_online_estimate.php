@@ -28,7 +28,7 @@
 	$pdf = new PrintEstimate;
 	
 	// Data loading
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','President Ave. BF Home Paranaque, City','801-6291');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','#100 President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setMaster($row_mst);
 	$pdf->setDetails($row_dtl);
 	

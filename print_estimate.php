@@ -86,7 +86,7 @@
 	
 	// Data loading
 	//$pdf->setImageLogo($image);
-	$pdf->setCompanyInfo('FAST QUICK SERVICE','President Ave. BF Home Paranaque, City','801-6291');
+	$pdf->setCompanyInfo('FAST QUICK SERVICE','#100 President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setEstimateRefNo($estimaterefno,$transdate);
 	//$pdf->setAccessoryData($qrywo_dtl_accessory);
 	//$pdf->setJobData($qrywo_dtl_job);
