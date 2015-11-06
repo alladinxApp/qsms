@@ -136,7 +136,7 @@
 	}
 </script>
 <body>
-	<form method="post" name="accessory_form" class="form" onSubmit="return ValidateMe();">
+	<form method="post" name="accessory_form" class="form">
 	<fieldset>
 	<legend><p id="title">Lubricants Masterfile</p></legend>
 	<br />
