@@ -15,6 +15,7 @@
 	$customerid = $rowwo_mst['customer_id'];
 	$worefno = $rowwo_mst['wo_refno'];
 	$vehicle_id = $rowwo_mst['vehicle_id'];
+	$creaby = $rowwo_mst['created_by'];
 	
 	$sql_cust = "SELECT * FROM tbl_customer WHERE cust_id = '$customerid'";
 	$qry_cust = mysql_query($sql_cust);
@@ -27,7 +28,7 @@
 	$qry_jc = mysql_query($sql_jc);
 	$row_jc = mysql_fetch_array($qry_jc);
 
-	$sql_user = "SELECT * FROM v_users WHERE username = '$_SESSION[username]'";
+	$sql_user = "SELECT * FROM v_users WHERE username = '$creaby'";
 	$qry_user = mysql_query($sql_user);
 	while($row_user = mysql_fetch_array($qry_user)){
 		$user_fullname = $row_user['name'];

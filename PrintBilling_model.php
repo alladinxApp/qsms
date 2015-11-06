@@ -15,6 +15,9 @@
 		public function setUser($user){
 			$this->user = $user;
 		}
+		public function setServiceAdviser($serviceadviser){
+			$this->serviceadviser = $serviceadviser;
+		}
 		public function setServiceMaster($servicemst){
 			$this->servicemst = $servicemst;
 		}
@@ -93,7 +96,7 @@
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(35,4,$this->vehicle['make_desc'],0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
-			$this->Cell(43,4,$this->user,0,0,'L');
+			$this->Cell(43,4,$this->serviceadviser,0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(48,4,$this->user,0,0,'L');
 			$this->Ln();
@@ -139,7 +142,7 @@
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(43,4,$this->servicemst['payment_mode'],0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
-			$this->Cell(48,4,$this->user,0,0,'L');
+			$this->Cell(48,4,'',0,0,'L');
 			$this->Ln(10);
 			
 			$this->Cell(15,4,null,0,0,'R');

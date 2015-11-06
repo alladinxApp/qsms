@@ -38,6 +38,13 @@
 		$vehicleid = $row_wo['vehicle_id'];
 		$total_amount += $row_wo['total_amount'];
 		$total_discount += $row_wo['discount'];
+		$creaby = $row_wo['created_by'];
+	}
+
+	$sql_adviser = "SELECT * FROM v_users WHERE username = '$creaby'";
+	$qry_adviser = mysql_query($sql_adviser);
+	while($row_adviser = mysql_fetch_array($qry_adviser)){
+		$adviser = $row_adviser['name'];
 	}
 
 	$sql_est = "SELECT v_service_detail.*,
@@ -98,6 +105,7 @@
 	$pdf->setBillingMaster($row_billingmst,$num_billingmst);
 	$pdf->setServiceDetail($row_est);
 	$pdf->setUser($user);
+	$pdf->setServiceAdviser($adviser);
 	$pdf->setPayments($total_amount,$total_discount);
 	
 	$pdf->AddPage();
