@@ -5,7 +5,12 @@
 	require_once("functions.php");
 	
 	$billingrefno = $_SESSION['billingrefno'];
-	$user = $_SESSION['username'];
+	$sql_user = "SELECT * FROM v_users WHERE username = '$_SESSION[username]'";
+	$qry_user = mysql_query($sql_user);
+	while($row_user = mysql_fetch_array($qry_user)){
+		$user = $row_user['name'];
+	}
+	// $user = $_SESSION['username'];
 	
 	$sql_billing = "SELECT tbl_billing.*,tbl_service_master.estimate_refno 
 						FROM tbl_billing JOIN tbl_service_master
@@ -73,6 +78,8 @@
 	$qry_billingmst = mysql_query($sql_billingmst);
 	$row_billingmst = mysql_fetch_array($qry_billingmst);
 	$num_billingmst = mysql_num_rows($qry_billingmst);
+
+
 	
 	$compinfo = array("companyname" => 'FAST QUICK SERVICE'
 					,"companyaddress" => '#100 President Ave. BF Home Paranaque, City'

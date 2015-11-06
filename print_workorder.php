@@ -26,6 +26,12 @@
 	$sql_jc = "SELECT * FROM v_jobclock_master WHERE wo_refno = '$worefno'";
 	$qry_jc = mysql_query($sql_jc);
 	$row_jc = mysql_fetch_array($qry_jc);
+
+	$sql_user = "SELECT * FROM v_users WHERE username = '$_SESSION[username]'";
+	$qry_user = mysql_query($sql_user);
+	while($row_user = mysql_fetch_array($qry_user)){
+		$user_fullname = $row_user['name'];
+	}
 	
 	$sql_histmst = "SELECT * FROM v_service_master WHERE customer_id = '$customerid' AND trans_status = '6' ORDER BY transaction_date DESC LIMIT 0,3";
 	$qry_histmst = mysql_query($sql_histmst);
@@ -114,7 +120,7 @@
 	$pdf->setCompanyInfo('FAST QUICK SERVICE','#100 President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setWOMST($servicemst);
 	$pdf->setJCMST($row_jc);
-	$pdf->setServiceAdvisor($_SESSION['username']);
+	$pdf->setServiceAdvisor($user_fullname);
 	$pdf->setServiceDetail($servicedtl);
 	$pdf->setVehicleInfo($vehicle);
 	$pdf->setCustomerInfo($customer);
