@@ -35,7 +35,7 @@
             	<ul>
             	<li id="li_menu"><a href="estimates_main.php"><img src="images/home.jpg" /></a></li>
                 <li id="li_menu"><a href=""><img src="images/settings.jpg" /></a></li>                   
-                <li id="li_menu"><a href="login.php"><img src="images/logout.jpg" hspace="15px" /></a></li>    
+                <li id="li_menu"><a href="logout.php"><img src="images/logout.jpg" hspace="15px" /></a></li>    
            		</ul>
        	  </div><!--end of pic_menu -->
                
@@ -49,7 +49,7 @@
                 <li id="li_menu"><a href=""></a></li>
                 <li id="li_menu"><a href="estimates_main.php">Home</a></li>
                 <li id="li_menu"><a href="">Settings</a></li>
-                <li id="li_menu"><a href="login.php">Logout</a></li>    
+                <li id="li_menu"><a href="logout.php">Logout</a></li>    
       			</ul>
           </div><!--end of menu--> 
       

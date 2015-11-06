@@ -19,7 +19,7 @@
 	
 	if (isset($_POST['update'])){
 		$pass = $_POST['txtpassword'];
-		$password = generatePassword($pass);
+		$password = generatePassword(strtoupper(trim($pass)));
 		$name = strtoupper($_POST['txtname']);
 		$status = $_POST['txtuserstatus'];
 		//$usertype = $_POST['user_type'];
@@ -40,7 +40,7 @@
 			$img = " image = '$image',";
 			move_uploaded_file($_FILES['txtuserimage']['tmp_name'],$upload_path . $image);
 		}else{
-			$img = 'no-image.png';
+			$img = " image = 'blank_person.jpg',";
 		}
 									   
 		$userupdate = "UPDATE tbl_users 
