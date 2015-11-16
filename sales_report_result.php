@@ -60,7 +60,7 @@
 		}
 		$estrefno = rtrim($estrefno,",");
 		
-		$sql_lbs_detail = "SELECT * FROM v_service_detail_job WHERE estimate_refno IN($estrefno)";
+		$sql_lbs_detail = "SELECT * FROM v_service_detail_job WHERE estimate_refno IN($estrefno) limit 0,1";
 		$qry_lbs_detail = mysql_query($sql_lbs_detail);
 		while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
 			$job .= $row_lbs_detail['job_name'] . ",";
@@ -131,8 +131,8 @@
 	<table width="1150">
 		<tr>
 			<th width="10">#</th>
-			<th width="140">Customer Name</th>
-			<th width="200">Service Availed</th>
+			<th width="200">Customer Name</th>
+			<th width="100">Service Availed</th>
 			<th width="100">Payment Type</th>
 			<th width="100">Labor</th>
 			<th width="100">Lubricants</th>
