@@ -128,12 +128,12 @@
 		</tr>
 	</table>
 	<div class="divEstimateList">
-	<table width="1150">
+	<table width="1350">
 		<tr>
 			<th width="10">#</th>
 			<th width="200">Customer Name</th>
-			<th width="100">Service Availed</th>
-			<th width="100">Payment Type</th>
+			<th width="250">Service Availed</th>
+			<th width="150">Payment Type</th>
 			<th width="100">Labor</th>
 			<th width="100">Lubricants</th>
 			<th width="100">Sublet/Others</th>
@@ -156,9 +156,11 @@
 				$totalsublet += $row['sublet'];
 				$totalparts += $row['parts'];
 				$totaldiscount += $row['discount'];
-				$totalsales += $row['total_amount'];
-				$discounted = $row['subtotal_amount'] - $row['discount'];
-				$vat = $discounted / 100 * $row['vat'];
+				$grandtotal = $row['labor'] + $row['lubricants'] + $row['sublet'] + $row['parts'];
+				$discounted = ($grandtotal - $row['discount']);
+				$vat = ($grandtotal * 0.12);
+				$totalamnt = ($discounted + $vat);
+				$totalsales += $totalamnt;
 				$totalvat += $vat;
 
 				$style = $bg;
@@ -174,7 +176,7 @@
 			<td align="right" style="<?=$style;?>"><?=number_format($row['parts'],2);?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($vat,2);?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['discount'],2);?></td>
-			<td align="right" style="<?=$style;?>"><?=number_format($row['total_amount'],2);?></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($totalamnt,2);?></td>
 		</tr>
 		<? $cnt++; } $style .= 'border-top: 3px double #000;';?>
 		<tr>
@@ -187,7 +189,19 @@
 			<td align="right" style="<?=$style;?>"><?=number_format($totaldiscount,2);?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($totalsales,2);?></td>
 		</tr>
+		<? 
+			$total_units = ($cnt - 1);
+			$ave_invoice_price = $totalsales / $total_units; 
+		?>
+		<tr>
+			<td colspan="2">TOTAL UNITS RECEIVED</td>
+			<td colspan="6">: <b><?=$total_units;?></b></td>
+		</tr>
 		
+		<tr>
+			<td colspan="2">AVERAGE INVOICE PRICE</td>
+			<td colspan="6">: <b><?=number_format($ave_invoice_price,2);?></b></td>
+		</tr>
 	</table>
 	</div>
 	<input type="submit" name="save" value="" style="cursor: pointer;">

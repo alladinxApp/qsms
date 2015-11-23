@@ -90,21 +90,30 @@
 
 					$ln .= "\r\nCustomer Name,Service Availed,Payment Type,Labor,Lubricants,Sublet/Others,Spare Parts,VAT,Discount,Total\r\n";
 
+					$cnt = 1;
 					while($row = mysql_fetch_array($qry_lbs_master)){
-						$discounted = $row['subtotal_amount'] - $row['discount'];
-						$vat = $discounted / 100 * $row['vat'];
-						$ln .= $row['customername'] . "," . $job . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . $vat . "," . $row['discount'] . "," . $row['total_amount'] . "\r\n";
+						$grandtotal = $row['labor'] + $row['lubricants'] + $row['sublet'] + $row['parts'];
+						$discounted = ($grandtotal - $row['discount']);
+						$vat = ($grandtotal * 0.12);
+						$totalamnt = ($discounted + $vat);
+						$ln .= $row['customername'] . "," . $job . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . $vat . "," . $row['discount'] . "," . $totalamnt . "\r\n";
 
 						$totallabor += $row['labor'];
 						$totallubricants += $row['lubricants'];
 						$totalsublet += $row['sublet'];
 						$totalparts += $row['parts'];
 						$totaldiscount += $row['discount'];
-						$totalsales += $row['total_amount'];
+						$totalsales += $totalamnt;
 						$totalvat += $vat;
+						$cnt++;
 					}
 
+					$total_units = ($cnt - 1);
+					$ave_invoice_price = $totalsales / $total_units; 
+
 					$ln .= ",,Total>>>>>," . $totallabor . "," . $totallubricants . "," . $totalsublet . "," . $totalparts . "," . $totalvat . "," . $totaldiscount . "," . $totalsales . "\r\n";
+					$ln .= "TOTAL UNITS RECEIVED," . ": " . $total_units . "\r\n";
+					$ln .= "AVERAGE INVOICE PRICE," . ": " . $ave_invoice_price . "\r\n";
 
 					$data = trim($ln);
 					$filename = "sales_report_" . $dt . ".csv";
