@@ -36,35 +36,6 @@
 			$this->total_discount = $discount;
 		}
 		public function Header(){
-			// $this->SetFont('Courier','B',16);
-			// $this->SetTextColor(0,0,0);
-			// $this->Cell(190,4,$this->companyname,0,0,'C');
-			// $this->Ln();
-			// $this->Image('images/logo1.png', 90, 0, 30);
-			
-			// $this->SetFont('Courier','',8);
-			// $this->Cell(190,4,"Aniec Car Repair Service",0,0,'C');
-			// $this->Ln();
-
-			// $this->SetFont('Courier','',8);
-			// $this->Cell(190,4,$this->companyaddress,0,0,'C');
-			// $this->Ln();
-			
-			// $this->SetFont('Courier','',8);
-			// $this->Cell(190,4,'Tel No. ' . $this->companyno,0,0,'C');
-			// $this->Ln();
-			
-			// $this->SetFont('Courier','',8);
-			// $this->Cell(190,4,$this->mobileno,0,0,'C');
-			// $this->Ln();
-
-			// $this->SetFont('Courier','',8);
-			// $this->Cell(190,4,'VAT REG ' . $this->vat,0,0,'C');
-			// $this->Ln();
-
-			// $this->SetFont('Courier','B',12);
-			// $this->Cell(190,4,'BILLING STATEMENT',0,0,'C');
-			// $this->Ln();
 			$this->Ln(40);
 		}
 		public function ImprovedTable(){
@@ -226,7 +197,9 @@
 			$this->Ln();
 
 			$sub_total = $grand_total - $this->total_discount;
+			$vat = ($grand_total * 0.12);
 			$total_vat = $this->total_amount - $sub_total;
+			$totalamnt = ($sub_total + $vat);
 
 			$this->Cell(15,4,null,0,0,'L');
 			$this->Cell(40,4,null,0,0,'L');
@@ -234,7 +207,7 @@
 			$this->Cell(1,4,null,0,0,'C');
 			$this->Cell(29,4,null,0,0,'C');
 			$this->Cell(60,4,'VAT',0,0,'R');
-			$this->Cell(30,4,number_format($total_vat,2),0,0,'R');
+			$this->Cell(30,4,number_format($vat,2),0,0,'R');
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Ln();
 
@@ -244,7 +217,7 @@
 			$this->Cell(1,4,null,0,0,'C');
 			$this->Cell(29,4,null,0,0,'C');
 			$this->Cell(60,4,'Grand Total >>>>>>>>>>',0,0,'R');
-			$this->Cell(30,4,number_format($this->total_amount,2),"T",2,'R');
+			$this->Cell(30,4,number_format($totalamnt,2),"T",2,'R');
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Ln();
 			
