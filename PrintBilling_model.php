@@ -65,7 +65,7 @@
 			// $this->SetFont('Courier','B',12);
 			// $this->Cell(190,4,'BILLING STATEMENT',0,0,'C');
 			// $this->Ln();
-			$this->Ln(30);
+			$this->Ln(40);
 		}
 		public function ImprovedTable(){
 			$this->SetFont('Courier','',9);
@@ -88,7 +88,6 @@
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(138,4,null,0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
-			$this->Cell(48,4,$this->customer['landline'],0,0,'L');
 			$this->Ln();
 			$this->Cell(190,4,null,0,0,'L');
 			$this->Ln();
@@ -97,8 +96,7 @@
 			$this->Cell(35,4,$this->vehicle['make_desc'],0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(43,4,$this->serviceadviser,0,0,'L');
-			$this->Cell(2,4,null,0,0,'L');
-			$this->Cell(48,4,$this->user,0,0,'L');
+			$this->Cell(48,4,$this->customer['landline'],0,0,'R');
 			$this->Ln();
 			$this->Cell(190,4,null,0,0,'L');
 			$this->Ln();
@@ -108,9 +106,9 @@
 			$this->Cell(35,4,$this->vehicle['model_desc'],0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(43,4,dateFormat($this->servicemst['wo_trans_date'],"M d, Y h:i"),0,0,'L');
-			$this->Cell(2,4,null,0,0,'L');
+			$this->Cell(48,4,$this->user,0,0,'R');
 			$this->Cell(48,4,$this->servicemst['tech_name'],0,0,'L');
-			$this->Ln();
+			$this->Ln(8);
 			$this->Cell(190,4,null,0,0,'L');
 			$this->Ln();
 			$this->Cell(2,4,null,0,0,'L');
@@ -144,6 +142,7 @@
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(48,4,'',0,0,'L');
 			$this->Ln(10);
+			$this->Ln(10);
 			
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Cell(39,4,'Type',"B",0,'C');
@@ -154,7 +153,7 @@
 			$this->Cell(1,4,null,0,0,'C');
 			$this->Cell(30,4,'Amount',"B",0,'R');
 			$this->Cell(15,4,null,0,0,'R');
-			$this->Ln();
+			$this->Ln(10);
 			
 			$grand_total = 0;
 			$cnt = 0;
@@ -251,7 +250,7 @@
 			
 		}
 		public function Footer(){
-			$this->SetY(-53);
+			$this->SetY(-29);
 			
 			$this->Cell(95,24,null,0,0,'L');
 			$this->Ln();
