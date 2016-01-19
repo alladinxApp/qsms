@@ -35,6 +35,9 @@
 			$this->total_amount = $amount;
 			$this->total_discount = $discount;
 		}
+		public function setOdometer($odo){
+			$this->odometer = $odo;
+		}
 		public function Header(){
 			$this->Ln(40);
 		}
@@ -83,7 +86,7 @@
 			$this->Cell(190,4,null,0,0,'L');
 			$this->Ln();
 			$this->Cell(2,4,null,0,0,'L');
-			$this->Cell(56,4,$this->servicemst['odometer'],0,0,'L');
+			$this->Cell(56,4,$this->odometer,0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');
 			$this->Cell(35,4,null,0,0,'L');
 			$this->Cell(2,4,null,0,0,'L');

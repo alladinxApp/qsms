@@ -39,8 +39,9 @@
 		$total_amount += $row_wo['total_amount'];
 		$total_discount += $row_wo['discount'];
 		$creaby = $row_wo['created_by'];
+		$odometer = $row_wo['odometer'];
 	}
-
+	
 	$sql_adviser = "SELECT * FROM v_users WHERE username = '$creaby'";
 	$qry_adviser = mysql_query($sql_adviser);
 	while($row_adviser = mysql_fetch_array($qry_adviser)){
@@ -107,7 +108,8 @@
 	$pdf->setUser($user);
 	$pdf->setServiceAdviser($adviser);
 	$pdf->setPayments($total_amount,$total_discount);
-	
+	$pdf->setOdometer($odometer);
+
 	$pdf->AddPage();
 	$pdf->ImprovedTable();
 
