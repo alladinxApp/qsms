@@ -51,25 +51,27 @@
 						$where .= "AND payment_id = '$ptype'";
 					}
 
-					$sql_lbs_master = "SELECT * FROM v_sales 
+					$sql_lbs_master = "SELECT v_sales.*,v_service_detail_job.job_name 
+						FROM v_sales
+							JOIN v_service_detail_job ON v_service_detail_job.estimate_refno = v_sales.estimate_refno
 			 			WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
 			 			ORDER BY v_sales.transaction_date";
 					$qry_lbs_master = mysql_query($sql_lbs_master);
 					$qry_mst = mysql_query($sql_lbs_master);
 
-					$estrefno = null;
-					while($row_mst = mysql_fetch_array($qry_mst)){
-						$estrefno .= "'$row_mst[estimate_refno]',";
-					}
-					$estrefno = rtrim($estrefno,",");
+					// $estrefno = null;
+					// while($row_mst = mysql_fetch_array($qry_mst)){
+					// 	$estrefno .= "'$row_mst[estimate_refno]',";
+					// }
+					// $estrefno = rtrim($estrefno,",");
 					
-					$job = null;
-					$sql_lbs_detail = "SELECT * FROM v_service_detail_job WHERE estimate_refno IN($estrefno) limit 0,1";
-					$qry_lbs_detail = mysql_query($sql_lbs_detail);
-					while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
-						$job .= $row_lbs_detail['job_name'] . " ";
-					}
-					$job = rtrim($job,",");
+					// $job = null;
+					// $sql_lbs_detail = "SELECT * FROM v_service_detail_job WHERE estimate_refno IN($estrefno) limit 0,1";
+					// $qry_lbs_detail = mysql_query($sql_lbs_detail);
+					// while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
+					// 	$job .= $row_lbs_detail['job_name'] . " ";
+					// }
+					// $job = rtrim($job,",");
 
 					$ln .= "SALES SUMMARY REPORT\r\n\r\n";
 					
@@ -96,7 +98,7 @@
 						$discounted = ($grandtotal - $row['discount']);
 						$vat = ($grandtotal * 0.12);
 						$totalamnt = ($discounted + $vat);
-						$ln .= $row['customername'] . "," . $job . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . $vat . "," . $row['discount'] . "," . $totalamnt . "\r\n";
+						$ln .= $row['customername'] . "," . $row['job_name'] . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . $vat . "," . $row['discount'] . "," . $totalamnt . "\r\n";
 
 						$totallabor += $row['labor'];
 						$totallubricants += $row['lubricants'];
