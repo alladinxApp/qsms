@@ -727,7 +727,7 @@
 								. "," . $row['conduction_sticker']
 								. "," . $row['make']
 								. "," . $row['color']
-								. "," . $row['year']
+								. "," . $row['yeardesc']
 								. "," . $row['variant']
 								. "\r\n";
 					}

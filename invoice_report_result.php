@@ -93,7 +93,7 @@
 			<td align="center" style="<?=$style;?>"><?=$row['conduction_sticker'];?></td>
 			<td align="center" style="<?=$style;?>"><?=$row['make'];?></td>
 			<td align="center" style="<?=$style;?>"><?=$row['color'];?></td>
-			<td align="center" style="<?=$style;?>"><?=$row['year'];?></td>
+			<td align="center" style="<?=$style;?>"><?=$row['yeardesc'];?></td>
 			<td style="<?=$style;?>"><?=$row['variant'];?></td>
 		</tr>
 		<? $cnt++; } ?>
