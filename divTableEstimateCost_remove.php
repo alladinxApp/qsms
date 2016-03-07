@@ -33,15 +33,19 @@
 	
 	$qrytempjob = "SELECT * FROM v_temp_estimate_job WHERE ses_id = '$ses_id'";
 	$restempjob = $dbo->query($qrytempjob);
-	
+	$numtemplabor = mysql_num_rows(mysql_query($qrytempjob));
+
 	$qrytempparts = "SELECT * FROM v_temp_estimate_parts WHERE ses_id = '$ses_id'";
 	$restempparts = $dbo->query($qrytempparts);
+	$numtempparts = mysql_num_rows(mysql_query($qrytempparts));
 	
 	$qrytempaccessory = "SELECT * FROM v_temp_estimate_accessory WHERE ses_id = '$ses_id'";
 	$restempaccessory = $dbo->query($qrytempaccessory);
+	$numtemplubricants = mysql_num_rows(mysql_query($qrytempaccessory));
 	
 	$qrytempmaterial = "SELECT * FROM v_temp_estimate_material WHERE ses_id = '$ses_id'";
 	$restempmaterial = $dbo->query($qrytempmaterial);
+	$numtempmaterial = mysql_num_rows(mysql_query($qrytempmaterial));
 	// END TEMPORARY ESTIMATE
 	
 	$subtotal = 0;
@@ -169,13 +173,52 @@
 <legend><p id="title">TOTAL COST</p></legend>	
 	<table>
 		<tr>
+			<td class="label">Senior Citizen:</td>
+			<td class="input"><input type="checkbox" name="senior" id="senior" onclick="getTotalAmount();" /></td>
+			<td></td>
+		</tr>
+		<tr>
 			<td class="label">Sub Total:</td>
 			<td class="input"><input type="text" name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" readonly style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
+		<? if($numtemplabor > 0){ ?>
 		<tr>
-			<td class="label">Discounts:</td>
-			<td class="input"><input type="text" name="discount" id="discount" value="" onBlur="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="label">Labor Discount:</td>
+			<td class="input"><input type="text" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			}
+			if($numtempparts > 0){
+		?>
+		<tr>
+			<td class="label">Parts Discount:</td>
+			<td class="input"><input type="text" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			} 
+			if($numtempmaterial > 0){
+		?>
+		<tr>
+			<td class="label">Material Discount:</td>
+			<td class="input"><input type="text" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			} 
+			if($numtemplubricants > 0){
+		?>
+		<tr>
+			<td class="label">Lubricants Discount:</td>
+			<td class="input"><input type="text" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? } ?>
+		<tr>
+			<td class="label">Total Discounts:</td>
+			<td class="input"><input type="text" name="discount" readonly id="discount" value="" onBlur="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<!-- <tr>

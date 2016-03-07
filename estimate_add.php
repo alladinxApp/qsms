@@ -49,6 +49,7 @@
 	
 	$qrytempjob = "SELECT * FROM v_temp_estimate_job WHERE ses_id = '$ses_id'";
 	$restempjob = $dbo->query($qrytempjob);
+	$numtemplabor = mysql_num_rows(mysql_query($qrytempjob));
 	
 	$qrytempparts = "SELECT * FROM v_temp_estimate_parts WHERE ses_id = '$ses_id'";
 	$restempparts = $dbo->query($qrytempparts);
@@ -56,6 +57,7 @@
 	
 	$qrytempaccessory = "SELECT * FROM v_temp_estimate_accessory WHERE ses_id = '$ses_id'";
 	$restempaccessory = $dbo->query($qrytempaccessory);
+	$numtemplubricants = mysql_num_rows(mysql_query($qrytempaccessory));
 	
 	$qrytempmaterial = "SELECT * FROM v_temp_estimate_material WHERE ses_id = '$ses_id'";
 	$restempmaterial = $dbo->query($qrytempmaterial);
@@ -422,15 +424,17 @@
 	}
 	
 	function getTotalAmount(){
+		getTotalDiscount();
 		var subtotal = document.getElementById("subtotal");
 		var discount = document.getElementById("discount");
-		var vat_val = '.' . document.getElementById("vatValue");
+		var vat_val = document.getElementById("vat").value;
 		var n = discount.value.indexOf("%");
 		
 		var discounted_price = document.getElementById("discounted_price");
 		var totalamount = document.getElementById("totalamount");
 		var amount = subtotal.value.replace(/,/g, '');
-		
+		var senior = document.getElementById("senior").checked;
+
 		if(amount <= 0){
 			alert("Please create estimate cost first!");
 			return false;
@@ -454,7 +458,13 @@
 		}
 		if(isNaN(amount) == false){
 			var vat = parseFloat(amount) * parseFloat(vat_val);
-			var vatable = parseFloat(amount) + parseFloat(vat);
+
+			if(document.getElementById("senior").checked == true){
+				var vatable = (parseFloat(amount) + 0.00);
+			}else{
+				var vatable = (parseFloat(amount) + parseFloat(vat));
+			}
+
 			totalamount.value = vatable;
 			CurrencyFormatted('totalamount');
 		}else{
@@ -477,6 +487,31 @@
 			req.open("GET", strURL, true);
 			req.send(null);
 		}
+	}
+	function getTotalDiscount(){
+		var lDiscount = $("#laborDiscount").val();
+		var pDiscount = $("#partsDiscount").val();
+		var mDiscount = $("#materialDiscount").val();
+		var luDiscount = $("#lubricantDiscount").val();
+		var subtotal = $("#subtotal").val();
+
+		if(lDiscount == "" || lDiscount == null){
+			lDiscount = 0;
+		}
+		if(pDiscount == "" || pDiscount == null){
+			pDiscount = 0;
+		}
+		if(mDiscount == "" || mDiscount == null){
+			mDiscount = 0;
+		}
+		if(luDiscount == "" || luDiscount == null){
+			luDiscount = 0;
+		}
+		var totalDiscount = (parseFloat(lDiscount) + parseFloat(pDiscount) + parseFloat(mDiscount) + parseFloat(luDiscount));
+		$("#discount").val(totalDiscount);
+
+		var discounted_price = (parseFloat(subtotal) - parseFloat(totalDiscount));
+		$("#discounted_price").val(discounted_price.toFixed(2));
 	}
 </script>
 <style type="text/css">
@@ -800,13 +835,52 @@
 	<legend><p id="title">TOTAL COST</p></legend>	
 	<table>
 		<tr>
+			<td class="label">Senior Citizen:</td>
+			<td class="input"><input type="checkbox" name="senior" id="senior" onClick="getTotalAmount();" value="1" /></td>
+			<td></td>
+		</tr>
+		<tr>
 			<td class="label">Sub Total:</td>
 			<td class="input"><input type="text" name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" readonly style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
+		<? if($numtemplabor > 0){ ?>
 		<tr>
-			<td class="label">Discounts:</td>
-			<td class="input"><input type="text" name="discount" id="discount" value="" onBlur="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
+			<td class="label">Labor Discount:</td>
+			<td class="input"><input type="text" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			}
+			if($numtempparts > 0){
+		?>
+		<tr>
+			<td class="label">Parts Discount:</td>
+			<td class="input"><input type="text" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			} 
+			if($numtempmaterial > 0){
+		?>
+		<tr>
+			<td class="label">Material Discount:</td>
+			<td class="input"><input type="text" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			} 
+			if($numtemplubricants > 0){
+		?>
+		<tr>
+			<td class="label">Lubricants Discount:</td>
+			<td class="input"><input type="text" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? } ?>
+		<tr>
+			<td class="label">Total Discounts:</td>
+			<td class="input"><input type="text" name="discount" readonly id="discount" value="" onBlur="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<!-- <tr>
