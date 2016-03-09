@@ -173,10 +173,35 @@
 		$discounted_price = trim(str_replace(",","",$_POST['discounted_price']));
 		$vat = $_POST['vat'];
 		$total_amount = trim(str_replace(",","",$_POST['totalamount']));
+		$recommendation = null;
+		$laborDiscount = 0;
+		$partsDiscount = 0;
+		$materialDiscount = 0;
+		$lubricantDiscount = 0;
+		$seniorCitizen = 0;
+		
 		if($_POST['txtrecommendation']){
 			$recommendation = $_POST['txtrecommendation'];
-		}else{
-			$recommendation = null;
+		}
+
+		if($_POST['laborDiscount']){
+			$laborDiscount = $_POST['laborDiscount'];
+		}
+
+		if($_POST['partsDiscount']){
+			$partsDiscount = $_POST['partsDiscount'];
+		}
+
+		if($_POST['materialDiscount']){
+			$materialDiscount = $_POST['materialDiscount'];
+		}
+
+		if($_POST['lubricantDiscount']){
+			$lubricantDiscount = $_POST['lubricantDiscount'];
+		}
+
+		if(isset($_POST['senior'])){
+			$seniorCitizen = 1;
 		}
 		
 		$qrytempestimate = "SELECT * FROM v_temp_estimate WHERE ses_id = '$ses_id'";
@@ -185,8 +210,8 @@
 		$estimate_refno = getNewNum('ESTIMATEREFNO');
 		
 		$sql .= "INSERT INTO tbl_service_master
-			(estimate_refno,odometer,transaction_date,customer_id,vehicle_id,payment_id,subtotal_amount,discount,discounted_price,vat,total_amount,created_by,remarks,recommendation)
-			VALUES('$estimate_refno','$odometer','$today','$customerid','$vehicleid','$payment','$subtotal','$discount','$discounted_price','$vat','$total_amount','$_SESSION[username]','$remarks','$recommendation'); ";
+			(estimate_refno,odometer,transaction_date,customer_id,vehicle_id,payment_id,subtotal_amount,discount,discounted_price,vat,total_amount,created_by,remarks,recommendation,labor_discount,parts_discount,lubricant_discount,material_discount,senior_citizen)
+			VALUES('$estimate_refno','$odometer','$today','$customerid','$vehicleid','$payment','$subtotal','$discount','$discounted_price','$vat','$total_amount','$_SESSION[username]','$remarks','$recommendation','$laborDiscount','$partsDiscount','$lubricantDiscount','$materialDiscount','$seniorCitizen'); ";
 		
 		foreach($restempestimate as $rowtempestimate){
 			$sql .= "INSERT INTO tbl_service_detail
@@ -464,7 +489,6 @@
 			}else{
 				var vatable = (parseFloat(amount) + parseFloat(vat));
 			}
-
 			totalamount.value = vatable;
 			CurrencyFormatted('totalamount');
 		}else{

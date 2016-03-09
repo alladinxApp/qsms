@@ -200,7 +200,7 @@
 			$this->Ln();
 			
 			$this->vat = $this->grandtotal * 0.12;
-			$this->totalamount = ($this->grandtotal - $this->discount) + $this->vat;
+			// $this->totalamount = ($this->grandtotal - $this->discount) + $this->vat;
 			
 			$this->Cell(160,4,"Discount",0,0,'R');
 			$this->Cell(30,4,number_format($this->discount,2),'TRBL',0,'R');

@@ -33,17 +33,19 @@
 	
 	$qrytempjob = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
 	$restempjob = $dbo->query($qrytempjob);
+	$numparts = mysql_num_rows(mysql_query($qrytempjob));
 	
 	$qrytempparts = "SELECT * FROM v_service_detail_parts WHERE estimate_refno = '$estimaterefno'";
 	$restempparts = $dbo->query($qrytempparts);
-	$numtempparts = mysql_num_rows(mysql_query($qrytempparts));
+	$numparts = mysql_num_rows(mysql_query($qrytempparts));
 	
 	$qrytempaccessory = "SELECT * FROM v_service_detail_accessory WHERE estimate_refno = '$estimaterefno'";
 	$restempaccessory = $dbo->query($qrytempaccessory);
+	$numlubricant = mysql_num_rows(mysql_query($qrytempaccessory));
 	
 	$qrytempmaterial = "SELECT * FROM v_service_detail_material WHERE estimate_refno = '$estimaterefno'";
 	$restempmaterial = $dbo->query($qrytempmaterial);
-	$numtempmaterial = mysql_num_rows(mysql_query($qrytempmaterial));
+	$nummaterial = mysql_num_rows(mysql_query($qrytempmaterial));
 	
 	foreach($resestimate as $rowestimate){
 		$custid = $rowestimate['customer_id'];
@@ -57,6 +59,11 @@
 		$transstatus = $rowestimate['trans_status'];
 		$subtotal = $rowestimate['subtotal_amount'];
 		$total = $rowestimate['total_amount'];
+		$labordiscount = $rowestimate['labor_discount'];
+		$partsdiscount = $rowestimate['parts_discount'];
+		$lubricantdiscount = $rowestimate['lubricant_discount'];
+		$materialdiscount = $rowestimate['material_discount'];
+		$seniorcitizen = $rowestimate['senior_citizen'];
 		$discount = $rowestimate['discount'];
 		$discprice = $rowestimate['discounted_price'];
 		$odometer = $rowestimate['odometer'];
@@ -64,6 +71,8 @@
 		$remarks = $rowestimate['remarks'];
 	}
 	
+	$isSenior = null;
+
 	$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$custid'";
 	$rescustomer = $dbo->query($qrycustomer);
 	
@@ -86,20 +95,24 @@
 		$serialno = $rowvehicle['serial_no'];
 	}
 	
+	$qrycost_make = "SELECT * FROM v_service_detail_make WHERE estimate_refno = '$estimaterefno'";
+	$rescost_make = $dbo->query($qrycost_make);
+
 	$qrycost_accessory = "SELECT * FROM v_service_detail_accessory WHERE estimate_refno = '$estimaterefno'";
 	$rescost_accessory = $dbo->query($qrycost_accessory);
+	$numlubricants = mysql_num_rows(mysql_query($qrycost_accessory));
 	
 	$qrycost_job = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
 	$rescost_job = $dbo->query($qrycost_job);
-	
-	$qrycost_make = "SELECT * FROM v_service_detail_make WHERE estimate_refno = '$estimaterefno'";
-	$rescost_make = $dbo->query($qrycost_make);
+	$numlabor = mysql_num_rows(mysql_query($qrycost_job));
 	
 	$qrycost_material = "SELECT * FROM v_service_detail_material WHERE estimate_refno = '$estimaterefno'";
 	$rescost_material = $dbo->query($qrycost_material);
+	$numtempmaterial = mysql_num_rows(mysql_query($qrycost_material));
 	
 	$qrycost_parts = "SELECT * FROM v_service_detail_parts WHERE estimate_refno = '$estimaterefno'";
 	$rescost_parts = $dbo->query($qrycost_parts);
+	$numparts = mysql_num_rows(mysql_query($qrycost_parts));
 	
 	$subtotal = 0;
 	
@@ -111,14 +124,44 @@
 		$discounted_price = trim(str_replace(",","",$_POST['discounted_price']));
 		$vat = $_POST['vat'];
 		$total_amount = trim(str_replace(",","",$_POST['totalamount']));
+		$recommendation = null;
+		$laborDiscount = 0;
+		$partsDiscount = 0;
+		$materialDiscount = 0;
+		$lubricantDiscount = 0;
+		$seniorCitizen = 0;
+
 		if($_POST['txtrecommendation']){
 			$recommendation = $_POST['txtrecommendation'];
-		}else{
-			$recommendation = null;
 		}
+
+		if($_POST['txtrecommendation']){
+			$recommendation = $_POST['txtrecommendation'];
+		}
+
+		if($_POST['laborDiscount']){
+			$laborDiscount = $_POST['laborDiscount'];
+		}
+
+		if($_POST['partsDiscount']){
+			$partsDiscount = $_POST['partsDiscount'];
+		}
+
+		if($_POST['materialDiscount']){
+			$materialDiscount = $_POST['materialDiscount'];
+		}
+
+		if($_POST['lubricantDiscount']){
+			$lubricantDiscount = $_POST['lubricantDiscount'];
+		}
+
+		if(isset($_POST['senior'])){
+			$seniorCitizen = 1;
+		}
+
 		switch($_POST['opt']){
 			case 1: 
-					$qry .= "UPDATE tbl_service_master SET subtotal_amount = '$subtotal',discount = '$discount',discounted_price = '$discounted_price',vat = '$vat',total_amount = '$total_amount',recommendation = '$recommendation' WHERE estimate_refno = '$estimaterefno'; ";
+					$qry .= "UPDATE tbl_service_master SET subtotal_amount = '$subtotal',discount = '$discount',discounted_price = '$discounted_price',vat = '$vat',total_amount = '$total_amount',recommendation = '$recommendation',labor_discount = '$laborDiscount',parts_discount = '$partsDiscount',lubricant_discount = '$lubricantDiscount',material_discount = '$materialDiscount' WHERE estimate_refno = '$estimaterefno'; ";
 					$res = $dbo->query($qry);
 					$msg = "updated";
 				break;
@@ -242,13 +285,16 @@
 		}
 	}
 	function getTotalAmount(){
+		getTotalDiscount();
 		var subtotal = document.getElementById("subtotal");
 		var discount = document.getElementById("discount");
+		var vat_val = document.getElementById("vat").value;
 		var n = discount.value.indexOf("%");
 		
 		var discounted_price = document.getElementById("discounted_price");
 		var totalamount = document.getElementById("totalamount");
 		var amount = subtotal.value.replace(/,/g, '');
+		var senior = document.getElementById("senior").checked;
 		
 		if(amount <= 0){
 			alert("Please create estimate cost first!");
@@ -272,8 +318,12 @@
 			discounted_price.value = "";
 		}
 		if(isNaN(amount) == false){
-			var vat = parseFloat(amount) * parseFloat(0.12);
-			var vatable = parseFloat(amount) + parseFloat(vat);
+			var vat = parseFloat(amount) * parseFloat(vat_val);
+			if(document.getElementById("senior").checked == true){
+				var vatable = (parseFloat(amount) + 0.00);
+			}else{
+				var vatable = (parseFloat(amount) + parseFloat(vat));
+			}
 			totalamount.value = vatable;
 			CurrencyFormatted('totalamount');
 		}else{
@@ -309,6 +359,31 @@
 			req.open("GET", strURL, true);
 			req.send(null);
 		}
+	}
+	function getTotalDiscount(){
+		var lDiscount = $("#laborDiscount").val();
+		var pDiscount = $("#partsDiscount").val();
+		var mDiscount = $("#materialDiscount").val();
+		var luDiscount = $("#lubricantDiscount").val();
+		var subtotal = $("#subtotal").val();
+
+		if(lDiscount == "" || lDiscount == null){
+			lDiscount = 0;
+		}
+		if(pDiscount == "" || pDiscount == null){
+			pDiscount = 0;
+		}
+		if(mDiscount == "" || mDiscount == null){
+			mDiscount = 0;
+		}
+		if(luDiscount == "" || luDiscount == null){
+			luDiscount = 0;
+		}
+		var totalDiscount = (parseFloat(lDiscount) + parseFloat(pDiscount) + parseFloat(mDiscount) + parseFloat(luDiscount));
+		$("#discount").val(totalDiscount);
+
+		var discounted_price = (parseFloat(subtotal) - parseFloat(totalDiscount));
+		$("#discounted_price").val(discounted_price.toFixed(2));
 	}
 </script>
 <body>
@@ -551,12 +626,51 @@
 	<legend><p id="title">TOTAL COST</p></legend>	
 	<table>
 		<tr>
+			<td class="label">Senior Citizen:</td>
+			<td class="input"><input type="checkbox" <? if($seniorcitizen > 0){ $isSenior = 'checked'; echo 'checked'; } ?> name="senior" id="senior" onClick="getTotalAmount();" value="1" /></td>
+			<td></td>
+		</tr>
+		<tr>
 			<td class="label">Sub Total:</td>
 			<td class="input"><input type="text" name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" readonly style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
+		<? if($numlabor > 0){ ?>
 		<tr>
-			<td class="label">Discounts:</td>
+			<td class="label">Labor Discount:</td>
+			<td class="input"><input type="text" value="<?=$labordiscount;?>" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			}
+			if($numparts > 0){
+		?>
+		<tr>
+			<td class="label">Parts Discount:</td>
+			<td class="input"><input type="text" value="<?=$partsdiscount;?>" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			} 
+			if($nummaterial > 0){
+		?>
+		<tr>
+			<td class="label">Material Discount:</td>
+			<td class="input"><input type="text" value="<?=$materialdiscount;?>" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? 
+			} 
+			if($numlubricant > 0){
+		?>
+		<tr>
+			<td class="label">Lubricants Discount:</td>
+			<td class="input"><input type="text" value="<?=$lubricantdiscount;?>" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td></td>
+		</tr>
+		<? } ?>
+		<tr>
+			<td class="label">Total Discounts:</td>
 			<td class="input"><input type="text" name="discount" id="discount" value="<?=$discount;?>" onBlur="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
@@ -575,10 +689,10 @@
 			<td class="input"><input type="text" name="discounted_price" id="discounted_price" value="<?=$discprice;?>" readonly style="width: 200px; text-align: right;"></td> 
 			<td></td>
 			<td><span class="label">VAT:</span></td>
-			<td class="input"><input type="text" name="vat" id="vat" value="12%" readonly style="width: 50px; text-align: right;"></td>
+			<td class="input"><input type="text" name="vat" id="vat" value="<?=getVatValue();?>" readonly style="width: 50px; text-align: right;"></td>
 			<td class="label">Total Amount:</td>
 			<? $vatable = ($subtotal * 0.12) + $subtotal;?>
-			<td class="input"><input type="text" name="totalamount" id="totalamount" value="<?=number_format($vatable,2);?>" readonly style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="totalamount" id="totalamount" value="<?=number_format($total,2);?>" readonly style="width: 200px; text-align: right;"></td>
 		</tr>
 	</table>
 	</fieldset>

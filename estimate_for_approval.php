@@ -15,7 +15,7 @@
 		if(!empty($datefrom) && !empty($dateto)){
 			$datefrom = dateFormat($datefrom,"Y-m-d");
 			$dateto = dateFormat($dateto,"Y-m-d");
-			$where .= " AND (transaction_date >= '$datefrom' AND transaction_date <= '$dateto')";
+			$where .= " AND (transaction_date between '$datefrom 00:00:00' AND '$dateto 23:59')";
 		}else if(empty($datefrom) && !empty($dateto)){
 			$dateto = dateFormat($dateto,"Y-m-d");
 			$where .= " AND transaction_date = '$dateto'";

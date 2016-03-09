@@ -18,6 +18,7 @@
 		$vehicleid = $rowestimate['vehicle_id'];
 		$remarks = $rowestimate['remarks'];
 		$paymentmode = $rowestimate['payment_mode'];
+		$payment = $rowestimate['payment_id'];
 		$discount = $rowestimate['discount'];
 		$porefno = $rowestimate['po_refno'];
 		$worefno = $rowestimate['wo_refno'];
@@ -149,7 +150,8 @@
 	<table><tr>
 		<td><a href="workorder_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank">
 	  <div style="width:100px; height:50px; text-align: center;"><img src="images/print_wo.png" width="59" height="48" style="pointer: cursor; width: 59px;" border="0" /></div></a></td>
-		<td><a href="workorder_cancel.php?worefno=<?=$worefno;?>"><img src="images/cancel.jpg" width="55" height="58" style="pointer: cursor; width: 59px;" border="0" /></a></td></tr><table>
+		<td><a href="workorder_cancel.php?worefno=<?=$worefno;?>"><img src="images/cancel.jpg" width="55" height="58" style="pointer: cursor; width: 59px;" border="0" /></a></td></tr>
+	</table>
 	<? } ?>
 	
 	<fieldset form="form_estimate" name="form_estimate">
@@ -279,7 +281,7 @@
 			<td class="input"><select name="paymentmode" id="paymentmode" style="width: 200px;">
 				<option value=""></option>
 				<? foreach($respayment as $rowpayment){ ?>
-				<option value="<?=$rowpayment['payment_id'];?>"><?=$rowpayment['payment'];?></option>
+				<option value="<?=$rowpayment['payment_id'];?>" <? if($payment == $rowpayment['payment_id']){ echo 'selected'; } ?>><?=$rowpayment['payment'];?></option>
 				<? } ?>
 			</select></td>
 			<td></td>

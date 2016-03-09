@@ -23,6 +23,12 @@
 		$worefno = $rowestimate['wo_refno'];
 		$subtotal = $rowestimate['subtotal_amount'];
 		$total = $rowestimate['total_amount'];
+		$labordiscount = $rowestimate['labor_discount'];
+		$partsdiscount = $rowestimate['parts_discount'];
+		$lubricantdiscount = $rowestimate['lubricant_discount'];
+		$materialdiscount = $rowestimate['material_discount'];
+		$seniorcitizen = $rowestimate['senior_citizen'];
+		$seniorcitizendesc = $rowestimate['senior_citizen_desc'];
 		$discount = $rowestimate['discount'];
 		$discprice = $rowestimate['discounted_price'];
 	}
@@ -51,6 +57,8 @@
 	
 	$qrycost_accessory = "SELECT * FROM v_service_detail_accessory WHERE estimate_refno = '$estimaterefno'";
 	$rescost_accessory = $dbo->query($qrycost_accessory);
+	$result1 = mysql_query($qrycost_accessory);
+	$numrow1 = mysql_num_rows($result1);
 	
 	$qrycost_job = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
 	$rescost_job = $dbo->query($qrycost_job);
@@ -76,10 +84,19 @@
 					$qry .= "UPDATE tbl_service_master SET wo_refno = '$new_refno',wo_trans_date = '$today', trans_status = '4' WHERE estimate_refno = '$estimaterefno'; ";
 					$qry .= "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'WORKORDER'; ";
 					
+					// PARTS
 					if($numrow > 0){
 						while($row = mysql_fetch_array($result)){
 							$qty = $row['qty'];
 							$qry .= "UPDATE tbl_parts SET part_onhand = (part_onhand - $qty) WHERE parts_id = '$row[id]'; ";
+						}
+					}
+
+					// ACCESSORY or LUBRICANTS
+					if($numrow1 > 0){
+						while($row = mysql_fetch_array($result1)){
+							$qty = $row['qty'];
+							$qry .= "UPDATE tbl_accessory SET access_onhand = (access_onhand - $qty) WHERE accessory_id = '$row[id]'";
 						}
 					}
 
@@ -276,6 +293,10 @@
 	<legend><p id="title">TOTAL COST</p></legend>	
 	<table>
 		<tr>
+			<td class="label">Senior Citizen:</td>
+			<td style="font-weight: normal; font-size: 12px; border:1px solid #333;"><?=$seniorcitizendesc;?></td>
+		</tr>
+		<tr>
 			<td class="label" width="100">Sub Total:</td>
 			<td align="right" width="200" style="font-weight: normal; font-size: 12px; border:1px solid #333;"><?=number_format($subtotal,2);?></td>
 			<td width="50"></td>
@@ -284,7 +305,23 @@
 			<td width="200"></td>
 		</tr>
 		<tr>
-			<td class="label">Discounts:</td>
+			<td class="label">Labor Discount:</td>
+			<td align="right" style="font-weight: normal; font-size: 12px; border:1px solid #333;"><?=$labordiscount;?></td>
+		</tr>
+		<tr>
+			<td class="label">Parts Discount:</td>
+			<td align="right" style="font-weight: normal; font-size: 12px; border:1px solid #333;"><?=$partsdiscount;?></td>
+		</tr>
+		<tr>
+			<td class="label">Lubricant Discount:</td>
+			<td align="right" style="font-weight: normal; font-size: 12px; border:1px solid #333;"><?=$lubricantdiscount;?></td>
+		</tr>
+		<tr>
+			<td class="label">Material Discount:</td>
+			<td align="right" style="font-weight: normal; font-size: 12px; border:1px solid #333;"><?=$materialdiscount;?></td>
+		</tr>
+		<tr>
+			<td class="label">Total Discounts:</td>
 			<td align="right" style="font-weight: normal; font-size: 12px; border:1px solid #333;"><?=$discount;?></td>
 		</tr>
 		<tr>

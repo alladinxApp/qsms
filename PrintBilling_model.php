@@ -220,7 +220,7 @@
 			$this->Cell(1,4,null,0,0,'C');
 			$this->Cell(29,4,null,0,0,'C');
 			$this->Cell(60,4,'Grand Total >>>>>>>>>>',0,0,'R');
-			$this->Cell(30,4,number_format($totalamnt,2),"T",2,'R');
+			$this->Cell(30,4,number_format($thie->billingmst['total_amount'],2),"T",2,'R');
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Ln();
 			
