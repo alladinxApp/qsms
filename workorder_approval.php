@@ -7,7 +7,6 @@
 	chkMenuAccess('workorder_approval',$_SESSION['username'],'workorder_list.php');
 	
 	$estimaterefno = $_GET['estimaterefno'];
-	$payment = $_POST['paymentmode'];
 	
 	$qryestimate = "SELECT * FROM v_service_master WHERE estimate_refno = '$estimaterefno'";
 	$resestimate = $dbo->query($qryestimate);
@@ -72,9 +71,10 @@
 		$empid = $_POST['empid'];
 		$promisetime = $_POST['promisetime'];
 		$promisedate = dateFormat($_POST['promisedate'],"Y-m-d");
+		$paymentmode = $_POST['paymentmode'];
 		
 		$qry = null;
-		$qry .= "UPDATE tbl_service_master SET payment_id = '$payment', technician = '$empid',promise_date = '$promisedate',promise_time = '$promisetime' WHERE estimate_refno = '$estimaterefno'; ";
+		$qry .= "UPDATE tbl_service_master SET payment_id = '$paymentmode', technician = '$empid',promise_date = '$promisedate',promise_time = '$promisetime' WHERE estimate_refno = '$estimaterefno'; ";
 		$qry .= "INSERT INTO tbl_jobclock_master(wo_refno) VALUE('$worefno'); ";
 		$res = $dbo->query($qry);
 		
