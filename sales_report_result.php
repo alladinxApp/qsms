@@ -158,11 +158,18 @@
 				$totalsublet += $row['sublet'];
 				$totalparts += $row['parts'];
 				$totaldiscount += $row['discount'];
+				$total = $row['total_amount'];
+				
 				$grandtotal = $row['labor'] + $row['lubricants'] + $row['sublet'] + $row['parts'];
 				$discounted = ($grandtotal - $row['discount']);
-				$vat = ($grandtotal * 0.12);
-				$totalamnt = ($discounted + $vat);
-				$totalsales += $totalamnt;
+				if($row['senior_citizen'] == 0){
+					$vat = ($grandtotal * 0.12);
+				}else{
+					$vat = 0;
+				}
+				$totalamnt = (($grandtotal - $vat) - $row['discount']);
+				
+				$totalsales += $total;
 				$totalvat += $vat;
 
 				$style = $bg;
@@ -178,7 +185,7 @@
 			<td align="right" style="<?=$style;?>"><?=number_format($row['parts'],2);?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($vat,2);?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['discount'],2);?></td>
-			<td align="right" style="<?=$style;?>"><?=number_format($totalamnt,2);?></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($total,2);?></td>
 		</tr>
 		<? $cnt++; } $style .= 'border-top: 3px double #000;';?>
 		<tr>

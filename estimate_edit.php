@@ -64,6 +64,7 @@
 		$lubricantdiscount = $rowestimate['lubricant_discount'];
 		$materialdiscount = $rowestimate['material_discount'];
 		$seniorcitizen = $rowestimate['senior_citizen'];
+		$seniorCitizenNo = $rowestimate['senior_citizen_no'];
 		$discount = $rowestimate['discount'];
 		$discprice = $rowestimate['discounted_price'];
 		$odometer = $rowestimate['odometer'];
@@ -159,9 +160,15 @@
 			$seniorCitizen = 1;
 		}
 
+		if(!empty($_POST['seniorNo'])){
+			$seniorCitizenNo = $_POST['seniorNo'];
+		}else{
+			$seniorCitizenNo = null;
+		}
+
 		switch($_POST['opt']){
 			case 1: 
-					$qry .= "UPDATE tbl_service_master SET subtotal_amount = '$subtotal',discount = '$discount',discounted_price = '$discounted_price',vat = '$vat',total_amount = '$total_amount',recommendation = '$recommendation',labor_discount = '$laborDiscount',parts_discount = '$partsDiscount',lubricant_discount = '$lubricantDiscount',material_discount = '$materialDiscount' WHERE estimate_refno = '$estimaterefno'; ";
+					$qry .= "UPDATE tbl_service_master SET subtotal_amount = '$subtotal',discount = '$discount',discounted_price = '$discounted_price',vat = '$vat',total_amount = '$total_amount',recommendation = '$recommendation',labor_discount = '$laborDiscount',parts_discount = '$partsDiscount',lubricant_discount = '$lubricantDiscount',material_discount = '$materialDiscount', senior_citizen = '$seniorCitizen', senior_citizen_no = '$seniorCitizenNo' WHERE estimate_refno = '$estimaterefno'; ";
 					$res = $dbo->query($qry);
 					$msg = "updated";
 				break;
@@ -184,7 +191,7 @@
 			exit();
 		}else{
 			$msg1 .= "Service(s) has been successfully " . $msg;
-			echo '<script>alert("' . $msg1 . '"); window.location="estimate_list.php";</script>';
+			echo '<script>alert("' . $msg1 . '"); window.location="estimate_edit.php?estimaterefno=' . $estimaterefno . '";</script>';
 		}
 	}
 ?>
@@ -285,46 +292,47 @@
 		}
 	}
 	function getTotalAmount(){
-		getTotalDiscount();
+		var discount = getTotalDiscount();
 		var subtotal = document.getElementById("subtotal");
-		var discount = document.getElementById("discount");
 		var vat_val = document.getElementById("vat").value;
-		var n = discount.value.indexOf("%");
 		
 		var discounted_price = document.getElementById("discounted_price");
 		var totalamount = document.getElementById("totalamount");
 		var amount = subtotal.value.replace(/,/g, '');
-		var senior = document.getElementById("senior").checked;
-		
+
 		if(amount <= 0){
 			alert("Please create estimate cost first!");
 			return false;
 		}
 
 		if(discount.value != ""){
-			if(n >= 0){
-				var str = discount.value.replace("%","");
-				var disc = parseFloat(amount) * (parseFloat(str.replace(/,/g, '')) / 100);
-				var disc_price = parseFloat(amount) - parseFloat(disc);
-				amount = disc_price;
-				discounted_price.value = amount;
-				CurrencyFormatted('discounted_price');
-			}else{
-				var amount = parseFloat(amount) - parseFloat(discount.value.replace(/,/g, ''));
-				discounted_price.value = amount;
-				CurrencyFormatted('discounted_price');
-			}
+		// 	if(n >= 0){
+		// 		// var str = discount.value.replace("%","");
+		// 		var disc = parseFloat(amount) * (parseFloat(str.replace(/,/g, '')) / 100);
+		// 		var disc_price = parseFloat(amount) - parseFloat(disc);
+		// 		amount = disc_price;
+		// 		discounted_price.value = amount;
+		// 		CurrencyFormatted('discounted_price');
+		// 	}else{
+		// 		var amount = parseFloat(amount) - parseFloat(discount.value.replace(/,/g, ''));
+		// 		discounted_price.value = amount;
+		// 		CurrencyFormatted('discounted_price');
+		// 	}
 		}else{
 			discounted_price.value = "";
+			discount = 0;
 		}
+
 		if(isNaN(amount) == false){
 			var vat = parseFloat(amount) * parseFloat(vat_val);
-			if(document.getElementById("senior").checked == true){
+
+			if(document.estimate_form.senior.checked == true){
 				var vatable = (parseFloat(amount) + 0.00);
 			}else{
 				var vatable = (parseFloat(amount) + parseFloat(vat));
 			}
-			totalamount.value = vatable;
+			discountedprice = (parseFloat(vatable) - parseFloat(discount));
+			totalamount.value = discountedprice;
 			CurrencyFormatted('totalamount');
 		}else{
 			discounted_price.value = "";
@@ -360,6 +368,14 @@
 			req.send(null);
 		}
 	}
+	function chkSenior(){
+		if(document.estimate_form.senior.checked){
+			document.estimate_form.seniorNo.readOnly = false;
+		}else{
+			document.estimate_form.seniorNo.value = "";
+			document.estimate_form.seniorNo.readOnly = true;
+		}
+	}
 	function getTotalDiscount(){
 		var lDiscount = $("#laborDiscount").val();
 		var pDiscount = $("#partsDiscount").val();
@@ -380,10 +396,13 @@
 			luDiscount = 0;
 		}
 		var totalDiscount = (parseFloat(lDiscount) + parseFloat(pDiscount) + parseFloat(mDiscount) + parseFloat(luDiscount));
-		$("#discount").val(totalDiscount);
-
-		var discounted_price = (parseFloat(subtotal) - parseFloat(totalDiscount));
+		var discounted_price = (parseFloat(subtotal.replace(/,/g, '')) - totalDiscount);
+		// $("#discount").val(totalDiscount);
+		
+		// var discounted_price = (parseFloat(subtotal) - parseFloat(totalDiscount));
+		$("#discount").val(totalDiscount.toFixed(2));
 		$("#discounted_price").val(discounted_price.toFixed(2));
+		return totalDiscount.toFixed(2);
 	}
 </script>
 <body>
@@ -599,7 +618,7 @@
 		</tr>
     </table>
 	</div>
-	<form method="Post" onSubmit="return ValidateMe();">
+	<form method="Post" name="estimate_form" onSubmit="return ValidateMe();">
 	</fieldset>
 	<?  if($numtempparts > 0 || $numtempmaterial > 0){ ?>
 	<br />
@@ -626,8 +645,11 @@
 	<legend><p id="title">TOTAL COST</p></legend>	
 	<table>
 		<tr>
-			<td class="label">Senior Citizen:</td>
-			<td class="input"><input type="checkbox" <? if($seniorcitizen > 0){ $isSenior = 'checked'; echo 'checked'; } ?> name="senior" id="senior" onClick="getTotalAmount();" value="1" /></td>
+			<td class="label">Senior ID:</td>
+			<td class="input">
+				<input type="text" name="seniorNo" <? if($seniorcitizen == 0){ echo 'readonly'; } ?> id="seniorNo" style="width: 200px; text-align: right;" value="<?=$seniorCitizenNo;?>">
+				<input type="checkbox" name="senior" id="senior" <? if($seniorcitizen == 1){ echo 'checked'; } ?> onClick="chkSenior(); getTotalAmount();" value="1" />
+			</td>
 			<td></td>
 		</tr>
 		<tr>
@@ -715,5 +737,44 @@
 	<input type="hidden" name="option" id="option" value="1" />
 	</form>	
 	<? } ?>
+	<script type="text/javascript">
+
+		function ValidateMe(){
+			var totalamnt = document.getElementById("totalamount").value;
+			var remarks = document.getElementById("txtremarks").value;
+			// var paymentmode = document.getElementById("paymentmode").value;
+			var customerid = document.getElementById("customer_id").value;
+			var plateno = document.getElementById("plateno").value;
+			var odometer = document.getElementById("odometer");
+			
+			if(customerid == ""){
+				alert("Please select customer by customer code/customer name!");
+				return false;
+			// }else if(plateno == ""){
+			// 	alert("please select vehicle by plate no!");
+			// 	return false;
+			// }else if(odometer.value == ""){
+			// 	alert("please enter vehicle odometer!");
+			// 	odometer.focus();
+			// 	return false;
+			}else if(document.estimate_form.senior.checked == true){
+				if(document.getElementById("seniorNo").value == ""){
+					alert("Please enter senior citizen no!");
+					return false;
+				}
+			}else if(totalamnt == "" || totalamnt == 0){
+				alert("Please select estimates costs!");
+				return false;
+			}else if(remarks == ""){
+				alert("Please enter remarks!");
+				return false;
+			// }else if(paymentmode == ""){
+			// 	alert("Please enter payment mode!");
+			// 	return false;
+			}else{
+				return true;
+			}
+		}
+	</script>
 </body>
 </html>

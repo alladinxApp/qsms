@@ -95,10 +95,14 @@
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry_lbs_master)){
 						$grandtotal = $row['labor'] + $row['lubricants'] + $row['sublet'] + $row['parts'];
-						$discounted = ($grandtotal - $row['discount']);
-						$vat = ($grandtotal * 0.12);
-						$totalamnt = ($discounted + $vat);
-						$ln .= $row['customername'] . "," . $row['job_name'] . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . $vat . "," . $row['discount'] . "," . $totalamnt . "\r\n";
+						if($row['senior_citizen'] == 0){
+							$vat = ($grandtotal * 0.12);
+						}else{
+							$vat = 0;
+						}
+						// $discounted = ($grandtotal - $row['discount']);
+						$totalamnt = (($grandtotal + $vat) - $row['discount']);
+						$ln .= $row['customername'] . "," . $row['job_name'] . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . number_format($vat,2,".","") . "," . $row['discount'] . "," . number_format($totalamnt,2,".","") . "\r\n";
 
 						$totallabor += $row['labor'];
 						$totallubricants += $row['lubricants'];
@@ -113,9 +117,9 @@
 					$total_units = ($cnt - 1);
 					$ave_invoice_price = $totalsales / $total_units; 
 
-					$ln .= ",,Total>>>>>," . $totallabor . "," . $totallubricants . "," . $totalsublet . "," . $totalparts . "," . $totalvat . "," . $totaldiscount . "," . $totalsales . "\r\n";
+					$ln .= ",,Total>>>>>," . $totallabor . "," . $totallubricants . "," . $totalsublet . "," . $totalparts . "," . number_format($totalvat,2,".","") . "," . number_format($totaldiscount,2,".","") . "," . number_format($totalsales,2,".","") . "\r\n";
 					$ln .= "TOTAL UNITS RECEIVED," . ": " . $total_units . "\r\n";
-					$ln .= "AVERAGE INVOICE PRICE," . ": " . $ave_invoice_price . "\r\n";
+					$ln .= "AVERAGE INVOICE PRICE," . ": " . number_format($ave_invoice_price,2,".","") . "\r\n";
 
 					$data = trim($ln);
 					$filename = "sales_report_" . $dt . ".csv";

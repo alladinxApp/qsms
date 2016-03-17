@@ -91,21 +91,8 @@
 			$firstname = $_POST['firstname'];
 			$middlename = $_POST['middlename'];
 			$address = $_POST['address'];
-			// $city = $_POST['city'];
-			// $province = $_POST['province'];
-			// $zipcode = $_POST['zipcode'];
-			// $birthday = $_POST['birthday'];
-			// $gender = $_POST['gender'];
-			// $tin = $_POST['tin'];
-			// $company = $_POST['company'];
-			// $source = $_POST['source'];
-			// $email = $_POST['email'];
-			// $landline = $_POST['landline'];
-			// $fax = $_POST['fax'];
-			// $mobile = $_POST['mobile'];
 			$customerid = getNewNum('CUSTOMER');
-			
-			// , city, province, zipcode, birthday, gender, tin, company, source, email, landline, fax, mobile
+
 			$sql .= "INSERT INTO tbl_customer (cust_id, salutation, lastname, firstname, middlename, address, cust_created) VALUES
 			('".$customerid."',
 			'".$salutation."',
@@ -115,19 +102,6 @@
 			'".$address."',
 			'".$today."'
 			); ";
-			
-			// '".$city."',
-			// '".$province."',
-			// '".$zipcode."',
-			// '".$birthday."',
-			// '".$gender."',
-			// '".$tin."',
-			// '".$company."',
-			// '".$source."',
-			// '".$email."',
-			// '".$landline."',
-			// '".$fax."',
-			// '".$mobile."',
 			
 			$sql .= "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'CUSTOMER'; ";
 		}
@@ -179,6 +153,11 @@
 		$materialDiscount = 0;
 		$lubricantDiscount = 0;
 		$seniorCitizen = 0;
+		if(!empty($_POST['seniorNo'])){
+			$seniorCitizenNo = $_POST['seniorNo'];
+		}else{
+			$seniorCitizenNo = null;
+		}
 		
 		if($_POST['txtrecommendation']){
 			$recommendation = $_POST['txtrecommendation'];
@@ -210,8 +189,8 @@
 		$estimate_refno = getNewNum('ESTIMATEREFNO');
 		
 		$sql .= "INSERT INTO tbl_service_master
-			(estimate_refno,odometer,transaction_date,customer_id,vehicle_id,payment_id,subtotal_amount,discount,discounted_price,vat,total_amount,created_by,remarks,recommendation,labor_discount,parts_discount,lubricant_discount,material_discount,senior_citizen)
-			VALUES('$estimate_refno','$odometer','$today','$customerid','$vehicleid','$payment','$subtotal','$discount','$discounted_price','$vat','$total_amount','$_SESSION[username]','$remarks','$recommendation','$laborDiscount','$partsDiscount','$lubricantDiscount','$materialDiscount','$seniorCitizen'); ";
+			(estimate_refno,odometer,transaction_date,customer_id,vehicle_id,payment_id,subtotal_amount,discount,discounted_price,vat,total_amount,created_by,remarks,recommendation,labor_discount,parts_discount,lubricant_discount,material_discount,senior_citizen,senior_citizen_no)
+			VALUES('$estimate_refno','$odometer','$today','$customerid','$vehicleid','$payment','$subtotal','$discount','$discounted_price','$vat','$total_amount','$_SESSION[username]','$remarks','$recommendation','$laborDiscount','$partsDiscount','$lubricantDiscount','$materialDiscount','$seniorCitizen','$seniorCitizenNo'); ";
 		
 		foreach($restempestimate as $rowtempestimate){
 			$sql .= "INSERT INTO tbl_service_detail
@@ -449,16 +428,13 @@
 	}
 	
 	function getTotalAmount(){
-		getTotalDiscount();
+		var discount = getTotalDiscount();
 		var subtotal = document.getElementById("subtotal");
-		var discount = document.getElementById("discount");
 		var vat_val = document.getElementById("vat").value;
-		var n = discount.value.indexOf("%");
 		
 		var discounted_price = document.getElementById("discounted_price");
 		var totalamount = document.getElementById("totalamount");
 		var amount = subtotal.value.replace(/,/g, '');
-		var senior = document.getElementById("senior").checked;
 
 		if(amount <= 0){
 			alert("Please create estimate cost first!");
@@ -466,30 +442,33 @@
 		}
 
 		if(discount.value != ""){
-			if(n >= 0){
-				var str = discount.value.replace("%","");
-				var disc = parseFloat(amount) * (parseFloat(str.replace(/,/g, '')) / 100);
-				var disc_price = parseFloat(amount) - parseFloat(disc);
-				amount = disc_price;
-				discounted_price.value = amount;
-				CurrencyFormatted('discounted_price');
-			}else{
-				var amount = parseFloat(amount) - parseFloat(discount.value.replace(/,/g, ''));
-				discounted_price.value = amount;
-				CurrencyFormatted('discounted_price');
-			}
+		// 	if(n >= 0){
+		// 		// var str = discount.value.replace("%","");
+		// 		var disc = parseFloat(amount) * (parseFloat(str.replace(/,/g, '')) / 100);
+		// 		var disc_price = parseFloat(amount) - parseFloat(disc);
+		// 		amount = disc_price;
+		// 		discounted_price.value = amount;
+		// 		CurrencyFormatted('discounted_price');
+		// 	}else{
+		// 		var amount = parseFloat(amount) - parseFloat(discount.value.replace(/,/g, ''));
+		// 		discounted_price.value = amount;
+		// 		CurrencyFormatted('discounted_price');
+		// 	}
 		}else{
 			discounted_price.value = "";
+			discount = 0;
 		}
+
 		if(isNaN(amount) == false){
 			var vat = parseFloat(amount) * parseFloat(vat_val);
 
-			if(document.getElementById("senior").checked == true){
+			if(document.estimate_form.senior.checked == true){
 				var vatable = (parseFloat(amount) + 0.00);
 			}else{
 				var vatable = (parseFloat(amount) + parseFloat(vat));
 			}
-			totalamount.value = vatable;
+			discountedprice = (parseFloat(vatable) - parseFloat(discount));
+			totalamount.value = discountedprice;
 			CurrencyFormatted('totalamount');
 		}else{
 			discounted_price.value = "";
@@ -512,6 +491,14 @@
 			req.send(null);
 		}
 	}
+	function chkSenior(){
+		if(document.estimate_form.senior.checked){
+			document.estimate_form.seniorNo.readOnly = false;
+		}else{
+			document.estimate_form.seniorNo.value = "";
+			document.estimate_form.seniorNo.readOnly = true;
+		}
+	}
 	function getTotalDiscount(){
 		var lDiscount = $("#laborDiscount").val();
 		var pDiscount = $("#partsDiscount").val();
@@ -531,11 +518,15 @@
 		if(luDiscount == "" || luDiscount == null){
 			luDiscount = 0;
 		}
-		var totalDiscount = (parseFloat(lDiscount) + parseFloat(pDiscount) + parseFloat(mDiscount) + parseFloat(luDiscount));
-		$("#discount").val(totalDiscount);
 
-		var discounted_price = (parseFloat(subtotal) - parseFloat(totalDiscount));
+		var totalDiscount = (parseFloat(lDiscount) + parseFloat(pDiscount) + parseFloat(mDiscount) + parseFloat(luDiscount));
+		var discounted_price = (parseFloat(subtotal.replace(/,/g, '')) - totalDiscount);
+		// $("#discount").val(totalDiscount);
+		
+		// var discounted_price = (parseFloat(subtotal) - parseFloat(totalDiscount));
+		$("#discount").val(totalDiscount.toFixed(2));
 		$("#discounted_price").val(discounted_price.toFixed(2));
+		return totalDiscount.toFixed(2);
 	}
 </script>
 <style type="text/css">
@@ -545,7 +536,7 @@
 	div.divTableEstimateCost div.divCost{ border-right: 1px solid #ddd; border-bottom: 1px solid #ddd; font-size: 12px; }
 </style>
 <body>
-	<form method="post" name="educational_form" class="form" onSubmit="return ValidateMe();">
+	<form method="post" name="estimate_form" class="form" onSubmit="return ValidateMe();">
 	<p id="title">Estimate</p>
 
 	<fieldset form="form_estimate" name="form_estimate">
@@ -859,8 +850,11 @@
 	<legend><p id="title">TOTAL COST</p></legend>	
 	<table>
 		<tr>
-			<td class="label">Senior Citizen:</td>
-			<td class="input"><input type="checkbox" name="senior" id="senior" onClick="getTotalAmount();" value="1" /></td>
+			<td class="label">Senior ID:</td>
+			<td class="input">
+				<input type="text" name="seniorNo" readonly id="seniorNo" style="width: 200px; text-align: right;">
+				<input type="checkbox" name="senior" id="senior" onClick="chkSenior(); getTotalAmount();" value="1" />
+			</td>
 			<td></td>
 		</tr>
 		<tr>
@@ -939,6 +933,7 @@
 	</p>
 	</form>
 	<script type="text/javascript">
+
 		function ValidateMe(){
 			var totalamnt = document.getElementById("totalamount").value;
 			var remarks = document.getElementById("txtremarks").value;
@@ -957,6 +952,11 @@
 			// 	alert("please enter vehicle odometer!");
 			// 	odometer.focus();
 			// 	return false;
+			}else if(document.estimate_form.senior.checked == true){
+				if(document.getElementById("seniorNo").value == ""){
+					alert("Please enter senior citizen no!");
+					return false;
+				}
 			}else if(totalamnt == "" || totalamnt == 0){
 				alert("Please select estimates costs!");
 				return false;

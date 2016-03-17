@@ -199,10 +199,9 @@
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Ln();
 
-			$sub_total = $grand_total - $this->total_discount;
+			
 			$vat = ($grand_total * 0.12);
-			$total_vat = $this->total_amount - $sub_total;
-			$totalamnt = ($sub_total + $vat);
+			$sub_total = $grand_total - $this->total_discount;
 
 			$this->Cell(15,4,null,0,0,'L');
 			$this->Cell(40,4,null,0,0,'L');
@@ -220,7 +219,7 @@
 			$this->Cell(1,4,null,0,0,'C');
 			$this->Cell(29,4,null,0,0,'C');
 			$this->Cell(60,4,'Grand Total >>>>>>>>>>',0,0,'R');
-			$this->Cell(30,4,number_format($thie->billingmst['total_amount'],2),"T",2,'R');
+			$this->Cell(30,4,number_format($this->billingmst['total_amount'],2),"T",2,'R');
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Ln();
 			

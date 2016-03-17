@@ -316,8 +316,11 @@
 <legend><p id="title">TOTAL COST</p></legend>	
 	<table>
 		<tr>
-			<td class="label">Senior Citizen:</td>
-			<td class="input"><input type="checkbox" name="senior" id="senior" onclick="getTotalAmount();" /></td>
+			<td class="label">Senior ID:</td>
+			<td class="input">
+				<input type="text" name="seniorNo" readonly id="seniorNo" style="width: 200px; text-align: right;">
+				<input type="checkbox" name="senior" id="senior" onClick="chkSenior(); getTotalAmount();" value="1" />
+			</td>
 			<td></td>
 		</tr>
 		<tr>

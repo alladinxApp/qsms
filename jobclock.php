@@ -106,7 +106,7 @@
 </style>
 <body>
 	<table><tr><td><a href="workorder_print.php?estimaterefno=<?=$estimaterefno;?>" target="_blank">
-	<div style="width:100px; height:50px; text-align: center;"><img src="images/print_wo.png" border="0" style="pointer: cursor;" width="59" /></div></a></td></tr><table>
+	<div style="width:100px; height:50px; text-align: center;"><img src="images/print_wo.png" border="0" style="pointer: cursor;" width="59" /></div></a></td></tr></table>
 	<fieldset form="form_estimate" name="form_estimate">
 	<legend><p id="title">REFERENCES</p></legend>
 	<table>

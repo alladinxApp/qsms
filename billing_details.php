@@ -163,7 +163,13 @@
 			<td align="center" style="<?=$bg . $color;?>"><?=$rowBILLINGDTL['plate_no'];?></td>
 			<td align="right" style="<?=$bg . $color;?>"><?=number_format($rowBILLINGDTL['total_amount'],2);?></td>
 		</tr>
-		<? $cnt++; } $total = $grand / 1.12; $vat = $grand - $total; ?>
+		<? 
+				$cnt++; 
+			} 
+			
+			$vat = ($grand * 0.12); 
+			$total = ($grand - $vat);
+		?>
 	</table>
 	</div>
 	<table>
