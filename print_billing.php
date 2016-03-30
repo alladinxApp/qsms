@@ -40,6 +40,8 @@
 		$total_discount += $row_wo['discount'];
 		$creaby = $row_wo['created_by'];
 		$odometer = $row_wo['odometer'];
+		$senior = $row_wo['senior_citizen'];
+		$senior_no = $row_wo['senior_citizen_no'];
 	}
 	
 	$sql_adviser = "SELECT * FROM v_users WHERE username = '$creaby'";
@@ -94,7 +96,7 @@
 					,"companyno" => '(02)801-6291 / (02)587-5305'
 					,"mobileno" => '(+63)917-578-8792'
 					,"tin" => '108-558-118-000');
-	
+
 	$pdf = new PrintBilling;
 	
 	// Data loading
@@ -102,6 +104,7 @@
 	$pdf->setVehicleInfo($row_vehicle);
 	$pdf->setCustomerInfo($row_custinfo);
 	$pdf->setServiceMaster($row_wo);
+	$pdf->setSenior($senior,$senior_no);
 	$pdf->setJobclock($row_jobclock);
 	$pdf->setBillingMaster($row_billingmst,$num_billingmst);
 	$pdf->setServiceDetail($row_est);

@@ -30,15 +30,11 @@
 		}
 		public function setMaster($master){
 			$this->discount = 0;
-			if(!empty($master['discount']) && $master['discount'] > 0){
-				$this->discount += $master['discount'];
-			}
 			$this->estrefno = $master['estrefno'];
-			// if(!empty($master['discounted_price']) && $master['discounted_price'] > 0){
-			// 	$this->discount += $master['discounted_price'];
-			// }
 			$this->totalamount = $master['total_amount'];
 			$this->odometer = $master['odometer'];
+			$this->discount = $master['discount'];
+			$this->seniorcitizen = $master['seniorcitizen'];
 		}
 		public function Header(){
 			// $this->SetFont('Courier','B',16);
@@ -177,13 +173,13 @@
 			$this->Cell(30,4,number_format($this->totalparts,2),'TRBL',0,'R');
 			$this->Ln();
 			
-			$this->grandtotal += $this->totallabor;
-			$this->grandtotal += $this->totallubricants;
-			$this->grandtotal += $this->totalsublet;
-			$this->grandtotal += $this->totalparts;
+			$this->subtotal += $this->totallabor;
+			$this->subtotal += $this->totallubricants;
+			$this->subtotal += $this->totalsublet;
+			$this->subtotal += $this->totalparts;
 			
 			$this->Cell(130,4,"SUB TOTAL",'TRBL',0,'R');
-			$this->Cell(60,4,number_format($this->grandtotal,2),'TRBL',0,'R');
+			$this->Cell(60,4,number_format($this->subtotal,2),'TRBL',0,'R');
 			$this->Ln(10);
 			
 			$this->Cell(160,4,"Total Labor",0,0,'R');
@@ -199,15 +195,23 @@
 			$this->Cell(30,4,number_format($this->totalsublet,2),'TRBL',0,'R');
 			$this->Ln();
 			
-			$this->vat = $this->grandtotal * 0.12;
-			// $this->totalamount = ($this->grandtotal - $this->discount) + $this->vat;
+			$this->discounted = ($this->subtotal - $this->discount);
 			
 			$this->Cell(160,4,"Discount",0,0,'R');
 			$this->Cell(30,4,number_format($this->discount,2),'TRBL',0,'R');
 			$this->Ln();
-			$this->Cell(160,4,"VAT 12%",0,0,'R');
-			$this->Cell(30,4,number_format($this->vat,2),'TRBL',0,'R');
-			$this->Ln();
+			
+			if($this->seniorcitizen == 0){
+				$this->vatable = $this->discounted * 0.12;
+				$this->Cell(160,4,"VAT 12%",0,0,'R');
+				$this->Cell(30,4,number_format($this->vatable,2),'TRBL',0,'R');
+				$this->Ln();
+			}else{
+				$this->vatable = $this->discounted * 0.00;
+			}
+
+			$totalamount = $vatable + $discounted;
+
 			$this->Cell(160,4,"Grand Total",0,0,'R');
 			$this->Cell(30,4,number_format($this->totalamount,2),'TRBL',0,'R');
 			$this->Ln();

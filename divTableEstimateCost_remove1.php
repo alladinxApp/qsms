@@ -25,6 +25,14 @@
 		$transstatus = $rowestimate['trans_status'];
 		$subtotal = $rowestimate['subtotal_amount'];
 		$total = $rowestimate['total_amount'];
+
+		$labordiscount = $rowestimate['labor_discount'];
+		$partsdiscount = $rowestimate['parts_discount'];
+		$lubricantdiscount = $rowestimate['lubricant_discount'];
+		$materialdiscount = $rowestimate['material_discount'];
+		$seniorcitizen = $rowestimate['senior_citizen'];
+		$seniorCitizenNo = $rowestimate['senior_citizen_no'];
+		
 		$discount = $rowestimate['discount'];
 		$discprice = $rowestimate['discounted_price'];
 		$odometer = $rowestimate['odometer'];

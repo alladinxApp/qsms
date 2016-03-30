@@ -71,11 +71,11 @@
 				total = parseFloat(total) + parseFloat(str[1]);
 			}
 		}
-		document.getElementById("txtGrandTotal").value = formatNumber(total);
-		var subtotal = total / 1.12;
-		document.getElementById("txtTotal").value = formatNumber(subtotal);
-		var vat = total - subtotal;
-		document.getElementById("txtVat").value = formatNumber(vat);
+		// document.getElementById("txtGrandTotal").value = formatNumber(total);
+		// var subtotal = total / 1.12;
+		document.getElementById("txtTotal").value = formatNumber(total);
+		// var vat = total - subtotal;
+		// document.getElementById("txtVat").value = formatNumber(vat);
 	}
 	function SelectAll(chkval){
 		var chk = document.getElementsByName('chkworefno[]');
@@ -97,11 +97,11 @@
 				total = 0;
 			}
 		}
-		document.getElementById("txtGrandTotal").value = formatNumber(total);
-		var subtotal = total / 1.12;
-		document.getElementById("txtTotal").value = formatNumber(subtotal);
-		var vat = total - subtotal;
-		document.getElementById("txtVat").value = formatNumber(vat);
+		// document.getElementById("txtGrandTotal").value = formatNumber(total);
+		// var subtotal = total / 1.12;
+		document.getElementById("txtTotal").value = formatNumber(total);
+		// var vat = total - subtotal;
+		// document.getElementById("txtVat").value = formatNumber(vat);
 	}
 	function formatNumber(num) {
 		var p = num.toFixed(2).split(".");
@@ -110,7 +110,7 @@
 		}, "") + "." + p[1];
 	}
 	function getChange(amnt){
-		var gtotal = document.getElementById("txtGrandTotal").value;
+		var gtotal = document.getElementById("txtTotal").value;
 		var change = parseFloat(amnt) - parseFloat(gtotal.replace(/,/g, ''));
 		
 		document.getElementById("txtchange").value = formatNumber(change);
@@ -167,8 +167,6 @@
 				$cnt++; 
 			} 
 			
-			$vat = ($grand * 0.12); 
-			$total = ($grand - $vat);
 		?>
 	</table>
 	</div>
@@ -176,17 +174,17 @@
 		<tr>
 			<td rowspan="5" valign="top" width="600"><input type="submit" name="btnsubmit" id="btnsubmit" value="" /></td>
 			<td width="100">Total</td>
-			<td width="100" align="right"><input name="txtTotal" id="txtTotal" type="text" value="<?=number_format($total,2);?>" readonly style="text-align: right;" /></td>
+			<td width="100" align="right"><input name="txtTotal" id="txtTotal" type="text" value="<?=number_format($grand,2);?>" readonly style="text-align: right;" /></td>
 			<td width="20">&nbsp;</td>
 		</tr>
-		<tr>
+<!-- 		<tr>
 			<td>Vat 12%</td>
 			<td align="right"><input type="text" name="txtVat" id="txtVat" value="<?=number_format($vat,2);?>" style="text-align: right;" /></td>
 		</tr>
 		<tr>
 			<td>Grand Total</td>
 			<td align="right"><input type="text" name="txtGrandTotal" id="txtGrandTotal" value="<?=number_format($grand,2);?>" readonly style="text-align: right;" /></td>
-		</tr>
+		</tr> -->
 		<tr>
 			<td>Amount Received</td>
 			<td align="right"><input type="text" name="txtamountreceived" id="txtamountreceived" value="" onKeyup="getChange(this.value);" style="text-align: right;" /></td>

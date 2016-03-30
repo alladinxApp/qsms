@@ -59,12 +59,14 @@
 		$transstatus = $rowestimate['trans_status'];
 		$subtotal = $rowestimate['subtotal_amount'];
 		$total = $rowestimate['total_amount'];
+
 		$labordiscount = $rowestimate['labor_discount'];
 		$partsdiscount = $rowestimate['parts_discount'];
 		$lubricantdiscount = $rowestimate['lubricant_discount'];
 		$materialdiscount = $rowestimate['material_discount'];
 		$seniorcitizen = $rowestimate['senior_citizen'];
 		$seniorCitizenNo = $rowestimate['senior_citizen_no'];
+
 		$discount = $rowestimate['discount'];
 		$discprice = $rowestimate['discounted_price'];
 		$odometer = $rowestimate['odometer'];
@@ -173,7 +175,7 @@
 					$msg = "updated";
 				break;
 			case 2: 
-					$qry .= "UPDATE tbl_service_master SET trans_status = '9' WHERE estimate_refno = '$estimaterefno'; ";
+					$qry .= "UPDATE tbl_service_master SET subtotal_amount = '$subtotal',discount = '$discount',discounted_price = '$discounted_price',vat = '$vat',total_amount = '$total_amount',recommendation = '$recommendation',labor_discount = '$laborDiscount',parts_discount = '$partsDiscount',lubricant_discount = '$lubricantDiscount',material_discount = '$materialDiscount', senior_citizen = '$seniorCitizen', senior_citizen_no = '$seniorCitizenNo', trans_status = '9' WHERE estimate_refno = '$estimaterefno'; ";
 					$res = $dbo->query($qry);
 					$msg = "approved";
 				break;
@@ -324,15 +326,17 @@
 		}
 
 		if(isNaN(amount) == false){
-			var vat = parseFloat(amount) * parseFloat(vat_val);
+			discountedprice = (parseFloat(amount) - parseFloat(discount));
+			
+			var vat = parseFloat(discountedprice) * parseFloat(vat_val);
 
 			if(document.estimate_form.senior.checked == true){
-				var vatable = (parseFloat(amount) + 0.00);
+				var vatable = (parseFloat(discountedprice) + 0.00);
 			}else{
-				var vatable = (parseFloat(amount) + parseFloat(vat));
+				var vatable = (parseFloat(discountedprice) + parseFloat(vat));
 			}
-			discountedprice = (parseFloat(vatable) - parseFloat(discount));
-			totalamount.value = discountedprice;
+			
+			totalamount.value = vatable;
 			CurrencyFormatted('totalamount');
 		}else{
 			discounted_price.value = "";
@@ -491,7 +495,7 @@
 	</table>
 	</span>
 	</fieldset>
-	<br />
+	<!-- <br />
 	<table>
 		<tr>
     		<td>Please select Package: 
@@ -503,7 +507,7 @@
     			</select>
     		</td>
     	</tr>
-	</table>
+	</table> -->
 	<br />
 	<span id="divTableEstimateCost">
 	<fieldset form="form_costestimate" name="form_costestimate">
@@ -531,7 +535,7 @@
 					echo $qty . ' ' . $rowtempjob['job_name'] . '<br />' . $rowtempjob['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onClick="RemoveCost('<?=$rowtempjob[estimate_refno];?>','<?=$rowtempjob[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<!-- <a href="#" onClick="RemoveCost('<?=$rowtempjob[estimate_refno];?>','<?=$rowtempjob[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost"> -->
 				<?
 						$subtotal += $rowtempjob['amount'];
 					}
@@ -548,7 +552,7 @@
 						echo $qty . ' ' . $rowtempparts['parts_name'] . '<br />' . $rowtempparts['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onClick="RemoveCost('<?=$rowtempparts[estimate_refno];?>','<?=$rowtempparts[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<!-- <a href="#" onClick="RemoveCost('<?=$rowtempparts[estimate_refno];?>','<?=$rowtempparts[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost"> -->
 				<?
 						$subtotal += $rowtempparts['amount'];
 					}
@@ -566,7 +570,7 @@
 						echo $qty . ' ' . $rowtempmaterial['material_name'] . '<br />' . $rowtempmaterial['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onClick="RemoveCost('<?=$rowtempmaterial[estimate_refno];?>','<?=$rowtempmaterial[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<!-- <a href="#" onClick="RemoveCost('<?=$rowtempmaterial[estimate_refno];?>','<?=$rowtempmaterial[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost"> -->
 				<?
 						$subtotal += $rowtempmaterial['amount'];
 					}
@@ -583,14 +587,14 @@
 						echo $qty . ' ' . $rowtempaccessory['accessory_name'] . '<br />' . $rowtempaccessory['amount'];
 				?>
 					&nbsp;&nbsp;&nbsp;
-					<a href="#" onClick="RemoveCost('<?=$rowtempaccessory[estimate_refno];?>','<?=$rowtempaccessory[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost">
+					<!-- <a href="#" onClick="RemoveCost('<?=$rowtempaccessory[estimate_refno];?>','<?=$rowtempaccessory[id];?>');"><img src="images/del_ico.png" width="15"></a></div><div align="center" class="divCost"> -->
 				<?
 						$subtotal += $rowtempaccessory['amount'];
 					}
 				?>
 			</div></td>
 		</tr>
-		<tr>
+		<!-- <tr>
 			<td><div align="center"><select name="job" id="job" style="width: 120px;" onChange="return AddCost('job',this.value,'<?=$estimaterefno;?>');">
 				<option value=""></option>
 				<? foreach($resjob as $rowjob){ ?>
@@ -615,7 +619,7 @@
 				<option value="<?=$rowaccessory['accessory_id'];?>"><?=$rowaccessory['accessory'];?></option>
 				<? } ?>
 			</select></div></td>
-		</tr>
+		</tr> -->
     </table>
 	</div>
 	<form method="Post" name="estimate_form" onSubmit="return ValidateMe();">

@@ -15,11 +15,12 @@
 		}else{
 			$where = "WHERE (trans_status < '4')";
 		}
+
 		if(!empty($datefrom) && !empty($dateto)){
 			$datefrom = dateFormat($datefrom,"Y-m-d");
 			$dateto = dateFormat($dateto,"Y-m-d");
-			// $where .= " AND (transaction_date between '$datefrom 00:00:000' AND '$dateto 23:59')";
-			$where .= " AND (transaction_date between '$datefrom 00:00' AND '$dateto 23:59')";
+			$where .= " AND (transaction_date between '$datefrom 00:00:000' AND '$dateto 23:59')";
+			// $where .= " AND (transaction_date between '$datefrom 00:00' AND '$dateto 23:59')";
 		}else if(empty($datefrom) && !empty($dateto)){
 			$dateto = dateFormat($dateto,"Y-m-d");
 			$where .= " AND transaction_date = '$dateto'";
@@ -27,16 +28,18 @@
 			$datefrom = dateFormat($datefrom,"Y-m-d");
 			$where .= " AND transaction_date = '$datefrom'";	
 		}
+
 		if(!empty($plateno)){
 			$where .= " AND plate_no LIKE '$plateno%'";
 		}
+
 		if(!empty($custname)){
 			$where .= " AND customername LIKE '$custname%'";
 		}
+
 		if(!empty($estimateno)){
 			$where .= " AND estimate_refno LIKE '$estimateno%'";
 		}
-		
 		
 		$qryservices = "SELECT * FROM v_service_master " . $where;
 		$resservices = $dbo->query($qryservices);
@@ -100,7 +103,8 @@
 			<th width="100">Status</th>
 		</tr>
 		<?
-			$cnt = 1; foreach($resservices as $rowservices){
+			$cnt = 1; 
+			foreach($resservices as $rowservices){
 				switch($rowservices['trans_status']){
 					case 1:
 						$color = "color: #00ff00;"; break;

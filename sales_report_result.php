@@ -163,7 +163,7 @@
 				$grandtotal = $row['labor'] + $row['lubricants'] + $row['sublet'] + $row['parts'];
 				$discounted = ($grandtotal - $row['discount']);
 				if($row['senior_citizen'] == 0){
-					$vat = ($grandtotal * 0.12);
+					$vat = ($discounted * 0.12);
 				}else{
 					$vat = 0;
 				}

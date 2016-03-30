@@ -19,6 +19,7 @@
 			$this->serviceadviser = $serviceadviser;
 		}
 		public function setServiceMaster($servicemst){
+			print_r($servicemst);
 			$this->servicemst = $servicemst;
 		}
 		public function setJobclock($jobclock){
@@ -37,6 +38,10 @@
 		}
 		public function setOdometer($odo){
 			$this->odometer = $odo;
+		}
+		public function setSenior($senior,$senior_no){
+			$this->senior = $senior;
+			$this->seniorno = $senior_no;
 		}
 		public function Header(){
 			$this->Ln(40);
@@ -199,19 +204,20 @@
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Ln();
 
-			
-			$vat = ($grand_total * 0.12);
-			$sub_total = $grand_total - $this->total_discount;
+			if($this->senior == 0){
+				$vat = ($grand_total - $this->total_discount) * 0.12;
+				$sub_total = $grand_total - $this->total_discount;
 
-			$this->Cell(15,4,null,0,0,'L');
-			$this->Cell(40,4,null,0,0,'L');
-			$this->SetFont('Courier','',10);
-			$this->Cell(1,4,null,0,0,'C');
-			$this->Cell(29,4,null,0,0,'C');
-			$this->Cell(60,4,'VAT',0,0,'R');
-			$this->Cell(30,4,number_format($vat,2),0,0,'R');
-			$this->Cell(15,4,null,0,0,'R');
-			$this->Ln();
+				$this->Cell(15,4,null,0,0,'L');
+				$this->Cell(40,4,null,0,0,'L');
+				$this->SetFont('Courier','',10);
+				$this->Cell(1,4,null,0,0,'C');
+				$this->Cell(29,4,null,0,0,'C');
+				$this->Cell(60,4,'VAT',0,0,'R');
+				$this->Cell(30,4,number_format($vat,2),0,0,'R');
+				$this->Cell(15,4,null,0,0,'R');
+				$this->Ln();
+			}
 
 			$this->Cell(15,4,null,0,0,'L');
 			$this->Cell(40,4,null,0,0,'L');

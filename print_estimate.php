@@ -27,6 +27,13 @@
 		$customermobile = $rowwo_mst['mobile'];
 		$customernumber = $rowwo_mst['landline'];
 		$discount = $rowwo_mst['discount'];
+		
+		$labordiscount = $rowwo_mst['labor_discount'];
+		$partsdiscount = $rowwo_mst['parts_discount'];
+		$lubricantdiscount = $rowwo_mst['lubricant_discount'];
+		$materialdiscount = $rowwo_mst['material_discount'];
+		$seniorcitizen = $rowwo_mst['senior_citizen'];
+
 		$discountedprice = $rowwo_mst['discounted_price'];
 		$subtotal = $rowwo_mst['subtotal_amount'];
 		$total_amount = $rowwo_mst['total_amount'];
@@ -38,7 +45,12 @@
 						"subtotal" => $subtotal_amount,
 						"total_amount" => $total_amount,
 						"odometer" => $odometer,
-						"estrefno" => $estimaterefno);
+						"estrefno" => $estimaterefno,
+						"labordiscount" => $labordiscount,
+						"partsdiscount" => $partsdiscount,
+						"lubricantdiscount" => $lubricantdiscount,
+						"materialdiscount" => $materialdiscount,
+						"seniorcitizen" => $seniorcitizen);
 	
 	$sql_servicedtl = "SELECT * FROM tbl_service_detail WHERE estimate_refno = '$estimaterefno'";
 	$qry_servicedtl = mysql_query($sql_servicedtl);

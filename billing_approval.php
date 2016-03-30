@@ -93,19 +93,19 @@
 		<tr>
 			<td rowspan="3" width="600"><input type="submit" name="btnsubmit" id="btnsubmit" value="" /></td>
 			<td width="100">Total</td>
-			<td width="100" align="right"><?=number_format($total,2);?></td>
+			<td width="100" align="right"><?=number_format($grand,2);?></td>
 			<td width="20">&nbsp;</td>
 		</tr>
 		<input type="hidden" name="postbill" id="postbill" value="1">
 		</form>
-		<tr>
+		<!-- <tr>
 			<td>Vat 12%</td>
 			<td align="right"><?=number_format($vat,2);?></td>
 		</tr>
 		<tr>
 			<td>Grand Total</td>
 			<td align="right"><?=number_format($grand,2);?></td>
-		</tr>
+		</tr> -->
 	</table>
 	</fieldset>
 </body>

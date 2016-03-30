@@ -95,13 +95,14 @@
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry_lbs_master)){
 						$grandtotal = $row['labor'] + $row['lubricants'] + $row['sublet'] + $row['parts'];
+						$discounted = $grandtotal - $row['discount'];
 						if($row['senior_citizen'] == 0){
-							$vat = ($grandtotal * 0.12);
+							$vat = ($discounted * 0.12);
 						}else{
-							$vat = 0;
+							$vat = $discounted * 0.00;
 						}
 						// $discounted = ($grandtotal - $row['discount']);
-						$totalamnt = (($grandtotal + $vat) - $row['discount']);
+						$totalamnt = ($discounted + $vat);
 						$ln .= $row['customername'] . "," . $row['job_name'] . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . number_format($vat,2,".","") . "," . $row['discount'] . "," . number_format($totalamnt,2,".","") . "\r\n";
 
 						$totallabor += $row['labor'];

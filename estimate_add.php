@@ -145,7 +145,7 @@
 		$subtotal = trim(str_replace(",","",$_POST['subtotal']));
 		$discount = trim(str_replace(",","",$_POST['discount']));
 		$discounted_price = trim(str_replace(",","",$_POST['discounted_price']));
-		$vat = $_POST['vat'];
+		$vat = $_POST['vatValue'];
 		$total_amount = trim(str_replace(",","",$_POST['totalamount']));
 		$recommendation = null;
 		$laborDiscount = 0;
@@ -153,6 +153,7 @@
 		$materialDiscount = 0;
 		$lubricantDiscount = 0;
 		$seniorCitizen = 0;
+
 		if(!empty($_POST['seniorNo'])){
 			$seniorCitizenNo = $_POST['seniorNo'];
 		}else{
@@ -460,15 +461,17 @@
 		}
 
 		if(isNaN(amount) == false){
-			var vat = parseFloat(amount) * parseFloat(vat_val);
+			discountedprice = (parseFloat(amount) - parseFloat(discount));
+
+			var vat = parseFloat(discountedprice) * parseFloat(vat_val);
 
 			if(document.estimate_form.senior.checked == true){
-				var vatable = (parseFloat(amount) + 0.00);
+				var vatable = (parseFloat(discountedprice) + 0.00);
 			}else{
-				var vatable = (parseFloat(amount) + parseFloat(vat));
+				var vatable = (parseFloat(discountedprice) + parseFloat(vat));
 			}
-			discountedprice = (parseFloat(vatable) - parseFloat(discount));
-			totalamount.value = discountedprice;
+			
+			totalamount.value = vatable;
 			CurrencyFormatted('totalamount');
 		}else{
 			discounted_price.value = "";
