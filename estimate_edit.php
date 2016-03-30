@@ -664,7 +664,7 @@
 		<? if($numlabor > 0){ ?>
 		<tr>
 			<td class="label">Labor Discount:</td>
-			<td class="input"><input type="text" value="<?=$labordiscount;?>" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" value="<?=$labordiscount;?>" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -673,7 +673,7 @@
 		?>
 		<tr>
 			<td class="label">Parts Discount:</td>
-			<td class="input"><input type="text" value="<?=$partsdiscount;?>" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" value="<?=$partsdiscount;?>" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -682,7 +682,7 @@
 		?>
 		<tr>
 			<td class="label">Material Discount:</td>
-			<td class="input"><input type="text" value="<?=$materialdiscount;?>" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" value="<?=$materialdiscount;?>" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -691,13 +691,13 @@
 		?>
 		<tr>
 			<td class="label">Lubricants Discount:</td>
-			<td class="input"><input type="text" value="<?=$lubricantdiscount;?>" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" value="<?=$lubricantdiscount;?>" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? } ?>
 		<tr>
 			<td class="label">Total Discounts:</td>
-			<td class="input"><input type="text" name="discount" id="discount" value="<?=$discount;?>" onBlur="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="discount" readonly id="discount" value="<?=$discount;?>" onBlur="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<!-- <tr>
@@ -747,34 +747,27 @@
 			var totalamnt = document.getElementById("totalamount").value;
 			var remarks = document.getElementById("txtremarks").value;
 			// var paymentmode = document.getElementById("paymentmode").value;
-			var customerid = document.getElementById("customer_id").value;
-			var plateno = document.getElementById("plateno").value;
+			// var customerid = document.getElementById("customer_id").value;
+			// var plateno = document.getElementById("plateno").value;
 			var odometer = document.getElementById("odometer");
 			
 			if(customerid == ""){
 				alert("Please select customer by customer code/customer name!");
 				return false;
-			// }else if(plateno == ""){
-			// 	alert("please select vehicle by plate no!");
-			// 	return false;
-			// }else if(odometer.value == ""){
-			// 	alert("please enter vehicle odometer!");
-			// 	odometer.focus();
-			// 	return false;
 			}else if(document.estimate_form.senior.checked == true){
 				if(document.getElementById("seniorNo").value == ""){
 					alert("Please enter senior citizen no!");
 					return false;
 				}
+			}else if(isNaN(document.getElementById("discount").value) == true){
+				alert("Please enter correct value of your discount!");
+				return false;
 			}else if(totalamnt == "" || totalamnt == 0){
 				alert("Please select estimates costs!");
 				return false;
 			}else if(remarks == ""){
 				alert("Please enter remarks!");
 				return false;
-			// }else if(paymentmode == ""){
-			// 	alert("Please enter payment mode!");
-			// 	return false;
 			}else{
 				return true;
 			}

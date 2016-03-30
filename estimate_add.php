@@ -283,7 +283,7 @@
 		amount = minus + amount;
 		return amount;
 	}
-	function IsNumeric(sText) {
+	function IsNumeric(sText,fld) {
 		var ValidChars = "0123456789.,";
 		var IsNumber=true;
 		var Char;
@@ -291,10 +291,11 @@
 		for (i = 0; i < sText.length && IsNumber == true; i++) { 
 			Char = sText.charAt(i); 
 			if (ValidChars.indexOf(Char) == -1) {
-				IsNumber = false;
+				var newtxt = sText.substring(0,sText.length - 1);
+				// IsNumber = false;
 			}
 		}
-		return IsNumber;
+		$("#"+fld).val(newtxt);
 	}
 	function isNumberKey(evt){
 		var charCode = (evt.which) ? evt.which : event.keyCode
@@ -868,7 +869,7 @@
 		<? if($numtemplabor > 0){ ?>
 		<tr>
 			<td class="label">Labor Discount:</td>
-			<td class="input"><input type="text" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -877,7 +878,7 @@
 		?>
 		<tr>
 			<td class="label">Parts Discount:</td>
-			<td class="input"><input type="text" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -886,7 +887,7 @@
 		?>
 		<tr>
 			<td class="label">Material Discount:</td>
-			<td class="input"><input type="text" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -895,13 +896,13 @@
 		?>
 		<tr>
 			<td class="label">Lubricants Discount:</td>
-			<td class="input"><input type="text" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? } ?>
 		<tr>
 			<td class="label">Total Discounts:</td>
-			<td class="input"><input type="text" name="discount" readonly id="discount" value="" onBlur="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="discount" readonly id="discount" value="" onBlur="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<!-- <tr>
@@ -960,6 +961,9 @@
 					alert("Please enter senior citizen no!");
 					return false;
 				}
+			}else if(isNaN(document.getElementById("discount").value) == true){
+				alert("Please enter correct value of your discount!");
+				return false;
 			}else if(totalamnt == "" || totalamnt == 0){
 				alert("Please select estimates costs!");
 				return false;
