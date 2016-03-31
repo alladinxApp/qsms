@@ -331,7 +331,7 @@
 		<? if($numtemplabor > 0){ ?>
 		<tr>
 			<td class="label">Labor Discount:</td>
-			<td class="input"><input type="text" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="laborDiscount" id="laborDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -340,7 +340,7 @@
 		?>
 		<tr>
 			<td class="label">Parts Discount:</td>
-			<td class="input"><input type="text" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="partsDiscount" id="partsDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -349,7 +349,7 @@
 		?>
 		<tr>
 			<td class="label">Material Discount:</td>
-			<td class="input"><input type="text" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="materialDiscount" id="materialDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? 
@@ -358,13 +358,13 @@
 		?>
 		<tr>
 			<td class="label">Lubricants Discount:</td>
-			<td class="input"><input type="text" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="lubricantDiscount" id="lubricantDiscount" value="" onKeyup="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<? } ?>
 		<tr>
 			<td class="label">Total Discounts:</td>
-			<td class="input"><input type="text" name="discount" readonly id="discount" value="" onBlur="return getTotalAmount();" onkeypress="return isNumberKey(event);" style="width: 200px; text-align: right;"></td>
+			<td class="input"><input type="text" name="discount" readonly id="discount" value="" onBlur="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
 		<!-- <tr>
