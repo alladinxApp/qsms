@@ -751,10 +751,11 @@
 			// var plateno = document.getElementById("plateno").value;
 			var odometer = document.getElementById("odometer");
 			
-			if(customerid == ""){
-				alert("Please select customer by customer code/customer name!");
-				return false;
-			}else if(document.estimate_form.senior.checked == true){
+			// if(customerid == ""){
+			// 	alert("Please select customer by customer code/customer name!");
+			// 	return false;
+			// }else 
+			if(document.estimate_form.senior.checked == true){
 				if(document.getElementById("seniorNo").value == ""){
 					alert("Please enter senior citizen no!");
 					return false;
