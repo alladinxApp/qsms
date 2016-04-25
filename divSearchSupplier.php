@@ -8,42 +8,36 @@ if(!isset($_SESSION))
 session_start();
 }
 
-$page_name = "customer_list.php";
+$page_name = "supplier_list.php";
 
-$query2 = " SELECT * FROM v_customer WHERE last LIKE '%$data%'";
+$query2 = " SELECT * FROM v_suppliers WHERE supplier_name LIKE '%$data%'";
 $count = $dbo->prepare($query2);
 $count->execute();
 $num = $count->rowCount();
 
 echo "<TABLE><tr>";
-echo "<th><a href='$page_name?column_name=customer_id'>Customer Code</a></th>";
-echo "<th><a href='$page_name?column_name=name'>Customer Name</a></th>";
-echo "<th><a href='$page_name?column_name=gender'>Gender</a></th>";
-echo "<th><a href='$page_name?column_name=birthday'>Birthdate</a></th>";
-echo "<th><a href='$page_name?column_name=company'>Company</a></th>";
-echo "<th><a href='$page_name?column_name=email'>Email Address</a></th>";
-echo "<th><a href='$page_name?column_name=phone'>Phone Number</a></th>";
-echo "<th><a href='$page_name?column_name=mobile'>Mobile Number</a></th>";
+echo "<th><a href='$page_name?column_name=supplier_code'>Supplier Code</a></th>";
+echo "<th><a href='$page_name?column_name=SAP_supplier_code'>SAP Supplier Code</a></th>";
+echo "<th><a href='$page_name?column_name=supplier_name'>Supplier Name</th>";
+echo "<th><a href='$page_name?column_name=address'>Address</th>";
+echo "<th><a href='$page_name?column_name=contact_person'>Contact Person</th>";
 echo "<th>&nbsp;</th></tr>";
 
 ////////////// Now let us start executing the query with variables $eu and $limit  set at the top of the page///////////
-$query=" SELECT * FROM v_customer WHERE custname LIKE '%$data%'";
+$query=" SELECT * FROM v_suppliers WHERE supplier_name LIKE '%$data%'";
 
 if($num > 0){
 foreach ($dbo->query($query) as $row) {
 
 echo "<tr >";
-echo "<td><center>$row[cust_id]</td>"; 
-echo "<td>$row[salutation]&nbsp$row[lastname]&nbsp$row[firstname],&nbsp$row[middlename] </td>";
-echo "<td><center>$row[gender]</center></td>";
-echo "<td><center>$row[birthday]</center></td>";
-echo "<td><center>$row[company]</center></td>";
-echo "<td><center>$row[email]</center></td>";
-echo "<td><center>$row[landline]</center></td>";
-echo "<td><center>$row[mobile]</center></td>"; 
+echo "<td><center>$row[supplier_code]</td>"; 
+echo "<td><center>$row[SAP_supplier_code]</center></td>"; 
+echo "<td><center>$row[supplier_name]</center></td>"; 
+echo "<td><center>$row[address]</td>";
+echo "<td><center>$row[contact_person]</td>";
 echo "<td width='110px'><center>
-			<a href='customer_edit.php?custid=".$row['cust_id']."'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
-			<a href='customer_delete.php?custid=".$row['cust_id']."'><img src='images/delete.png' /></a>
+			<a href='supplier_edit.php?suppliercode=$row[supplier_code]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
+			<a href='supplier_delete.php?suppliercode=$row[supplier_code]'><img src='images/delete.png' /></a>
 		</center></td>"; 
 
 echo "</tr>";

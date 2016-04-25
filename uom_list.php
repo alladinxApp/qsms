@@ -32,18 +32,18 @@
 		}
 		return xmlhttp;
 	}
-	function SearchSupplier(){
-		var data = document.getElementById("txtsearchsupplier").value;
+	function SearchUOM(){
+		var data = document.getElementById("txtsearchuom").value;
 		if(data == ""){
-			alert("Please enter supplier name to search!");
+			alert("Please enter uom to search!");
 			return false;
 		}
-		var strURL = "divSearchSupplier.php?data="+data;
+		var strURL = "divSearchUOM.php?data="+data;
 		var req = getXMLHTTP();
 		if (req){
 			req.onreadystatechange = function(){
 				if (req.readyState == 4){
-						document.getElementById('divSearchSupplier').innerHTML = req.responseText;
+						document.getElementById('divSearchUOM').innerHTML = req.responseText;
 				}
 			}
 			req.open("GET", strURL, true);
@@ -53,17 +53,17 @@
 </script>
 <body>
 
-<div class="button"><a href="supplier_add.php"><img src="images/add.jpg" /></a></div>
+<div class="button"><a href="uom_add.php"><img src="images/add.jpg" /></a></div>
 
-<div class="title">SUPPLIER LIST</div> 
+<div class="title">UOM LIST</div> 
 
-Search by Name: <input type="text" name="txt" id="txtsearchsupplier" name="txtsearchsupplier" placeholder="Enter Supplier Name" /><input type="button" value="Search" onClick="SearchSupplier();" />
+Search by Description: <input type="text" name="txt" id="txtsearchuom" name="txtsearchuom" placeholder="Enter UOM" /><input type="button" value="Search" onClick="SearchUOM();" />
 
 <?Php
 
-$page_name="supplier_list.php"; //  If you use this code with a different page ( or file ) name then change this 
+$page_name="uom_list.php"; //  If you use this code with a different page ( or file ) name then change this 
 
-@$column_name=$_GET['supplier_list']; // Read the column name from query string. 
+@$column_name=$_GET['uom_list']; // Read the column name from query string. 
 if(strlen($column_name)>0 and !ctype_alnum($column_name)){ 
 // We don't expect the value of column variable to be any thing other than alphanumeric so checking before using. 
 echo "Data Error";
@@ -83,38 +83,32 @@ $back = $eu - $limit;
 $next = $eu + $limit; 
 
 /////////////// WE have to find out the number of records in our table. We will use this to break the pages///////
-$query2=" SELECT * FROM v_suppliers  ";
+$query2=" SELECT * FROM v_uom  ";
 $count=$dbo->prepare($query2);
 $count->execute();
 $nume=$count->rowCount();
 
-echo "<span id='divSearchSupplier'><TABLE><tr>";
-echo "<th><a href='$page_name?column_name=supplier_code'>Supplier Code</a></th>";
-echo "<th><a href='$page_name?column_name=SAP_supplier_code'>SAP Supplier Code</a></th>";
-echo "<th><a href='$page_name?column_name=supplier_name'>Supplier Name</th>";
-echo "<th><a href='$page_name?column_name=address'>Address</th>";
-echo "<th><a href='$page_name?column_name=contact_person'>Contact Person</th>";
+echo "<span id='divSearchUOM'><TABLE><tr>";
+echo "<th><a href='$page_name?column_name=uom_code'>UOM Code</a></th>";
+echo "<th><a href='$page_name?column_name=description'>Description</a></th>";
 echo "<th>&nbsp;</th></tr>";
 
 ////////////// Now let us start executing the query with variables $eu and $limit  set at the top of the page///////////
-$query=" SELECT * FROM v_suppliers  ";
+$query=" SELECT * FROM v_uom  ";
 
 if(isset($column_name) and strlen($column_name)>0){
-$query = $query . " order by $supplier_code";
+$query = $query . " order by $uom_code";
 }
 $query = $query. " limit $eu, $limit ";
 //////////////// Now we will display the returned records in side the rows of the table/////////
 foreach ($dbo->query($query) as $row) {
 
 echo "<tr >";
-echo "<td><center>$row[supplier_code]</td>"; 
-echo "<td><center>$row[SAP_supplier_code]</center></td>"; 
-echo "<td><center>$row[supplier_name]</center></td>"; 
-echo "<td><center>$row[address]</td>";
-echo "<td><center>$row[contact_person]</td>";
+echo "<td><center>$row[uom_code]</td>"; 
+echo "<td><center>$row[description]</center></td>"; 
 echo "<td width='110px'><center>
-			<a href='supplier_edit.php?suppliercode=$row[supplier_code]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
-			<a href='supplier_delete.php?suppliercode=$row[supplier_code]'><img src='images/delete.png' /></a>
+			<a href='uom_edit.php?uomcode=$row[uom_code]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
+			<a href='uom_delete.php?uomcode=$row[uom_code]'><img src='images/delete.png' /></a>
 		</center></td>"; 
 
 echo "</tr>";

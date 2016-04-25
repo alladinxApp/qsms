@@ -5,14 +5,14 @@
 		session_start();
 	}
 	
-	$cust_id = $_GET['custid'];
-	$qry = "DELETE FROM tbl_customer WHERE cust_id = '$cust_id'";
+	$suppliercode = $_GET['suppliercode'];
+	$qry = "DELETE FROM tbl_suppliers WHERE supplier_code = '$suppliercode'";
 	$res = mysql_query($qry);
 	
 	if(!$res){
-		echo '<script>alert("There has been an error on deleting your customer profile!");</script>';
+		echo '<script>alert("There has been an error on deleting your supplier profile!");</script>';
 	}else{
-		echo '<script>alert("Customer profile successfully deleted.");</script>';
+		echo '<script>alert("Supplier profile successfully deleted.");</script>';
 	}
-	echo '<script>window.location="customer_list.php";</script>';
+	echo '<script>window.location="supplier_list.php";</script>';
 ?>
