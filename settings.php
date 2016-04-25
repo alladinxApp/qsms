@@ -57,13 +57,16 @@
         <td width="15">&nbsp;</td>
         <td width="92"><a href="configuration.php"><img src="images/vat.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92">&nbsp;</td>
+        <td width="92"><a href="supplier_list.php">Suppliers</a></td>
         <td width="15">&nbsp;</td>
-        <td width="92">&nbsp;</td>
+        <td width="92"><a href="items_list.php">Items</a></td>
         <td width="15">&nbsp;</td>
-        <td width="92">&nbsp;</td>
+        <td width="92"><a href="uom_list.php">UOM</a></td>
         <td width="15">&nbsp;</td>
-        <td width="92">&nbsp;</td>
+        <td width="92"><a href="payment_term_list.php">Payment Term</a></td>
+        <td width="15">&nbsp;</td>
+        <td width="92"><a href="item_type_list.php">Item Type</a></td>
+        <td width="15">&nbsp;</td>
         <td width="92">&nbsp;</td>
         <td width="15">&nbsp;</td>
         <td width="92">&nbsp;</td>
