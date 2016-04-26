@@ -81,7 +81,7 @@
 		if(isset($_POST['search']) && !empty($_POST['search']) && $_POST['search'] == 1){
 	?>
 	<fieldset form="form_estimate_list" name="form_estimate_list">
-	<p id="title">Pending Estimate LIST</p>
+	<p id="title">purchase order  LIST</p>
 	<div class="divEstimateList">
 	<table width="2200">
 		<tr>
