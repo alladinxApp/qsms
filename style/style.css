@@ -52,11 +52,8 @@ body{
 	}*/
 
 #pic_menu{
-	height:55px;
-	padding:5px;
+	height: 55px;
 	float: right;
-	margin-right: 25px;
-	margin-top: 25px;
 }
 
 #pic_menu li{
@@ -74,8 +71,7 @@ a img
 #mmenu {	
 		/*width:850px;*/
 		height:33px;
-		margin: -42px 25px;
-		padding:2px;
+		margin: -45px 0;
 		font-size:13px;
 		vertical-align:top;
 		float:right;

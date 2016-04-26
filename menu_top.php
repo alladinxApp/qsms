@@ -1,8 +1,9 @@
 <div id="lmain">
-		<a href="main.php" title="logo" ><img src="images/logo1.png" /></a>
+		<a href="main.php" title="logo" ><img src="images/logo1.png" width="250" /></a>
 		
 	<div id="pic_menu">
 		<ul>
+		<li id="li_menu"><a href="ro_main.php"><img src="images/rep.jpg" /></a></li>
 		<li id="li_menu"><a href="reports_main.php"><img src="images/rep.jpg" /></a></li>
 		<li id="li_menu"><a href="estimates_main.php"><img src="images/calc.jpg" /></a> </li>
 		<li id="li_menu"><a href="po_receiving_main.php"><img src="images/po.jpg" /></a> </li>
@@ -16,8 +17,8 @@
 	   
 	<div id="mmenu">
 		
-		<!--<div style="width:4px; height:37px; padding:0px; margin:0px; float:right;"></div>-->
 		<ul>
+		<li id="li_menu"><a href="ro_main.php">RO</a></li>
 		<li id="li_menu"><a href="reports_main.php">Reports</a></li>
 		<li id="li_menu"><a href="estimates_main.php">Estimates</a> </li>
 		<li id="li_menu"><a href="po_receiving_main.php">PO Receiving</a> </li>
