@@ -25,8 +25,9 @@
 		$subtotal = $_POST['subtotal'];
 		$vat = $_POST['vat'];
 		$totalamount = $_POST['total_amount'];
+		$item = explode("|",$_POST['arrItems']);
 		$newnum = getNewNum('RO');
-		
+
 		$ro_mst_insert = "INSERT INTO tbl_ro_master (ro_reference_no,ro_date,supplier_code,deliver_to,delivery_address,payment_code,discount,sub_total,vat,total_amount,special_instruction,created_date) VALUES
 		('".$newnum."',
 		'".$today."',
@@ -48,6 +49,17 @@
 		if(!$res){
 			echo '<script>alert("There has been an error on saving your RO! Please double check all the data and save.");</script>';
 		}else{
+			$cnt = 1;
+			for($i=0;$i<count($item);$i++){
+				$val = explode(":",$item[$i]);
+				$qry_dtl = mysql_query("INSERT INTO tbl_ro_detail(ro_reference_no,item_code,price,quantity,seqno) VALUES
+					('".$newnum."',
+					'".$val[0]."',
+					'".$val[4]."',
+					'".$val[5]."',
+					'".$cnt."')");
+				$cnt++;
+			}
 			mysql_query($update_controlno);
 			echo '<script>alert("RO successfully saved.");</script>';
 		}
@@ -163,6 +175,7 @@
 			req.onreadystatechange = function(){
 				if (req.readyState == 4){
 						document.getElementById('divRODtls').innerHTML = req.responseText;
+						document.getElementById("qty").value = "";
 				}
 			}
 			req.open("GET", strURL, true);
