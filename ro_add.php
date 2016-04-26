@@ -16,37 +16,42 @@
 	$result_items = $dbo->query($qry_items);
 
 	if (isset($_POST['save'])){
-		// $parts = strtoupper($_POST['parts']);
-		// $parts_discount = str_replace(",","",$_POST['parts_discount']);
-		// $part_srp = str_replace(",","",$_POST['part_srp']);
-		// $part_onhand = $_POST['part_onhand'];
-		// $parts_lowstock = $_POST['parts_lowstock'];
-		// $partstatus = $_POST['partstatus'];
-		// $new_price_date	= date("Y-m-d h:i:s");
-		// $newnum = getNewNum('PARTS');
+		$supplier = $_POST['supplier'];
+		$deliverto = $_POST['deliver_to'];
+		$deliveryaddress = $_POST['delivery_address'];
+		$special = $_POST['special'];
+		$paymentterms = $_POST['payment_terms'];
+		$discount = $_POST['discount'];
+		$subtotal = $_POST['subtotal'];
+		$vat = $_POST['vat'];
+		$totalamount = $_POST['total_amount'];
+		$newnum = getNewNum('RO');
 		
-		// $parts_insert = "INSERT INTO tbl_ro_master (parts_id, parts, parts_discount, part_srp, part_onhand, parts_lowstock, partstatus, part_created, new_price_date) VALUES
-		// ('".$newnum."',
-		// '".$parts."',
-		// '".$parts_discount."',
-		// '".$part_srp."',
-		// '".$part_onhand."',
-		// '".$parts_lowstock."',
-		// '".$partstatus."',
-		// '".$today."',
-		// '".$new_price_date."')";
+		$ro_mst_insert = "INSERT INTO tbl_ro_master (ro_reference_no,ro_date,supplier_code,deliver_to,delivery_address,payment_code,discount,sub_total,vat,total_amount,special_instruction,created_date) VALUES
+		('".$newnum."',
+		'".$today."',
+		'".$supplier."',
+		'".$deliverto."',
+		'".$deliveryaddress."',
+		'".$paymentterms."',
+		'".$discount."',
+		'".$subtotal."',
+		'".$vat."',
+		'".$totalamount."',
+		'".$special."',
+		'".$today."')";
 		
-		// $update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'PARTS' ";
+		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RO' ";
 		
-		// $res = mysql_query($parts_insert) or die("INSERT PARTS ".mysql_error());
+		$res = mysql_query($ro_mst_insert) or die("INSERT RO ".mysql_error());
 		
-		// if(!$res){
-		// 	echo '<script>alert("There has been an error on saving your parts! Please double check all the data and save.");</script>';
-		// }else{
-		// 	mysql_query($update_controlno);
+		if(!$res){
+			echo '<script>alert("There has been an error on saving your RO! Please double check all the data and save.");</script>';
+		}else{
+			mysql_query($update_controlno);
 			echo '<script>alert("RO successfully saved.");</script>';
-		// }
-		echo '<script>window.location="parts_list.php";</script>';
+		}
+		echo '<script>window.location="ro_list.php";</script>';
 	}
 ?>
 <html>
@@ -164,6 +169,20 @@
 			req.send(null);
 		}
 	}
+	function removeItem(id){
+		var arrItems = document.getElementById("arrItems").value;
+		var strURL = "divRemoveItem.php?id="+id+"&items="+arrItems;
+		var req = getXMLHTTP();
+		if (req){
+			req.onreadystatechange = function(){
+				if (req.readyState == 4){
+						document.getElementById('divRODtls').innerHTML = req.responseText;
+				}
+			}
+			req.open("GET", strURL, true);
+			req.send(null);
+		}
+	}
 	function discounted(){
 		var subt = document.getElementById("subtotal").value;
 		var disc = document.getElementById("discount").value;
@@ -218,23 +237,21 @@
 		</tr>
 	</table>
 	</fieldset>
-	<fieldset form="form_items" name="form_items">
-	<legend><p id="title">Select Item</p></legend>
-		<table>
-			<tr>
-				<td>Items: </td>
-				<td><select name="item" id="item">
-					<option value="">-- Select Item --</option>
-					<? foreach($result_items as $row_items){ ?>
-						<option value="<?=$row_items['item_code'];?>"><?=$row_items['item_description'];?> ( <?=$row_items['UOM_desc'];?> )</option>
-					<? } ?>
-				</select></td>
-				<td class ="input"><input type="text" name="qty" id="qty" value="" style="width:100px"></td>
-				<td><input type="button" value="" onClick="return addItem();" style="cursor: pointer;" /></td>
-			</tr>
-		</table>
-	</fieldset>
-
+	<div>
+	<table>
+		<tr>
+			<td>Add Item: </td>
+			<td><select name="item" id="item">
+				<option value="">-- Select Item --</option>
+				<? foreach($result_items as $row_items){ ?>
+					<option value="<?=$row_items['item_code'];?>"><?=$row_items['item_description'];?> ( <?=$row_items['UOM_desc'];?> )</option>
+				<? } ?>
+			</select></td>
+			<td class ="input"><input type="text" name="qty" id="qty" value="" style="width:100px"></td>
+			<td><input type="button" value="" onClick="return addItem();" style="cursor: pointer;" /></td>
+		</tr>
+	</table>
+	</div>
 	<span id="divRODtls">
 	<fieldset form="form_dtls" name="form_dtls">
 	<legend><p id="title">Details</p></legend>
@@ -298,6 +315,7 @@
 			var deliverto = document.getElementById("deliver_to");
 			var deliveryaddress = document.getElementById("delivery_address");
 			var paymentterms = document.getElementById("payment_terms");
+			var items = document.getElementById("arrItems")
 			
 			if(supplier.value == ""){
 				alert("Supplier is required! Please select supplier.");
@@ -312,6 +330,9 @@
 				return false;
 			}else if(paymentterms.value == ""){
 				alert("Payment terms is required! Please select payment terms");
+				return false;
+			}else if(items.value == ""){
+				alert("Item(s) is required! Please select items");
 				return false;
 			}else{
 				return true;
