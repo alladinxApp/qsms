@@ -57,15 +57,15 @@
         <td width="15">&nbsp;</td>
         <td width="92"><a href="configuration.php"><img src="images/vat.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="supplier_list.php">Suppliers</a></td>
+        <td width="92"><a href="supplier_list.php"><img src="images/supplier.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="items_list.php">Items</a></td>
+        <td width="92"><a href="uom_list.php"><img src="images/uom.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="uom_list.php">UOM</a></td>
+        <td width="92"><a href="payment_term_list.php"><img src="images/paymenttype.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="payment_term_list.php">Payment Term</a></td>
+        <td width="92"><a href="item_type_list.php"><img src="images/itemttype.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="item_type_list.php">Item Type</a></td>
+        <td width="92"><a href="items_list.php"><img src="images/items.png" width="78" height="93"></a></td>
         <td width="15">&nbsp;</td>
         <td width="92">&nbsp;</td>
         <td width="15">&nbsp;</td>
