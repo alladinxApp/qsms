@@ -3,7 +3,7 @@
 		
 	<div id="pic_menu">
 		<ul>
-		<li id="li_menu"><a href="ro_main.php"><img src="images/rep.jpg" /></a></li>
+		<li id="li_menu"><a href="ro_main.php"><img src="images/buy.png" /></a></li>
 		<li id="li_menu"><a href="reports_main.php"><img src="images/rep.jpg" /></a></li>
 		<li id="li_menu"><a href="estimates_main.php"><img src="images/calc.jpg" /></a> </li>
 		<li id="li_menu"><a href="po_receiving_main.php"><img src="images/po.jpg" /></a> </li>
@@ -18,7 +18,7 @@
 	<div id="mmenu">
 		
 		<ul>
-		<li id="li_menu"><a href="ro_main.php">RO</a></li>
+		<li id="li_menu"><a href="ro_main.php">Purchasing</a></li>
 		<li id="li_menu"><a href="reports_main.php">Reports</a></li>
 		<li id="li_menu"><a href="estimates_main.php">Estimates</a> </li>
 		<li id="li_menu"><a href="po_receiving_main.php">PO Receiving</a> </li>
