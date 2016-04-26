@@ -217,12 +217,13 @@
 	textarea#special { resize: none; }
 </style>
 <body>
-	<form method="post" name="parts_ro" class="form" onsubmit="return ValidateMe();">
+	<form method="post" name="parts_ro" class="form" onSubmit="return ValidateMe();">
 	<fieldset form="form_ro" name="form_ro">
-	<legend><p id="title">Create RO</p></legend>
+	<legend>
+	<p id="title">Create P.O.</p></legend>
 	<table>
 		<tr>
-			<td class ="label"><label name="ro_no">RO Reference No:</label>
+			<td class ="label"><label name="ro_no">PO Reference No:</label>
 			<td class ="input"><input type="text" name="ro_no" value="[SYSTEM GENERATED]" readonly style="width:272px"></td>
 		</tr>
 		<tr>
@@ -296,7 +297,7 @@
 			</tr>    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
-				<td class ="input"><input type="text" name="discount" id="discount" value="" onkeypress="return IsNumeric(discount);" style="width:170px"></td>
+				<td class ="input"><input type="text" name="discount" id="discount" value="" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
