@@ -34,7 +34,7 @@
         
                      <div id="contents">
             
-            		<iframe src="ro_list.php" frameborder="0" width="850px" height="650px" style="overflow:hidden"></iframe>
+            		<iframe src="po_list.php" frameborder="0" width="850px" height="650px" style="overflow:hidden"></iframe>
     		
                 	</div><!--end of contents -->   
      				</div><!--end of main2 -->

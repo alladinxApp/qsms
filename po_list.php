@@ -77,11 +77,11 @@
 </style>
 <body>
 	<? 
-		require_once('ro_menu.php');
+		require_once('po_menu.php');
 		if(isset($_POST['search']) && !empty($_POST['search']) && $_POST['search'] == 1){
 	?>
 	<fieldset form="form_estimate_list" name="form_estimate_list">
-	<p id="title">purchase order  LIST</p>
+	<p id="title">PURCHASE ORDER LIST</p>
 	<div class="divEstimateList">
 	<table width="2200">
 		<tr>
@@ -148,7 +148,7 @@
 	</div>
 	</fieldset>
 	<? }else{ ?>
-	<p id="title">Search Pending RO LIST</p>
+	<p id="title">Search Pending PO LIST</p>
 	<form method="Post">
 	<div class="estimate_approval">
 	<table>

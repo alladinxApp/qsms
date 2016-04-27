@@ -7,57 +7,34 @@
 	}
 
 	$id = $_GET['id'];
-	$qty = $_GET['qty'];
 	$items = $_GET['items'];
-
-	$qry_item = "SELECT * FROM v_items WHERE item_code = '$id'";
-	$result_item = $dbo->query($qry_item);
 
 	$qry_payterms = "SELECT * FROM v_payment_term WHERE status = '1'";
 	$result_payterms = $dbo->query($qry_payterms);
 
-	foreach($result_item as $row_item){
-		$r_itemcode = $row_item['item_code'];
-		$r_itemdesc = $row_item['item_description'];
-		$r_itemuom = $row_item['UOM'];
-		$r_itemuomdesc = $row_item['UOM_desc'];
-		$r_itemprice = $row_item['unit_price'];
-	}
-
 	$nArrItems = null;
-	if($items != "" || $items != null){
-		$exist = 0;
-		$item = explode("|",$items);
-		for($i=0;$i<count($item);$i++){
-			$val = explode(":",$item[$i]);
-			$itemcode = $val[0];
-			$itemdesc = $val[1];
-			$itemuom = $val[2];
-			$itemuomdesc = $val[3];
-			$itemprice = $val[4];
-			$itemqty = $val[5];
+	$item = explode("|",$items);
+	for($i=0;$i<count($item);$i++){
+		$val = explode(":",$item[$i]);
+		$itemcode = $val[0];
+		$itemdesc = $val[1];
+		$itemuom = $val[2];
+		$itemuomdesc = $val[3];
+		$itemprice = $val[4];
+		$itemqty = $val[5];
 
-			if($val[0] != $id){
-				$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
-			}else{
-				$exist++;
-				$itemqty = ($val[5] + $qty);
-				$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
-			}
+		if($val[0] != $id){
+			$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
 		}
-	}
-
-	if($exist == 0){
-		$nArrItems .= $r_itemcode . ":" . $r_itemdesc . ":" . $r_itemuom . ":" . $r_itemuomdesc . ":" . $r_itemprice . ":" . $qty . "|";
 	}
 
 	$nArrItems = rtrim($nArrItems,"|");
 ?>
 
-<span id="divRODtls">
+<span id="divPODtls">
 <fieldset form="form_dtls" name="form_dtls">
 <legend><p id="title">Details</p></legend>
-	<div class="RODtls">
+	<div class="PODtls">
 	<table>
 		<tr>
 			<th width="100">ITEM CODE</th>
@@ -71,7 +48,8 @@
 		<? 
 			$subtotal = 0;
 			$totalqty = 0;
-			$nArrItem = explode("|",$nArrItems); 
+			$nArrItem = explode("|",$nArrItems);
+			if($nArrItems != null || $nArrItems != ""){
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
@@ -101,6 +79,7 @@
 		<?
 			$vat = ($subtotal * 0.12);
 			$totalamnt = ($subtotal + $vat);
+			}
 		?>
 	</table>
 	</div>

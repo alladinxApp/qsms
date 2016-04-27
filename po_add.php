@@ -26,9 +26,9 @@
 		$vat = $_POST['vat'];
 		$totalamount = $_POST['total_amount'];
 		$item = explode("|",$_POST['arrItems']);
-		$newnum = getNewNum('RO');
+		$newnum = getNewNum('PURCHASE_ORDER');
 
-		$ro_mst_insert = "INSERT INTO tbl_ro_master (ro_reference_no,ro_date,supplier_code,deliver_to,delivery_address,payment_code,discount,sub_total,vat,total_amount,special_instruction,created_date) VALUES
+		$po_mst_insert = "INSERT INTO tbl_po_mst (po_reference_no,po_date,supplier_code,deliver_to,delivery_address,payment_code,discount,sub_total,vat,total_amount,special_instruction,created_date) VALUES
 		('".$newnum."',
 		'".$today."',
 		'".$supplier."',
@@ -42,9 +42,9 @@
 		'".$special."',
 		'".$today."')";
 		
-		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RO' ";
+		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'PURCHASE_ORDER' ";
 		
-		$res = mysql_query($ro_mst_insert) or die("INSERT RO ".mysql_error());
+		$res = mysql_query($po_mst_insert) or die("INSERT PO ".mysql_error());
 		
 		if(!$res){
 			echo '<script>alert("There has been an error on saving your RO! Please double check all the data and save.");</script>';
@@ -52,7 +52,7 @@
 			$cnt = 1;
 			for($i=0;$i<count($item);$i++){
 				$val = explode(":",$item[$i]);
-				$qry_dtl = mysql_query("INSERT INTO tbl_ro_detail(ro_reference_no,item_code,price,quantity,seqno) VALUES
+				$qry_dtl = mysql_query("INSERT INTO tbl_po_dtl(po_reference_no,item_code,price,quantity,seqno) VALUES
 					('".$newnum."',
 					'".$val[0]."',
 					'".$val[4]."',
@@ -61,9 +61,9 @@
 				$cnt++;
 			}
 			mysql_query($update_controlno);
-			echo '<script>alert("RO successfully saved.");</script>';
+			echo '<script>alert("PO successfully saved.");</script>';
 		}
-		echo '<script>window.location="ro_list.php";</script>';
+		echo '<script>window.location="po_list.php";</script>';
 	}
 ?>
 <html>
@@ -169,12 +169,12 @@
 			return false;
 		}
 
-		var strURL = "divAddItem.php?id="+id+"&qty="+qty+"&items="+arrItems;
+		var strURL = "divPOAddItem.php?id="+id+"&qty="+qty+"&items="+arrItems;
 		var req = getXMLHTTP();
 		if (req){
 			req.onreadystatechange = function(){
 				if (req.readyState == 4){
-						document.getElementById('divRODtls').innerHTML = req.responseText;
+						document.getElementById('divPODtls').innerHTML = req.responseText;
 						document.getElementById("qty").value = "";
 				}
 			}
@@ -184,12 +184,12 @@
 	}
 	function removeItem(id){
 		var arrItems = document.getElementById("arrItems").value;
-		var strURL = "divRemoveItem.php?id="+id+"&items="+arrItems;
+		var strURL = "divPORemoveItem.php?id="+id+"&items="+arrItems;
 		var req = getXMLHTTP();
 		if (req){
 			req.onreadystatechange = function(){
 				if (req.readyState == 4){
-						document.getElementById('divRODtls').innerHTML = req.responseText;
+						document.getElementById('divPODtls').innerHTML = req.responseText;
 				}
 			}
 			req.open("GET", strURL, true);
@@ -210,21 +210,21 @@
 	}
 </script>
 <style type="text/css">
-	div.RODtls { border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
-	div.RODtls table{ border: 1px solid #ccc; font-size: 12px; }
-	div.RODtls table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
+	div.PODtls { border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
+	div.PODtls table{ border: 1px solid #ccc; font-size: 12px; }
+	div.PODtls table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
 
 	textarea#special { resize: none; }
 </style>
 <body>
-	<form method="post" name="parts_ro" class="form" onSubmit="return ValidateMe();">
-	<fieldset form="form_ro" name="form_ro">
+	<form method="post" name="parts_po" class="form" onSubmit="return ValidateMe();">
+	<fieldset form="form_po" name="form_po">
 	<legend>
 	<p id="title">Create P.O.</p></legend>
 	<table>
 		<tr>
-			<td class ="label"><label name="ro_no">PO Reference No:</label>
-			<td class ="input"><input type="text" name="ro_no" value="[SYSTEM GENERATED]" readonly style="width:272px"></td>
+			<td class ="label"><label name="po_no">PO Reference No:</label>
+			<td class ="input"><input type="text" name="po_no" value="[SYSTEM GENERATED]" readonly style="width:272px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="supplier">Supplier:</label>
@@ -266,10 +266,10 @@
 		</tr>
 	</table>
 	</div>
-	<span id="divRODtls">
+	<span id="divPODtls">
 	<fieldset form="form_dtls" name="form_dtls">
 	<legend><p id="title">Details</p></legend>
-		<div class="RODtls">
+		<div class="PODtls">
 		<table>
 			<tr>
 				<th width="100">ITEM CODE</th>
@@ -318,7 +318,7 @@
 
 	<p class="button">
 		<input type="submit" value="" name="save" />
-		<a href="ro_add.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>
+		<a href="po_add.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>
 		<br /><br />
 	</p>
 	</form>
