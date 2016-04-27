@@ -130,7 +130,7 @@ CREATE TABLE `tbl_controlno` (
 
 /*Data for the table `tbl_controlno` */
 
-insert  into `tbl_controlno`(`id`,`control_type`,`digit`,`lastseqno`,`control_code`) values (1,'CUSTOMER',8,95,'CUST'),(2,'VEHICLE',8,118,'VEH'),(3,'COLOR',8,38,'COL'),(4,'EMPLOYEE',8,9,'EMP'),(11,'JOB',8,151,'JOB'),(5,'MAKE',8,52,'MAK'),(6,'MODEL',8,272,'MDL'),(7,'YEAR',8,26,'YR'),(8,'PARTS',8,451,'PAR'),(9,'MATERIAL',8,60,'MAT'),(10,'ACCESSORY',8,68,'ACC'),(12,'WOCATEGORY',8,38,'WOC'),(13,'IDLE',8,6,'IDL'),(14,'PAYMENT',8,4,'PAY'),(15,'ESTIMATEREFNO',8,192,'ER'),(16,'WORKORDER',8,166,'WO'),(17,'PURCHASEORDER',8,0,'PO'),(18,'BILLING',8,131,''),(19,'ONLINE_ESTIMATE',8,1,'OE'),(20,'PACKAGE',8,18,'PAC'),(21,'SUPPLIER',8,3,'SUP'),(22,'UOM',8,4,'UOM'),(23,'PAYMENT_TERM',8,4,'PT'),(24,'ITEM_TYPE',8,5,'IT'),(25,'ITEMS',8,4,'ITM'),(26,'RO',8,5,'RO');
+insert  into `tbl_controlno`(`id`,`control_type`,`digit`,`lastseqno`,`control_code`) values (1,'CUSTOMER',8,95,'CUST'),(2,'VEHICLE',8,118,'VEH'),(3,'COLOR',8,38,'COL'),(4,'EMPLOYEE',8,9,'EMP'),(11,'JOB',8,151,'JOB'),(5,'MAKE',8,52,'MAK'),(6,'MODEL',8,272,'MDL'),(7,'YEAR',8,26,'YR'),(8,'PARTS',8,451,'PAR'),(9,'MATERIAL',8,60,'MAT'),(10,'ACCESSORY',8,68,'ACC'),(12,'WOCATEGORY',8,38,'WOC'),(13,'IDLE',8,6,'IDL'),(14,'PAYMENT',8,4,'PAY'),(15,'ESTIMATEREFNO',8,192,'ER'),(16,'WORKORDER',8,166,'WO'),(17,'PURCHASEORDER',8,0,'PO'),(18,'BILLING',8,131,''),(19,'ONLINE_ESTIMATE',8,1,'OE'),(20,'PACKAGE',8,18,'PAC'),(21,'SUPPLIER',8,3,'SUP'),(22,'UOM',8,4,'UOM'),(23,'PAYMENT_TERM',8,4,'PT'),(24,'ITEM_TYPE',8,5,'IT'),(25,'ITEMS',8,4,'ITM'),(26,'PURCHASE_ORDER',8,1,'PO');
 
 /*Table structure for table `tbl_customer` */
 
@@ -658,6 +658,24 @@ CREATE TABLE `tbl_po_detail` (
 
 /*Data for the table `tbl_po_detail` */
 
+/*Table structure for table `tbl_po_dtl` */
+
+DROP TABLE IF EXISTS `tbl_po_dtl`;
+
+CREATE TABLE `tbl_po_dtl` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `po_reference_no` varchar(20) DEFAULT NULL,
+  `item_code` varchar(20) DEFAULT NULL,
+  `price` decimal(10,2) DEFAULT NULL,
+  `quantity` int(11) DEFAULT NULL,
+  `seqno` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+
+/*Data for the table `tbl_po_dtl` */
+
+insert  into `tbl_po_dtl`(`id`,`po_reference_no`,`item_code`,`price`,`quantity`,`seqno`) values (1,'PO00000001','ITM00000002','12.00',3,1),(2,'PO00000001','ITM00000003','15.00',2,2),(3,'PO00000001','ITM00000004','120.00',3,3);
+
 /*Table structure for table `tbl_po_master` */
 
 DROP TABLE IF EXISTS `tbl_po_master`;
@@ -682,31 +700,13 @@ CREATE TABLE `tbl_po_master` (
 
 /*Data for the table `tbl_po_master` */
 
-/*Table structure for table `tbl_ro_detail` */
+/*Table structure for table `tbl_po_mst` */
 
-DROP TABLE IF EXISTS `tbl_ro_detail`;
+DROP TABLE IF EXISTS `tbl_po_mst`;
 
-CREATE TABLE `tbl_ro_detail` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `ro_reference_no` varchar(20) DEFAULT NULL,
-  `item_code` varchar(20) DEFAULT NULL,
-  `price` decimal(10,2) DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
-  `seqno` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-
-/*Data for the table `tbl_ro_detail` */
-
-insert  into `tbl_ro_detail`(`id`,`ro_reference_no`,`item_code`,`price`,`quantity`,`seqno`) values (1,'RO00000005','ITM00000002','12.00',2,1),(2,'RO00000005','ITM00000003','15.00',3,2);
-
-/*Table structure for table `tbl_ro_master` */
-
-DROP TABLE IF EXISTS `tbl_ro_master`;
-
-CREATE TABLE `tbl_ro_master` (
-  `ro_reference_no` varchar(20) NOT NULL,
-  `ro_date` datetime DEFAULT NULL,
+CREATE TABLE `tbl_po_mst` (
+  `po_reference_no` varchar(20) NOT NULL,
+  `po_date` datetime DEFAULT NULL,
   `supplier_code` varchar(20) DEFAULT NULL,
   `deliver_to` varchar(100) DEFAULT NULL,
   `delivery_address` text,
@@ -719,12 +719,12 @@ CREATE TABLE `tbl_ro_master` (
   `status` int(1) DEFAULT '0',
   `created_date` datetime DEFAULT NULL,
   `created_by` varchar(20) DEFAULT NULL,
-  PRIMARY KEY (`ro_reference_no`)
+  PRIMARY KEY (`po_reference_no`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
-/*Data for the table `tbl_ro_master` */
+/*Data for the table `tbl_po_mst` */
 
-insert  into `tbl_ro_master`(`ro_reference_no`,`ro_date`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`created_date`,`created_by`) values ('RO00000004','2016-04-26 18:28:06','SUP00000002','asdf','asdf','PT00000002','10.00','69.00','7.08','66.08','asdf',0,'2016-04-26 18:28:06',NULL),('RO00000003','2016-04-26 18:27:01','SUP00000002','as','asdf','PT00000003','10.00','69.00','7.08','66.08','asdf',0,'2016-04-26 18:27:01',NULL),('RO00000005','2016-04-26 18:29:59','SUP00000002','asd','asd','PT00000002','12.00','69.00','6.84','63.84','asd',0,'2016-04-26 18:29:59',NULL);
+insert  into `tbl_po_mst`(`po_reference_no`,`po_date`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`created_date`,`created_by`) values ('PO00000001','2016-04-27 08:34:57','SUP00000002','a','a','PT00000002','25.00','426.00','48.12','449.12','a',0,'2016-04-27 08:34:57',NULL);
 
 /*Table structure for table `tbl_service_detail` */
 
@@ -1702,6 +1702,27 @@ DROP TABLE IF EXISTS `v_po_detail_parts`;
  `qty` int(12) 
 )*/;
 
+/*Table structure for table `v_po_dtl` */
+
+DROP TABLE IF EXISTS `v_po_dtl`;
+
+/*!50001 DROP VIEW IF EXISTS `v_po_dtl` */;
+/*!50001 DROP TABLE IF EXISTS `v_po_dtl` */;
+
+/*!50001 CREATE TABLE  `v_po_dtl`(
+ `id` int(11) ,
+ `po_reference_no` varchar(20) ,
+ `item_code` varchar(20) ,
+ `SAP_item_code` varchar(20) ,
+ `item_description` varchar(100) ,
+ `item_type` varchar(20) ,
+ `UOM` varchar(20) ,
+ `price` decimal(10,2) ,
+ `quantity` int(11) ,
+ `total` decimal(20,2) ,
+ `seqno` int(11) 
+)*/;
+
 /*Table structure for table `v_po_master` */
 
 DROP TABLE IF EXISTS `v_po_master`;
@@ -1724,6 +1745,32 @@ DROP TABLE IF EXISTS `v_po_master`;
  `remarks` longtext ,
  `created_by` varchar(20) ,
  `trans_status` enum('0','1') 
+)*/;
+
+/*Table structure for table `v_po_mst` */
+
+DROP TABLE IF EXISTS `v_po_mst`;
+
+/*!50001 DROP VIEW IF EXISTS `v_po_mst` */;
+/*!50001 DROP TABLE IF EXISTS `v_po_mst` */;
+
+/*!50001 CREATE TABLE  `v_po_mst`(
+ `po_reference_no` varchar(20) ,
+ `po_date` datetime ,
+ `supplier_code` varchar(20) ,
+ `supplier_name` varchar(200) ,
+ `deliver_to` varchar(100) ,
+ `delivery_address` text ,
+ `payment_code` varchar(20) ,
+ `payment_term` varchar(100) ,
+ `discount` decimal(10,2) ,
+ `sub_total` decimal(10,2) ,
+ `vat` decimal(10,2) ,
+ `total_amount` decimal(10,2) ,
+ `special_instruction` text ,
+ `status` int(1) ,
+ `created_date` datetime ,
+ `created_by` varchar(20) 
 )*/;
 
 /*Table structure for table `v_sales` */
@@ -2781,12 +2828,26 @@ DROP TABLE IF EXISTS `v_year`;
 
 /*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_detail_parts` AS (select `tbl_po_detail`.`po_refno` AS `po_refno`,`tbl_po_detail`.`type` AS `type`,`tbl_po_detail`.`description` AS `description`,`tbl_po_detail`.`amount` AS `amount`,`tbl_po_detail`.`qty` AS `qty` from `tbl_po_detail` where (`tbl_po_detail`.`type` = _latin1'parts')) */;
 
+/*View structure for view v_po_dtl */
+
+/*!50001 DROP TABLE IF EXISTS `v_po_dtl` */;
+/*!50001 DROP VIEW IF EXISTS `v_po_dtl` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_dtl` AS (select `tbl_po_dtl`.`id` AS `id`,`tbl_po_dtl`.`po_reference_no` AS `po_reference_no`,`tbl_po_dtl`.`item_code` AS `item_code`,`tbl_items`.`SAP_item_code` AS `SAP_item_code`,`tbl_items`.`item_description` AS `item_description`,`tbl_items`.`item_type` AS `item_type`,`tbl_items`.`UOM` AS `UOM`,`tbl_po_dtl`.`price` AS `price`,`tbl_po_dtl`.`quantity` AS `quantity`,(`tbl_po_dtl`.`price` * `tbl_po_dtl`.`quantity`) AS `total`,`tbl_po_dtl`.`seqno` AS `seqno` from (`tbl_po_dtl` join `tbl_items` on((`tbl_items`.`item_code` = `tbl_po_dtl`.`item_code`)))) */;
+
 /*View structure for view v_po_master */
 
 /*!50001 DROP TABLE IF EXISTS `v_po_master` */;
 /*!50001 DROP VIEW IF EXISTS `v_po_master` */;
 
 /*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_master` AS (select `tbl_po_master`.`estimate_refno` AS `estimate_refno`,`tbl_po_master`.`wo_refno` AS `wo_refno`,`tbl_po_master`.`po_refno` AS `po_refno`,`tbl_po_master`.`transaction_date` AS `transaction_date`,`tbl_po_master`.`payment_id` AS `payment_id`,(select `tbl_payment`.`payment` AS `payment` from `tbl_payment` where (convert(`tbl_payment`.`payment_id` using latin1) = `tbl_po_master`.`payment_id`)) AS `payment_mode`,`tbl_po_master`.`subtotal_amount` AS `subtotal_amount`,`tbl_po_master`.`discount` AS `discount`,`tbl_po_master`.`discounted_price` AS `discounted_price`,`tbl_po_master`.`vat` AS `vat`,`tbl_po_master`.`total_amount` AS `total_amount`,`tbl_po_master`.`remarks` AS `remarks`,`tbl_po_master`.`created_by` AS `created_by`,`tbl_po_master`.`trans_status` AS `trans_status` from `tbl_po_master` where (`tbl_po_master`.`trans_status` = _latin1'1')) */;
+
+/*View structure for view v_po_mst */
+
+/*!50001 DROP TABLE IF EXISTS `v_po_mst` */;
+/*!50001 DROP VIEW IF EXISTS `v_po_mst` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_mst` AS (select `tbl_po_mst`.`po_reference_no` AS `po_reference_no`,`tbl_po_mst`.`po_date` AS `po_date`,`tbl_po_mst`.`supplier_code` AS `supplier_code`,`tbl_suppliers`.`supplier_name` AS `supplier_name`,`tbl_po_mst`.`deliver_to` AS `deliver_to`,`tbl_po_mst`.`delivery_address` AS `delivery_address`,`tbl_po_mst`.`payment_code` AS `payment_code`,`tbl_payment_term`.`description` AS `payment_term`,`tbl_po_mst`.`discount` AS `discount`,`tbl_po_mst`.`sub_total` AS `sub_total`,`tbl_po_mst`.`vat` AS `vat`,`tbl_po_mst`.`total_amount` AS `total_amount`,`tbl_po_mst`.`special_instruction` AS `special_instruction`,`tbl_po_mst`.`status` AS `status`,`tbl_po_mst`.`created_date` AS `created_date`,`tbl_po_mst`.`created_by` AS `created_by` from ((`tbl_po_mst` join `tbl_suppliers` on((`tbl_suppliers`.`supplier_code` = `tbl_po_mst`.`supplier_code`))) join `tbl_payment_term` on((`tbl_payment_term`.`payment_term_code` = `tbl_po_mst`.`payment_code`)))) */;
 
 /*View structure for view v_sales */
 
