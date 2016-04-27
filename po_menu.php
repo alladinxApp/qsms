@@ -1,6 +1,6 @@
 <div class="menu_img">
 	<div style="text-align: center;"><a href="po_add.php"><img src="images/purchaseprep.png" alt="Purchase Order"></a></div>
-	<div style="text-align: center;"><a href="receiving.php"><img src="images/recrep.png" alt="Receiving Report"></a></div>
+	<div style="text-align: center;"><a href="rr_list.php"><img src="images/recrep.png" alt="Receiving Report"></a></div>
     <div style="text-align: center;"><a href="rr_posting.php"><img src="images/roposting.png" alt="RR Posting"></a></div>
     <div style="text-align: center;"><a href="payment.php"><img src="images/ropayment.png" alt="Payment"></a></div>
 </div>

@@ -6,25 +6,37 @@
 	$dateto = Date("m-d-Y");
 
 	if(isset($_POST['search']) && !empty($_POST['search']) && $_POST['search'] == 1){
-		$datefrom = Date("Y-m-d 00:00"); //$_POST['txtdatefrom'];
-		$dateto = Date("Y-m-d 23:59"); //$_POST['txtdateto'];
-		$status = $_POST['txtstatus'];
 		
-		if(!empty($_POST['txtdatefrom'])){
-			$datefrom = $_POST['txtdatefrom'] . " 00:00";
+		$status = $_POST['txtstatus'];
+		$porefno = $_POST['txtporefno'];
+		$cnt = 0;
+
+		$where = "WHERE 1 ";
+
+		if($status != ""){
+			$where .= " AND status = '$status' ";
+			$cnt++;
 		}
 
-		if(!empty($_POST['txtdateto'])){
-			$dateto = $_POST['txtdateto'] . " 23:59";
+		if(!empty($porefno)){
+			$where .= " AND po_reference_no = '$porefno'";
+			$cnt++;
 		}
 
-		if(!empty($status)){
-			$where = "WHERE (trans_status = '$status') ";
-		}else{
-			$where = "WHERE 1 ";
-		}
+		if(!empty($_POST['txtdatefrom']) || !empty($_POST['txtdateto']) || $cnt == 0){
+			$datefrom = Date("Y-m-d 00:00");
+			$dateto = Date("Y-m-d 23:59");
+		
+			if(!empty($_POST['txtdatefrom'])){
+				$datefrom = $_POST['txtdatefrom'] . " 00:00";
+			}
 
-		$where .= " AND (po_date between '$datefrom' AND '$dateto') ";
+			if(!empty($_POST['txtdateto'])){
+				$dateto = $_POST['txtdateto'] . " 23:59";
+			}
+
+			$where .= " AND (po_date between '$datefrom' AND '$dateto') ";
+		}		
 		
 		$qrypomst = "SELECT * FROM v_po_mst " . $where;
 		$respomst = $dbo->query($qrypomst);
@@ -74,14 +86,11 @@
 			<th width="20">#</th>
 			<th width="100">PO Ref No</th>
 			<th width="100">PO Date</th>
+			<th width="100">Total Amount</th>
+			<th width="100">Status</th>
 			<th width="200">Supplier</th>
 			<th width="200">Deliver To</th>
 			<th width="200">Delivery Address</th>
-			<th width="100">Discount</th>
-			<th width="100">Sub-Total</th>
-			<th width="100">Vat</th>
-			<th width="100">Total Amount</th>
-			<th width="100">Status</th>
 		</tr>
 		<?
 			$cnt = 1; 
@@ -103,8 +112,13 @@
 		<tr>
 			<td align="center" style="<?=$bg . $color;?>"><a href="po_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
 			<td align="center" style="<?=$bg . $color;?>"><?=$cnt;?></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=$rowpomst['po_reference_no'];?></td>
+			<td style="<?=$bg . $color;?>"><?=$rowpomst['po_reference_no'];?></td>
+			<td align="center" style="<?=$bg . $color;?>"><?=dateFormat($rowpomst['po_date'],"F d, Y");?></td>
+			<td align="right" style="<?=$bg . $color;?>"><?=number_format($rowpomst['total_amount'],2);?></td>
 			<td align="center" style="<?=$bg . $color;?>"><?=$rowpomst['status_desc'];?></td>
+			<td style="<?=$bg . $color;?>"><?=$rowpomst['supplier_name'];?></td>
+			<td style="<?=$bg . $color;?>"><?=$rowpomst['deliver_to'];?></td>
+			<td style="<?=$bg . $color;?>"><?=$rowpomst['delivery_address'];?></td>
 		</tr>
 		<? $cnt++; } ?>
 	</table>
@@ -121,6 +135,11 @@
 			<td width="125"><input type="text" id="txtdatefrom" name="txtdatefrom" value="" readonly class="date-pick" style="width: 100"></td>
 			<td align="center" width="20">to</td>
 			<td width="125"><input type="text" id="txtdateto" name="txtdateto" readonly class="date-pick" style="width: 100"></td>
+		</tr>
+		<tr>
+			<td >PO Ref No</td>
+			<td align="center">:</td>
+			<td colspan="3"><input type="text" id="txtporefno" name="txtporefno" style="width: 230"></td>
 		</tr>
 		<tr>
 			<td >Status</td>
