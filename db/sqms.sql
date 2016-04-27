@@ -670,11 +670,11 @@ CREATE TABLE `tbl_po_dtl` (
   `quantity` int(11) DEFAULT NULL,
   `seqno` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=4 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=44 DEFAULT CHARSET=latin1;
 
 /*Data for the table `tbl_po_dtl` */
 
-insert  into `tbl_po_dtl`(`id`,`po_reference_no`,`item_code`,`price`,`quantity`,`seqno`) values (1,'PO00000001','ITM00000002','12.00',3,1),(2,'PO00000001','ITM00000003','15.00',2,2),(3,'PO00000001','ITM00000004','120.00',3,3);
+insert  into `tbl_po_dtl`(`id`,`po_reference_no`,`item_code`,`price`,`quantity`,`seqno`) values (43,'PO00000001','ITM00000004','120.00',1,3),(42,'PO00000001','ITM00000002','12.00',4,2),(41,'PO00000001','ITM00000003','15.00',2,1);
 
 /*Table structure for table `tbl_po_master` */
 
@@ -717,14 +717,18 @@ CREATE TABLE `tbl_po_mst` (
   `total_amount` decimal(10,2) DEFAULT NULL,
   `special_instruction` text,
   `status` int(1) DEFAULT '0',
+  `approved_date` datetime DEFAULT NULL,
+  `approved_by` varchar(20) DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
   `created_by` varchar(20) DEFAULT NULL,
+  `modified_date` datetime DEFAULT NULL,
+  `modified_by` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`po_reference_no`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 /*Data for the table `tbl_po_mst` */
 
-insert  into `tbl_po_mst`(`po_reference_no`,`po_date`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`created_date`,`created_by`) values ('PO00000001','2016-04-27 08:34:57','SUP00000002','a','a','PT00000002','25.00','426.00','48.12','449.12','a',0,'2016-04-27 08:34:57',NULL);
+insert  into `tbl_po_mst`(`po_reference_no`,`po_date`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`approved_date`,`approved_by`,`created_date`,`created_by`,`modified_date`,`modified_by`) values ('PO00000001','2016-04-27 08:34:57','SUP00000002','a1','a1','PT00000002','20.00','198.00','23.76','199.36','a1',1,'2016-04-27 11:38:36','alladinx','2016-04-27 08:34:57',NULL,'2016-04-27 11:37:34','alladinx');
 
 /*Table structure for table `tbl_service_detail` */
 
@@ -1717,6 +1721,7 @@ DROP TABLE IF EXISTS `v_po_dtl`;
  `item_description` varchar(100) ,
  `item_type` varchar(20) ,
  `UOM` varchar(20) ,
+ `UOM_desc` varchar(100) ,
  `price` decimal(10,2) ,
  `quantity` int(11) ,
  `total` decimal(20,2) ,
@@ -1769,6 +1774,7 @@ DROP TABLE IF EXISTS `v_po_mst`;
  `total_amount` decimal(10,2) ,
  `special_instruction` text ,
  `status` int(1) ,
+ `status_desc` varchar(11) ,
  `created_date` datetime ,
  `created_by` varchar(20) 
 )*/;
@@ -2833,7 +2839,7 @@ DROP TABLE IF EXISTS `v_year`;
 /*!50001 DROP TABLE IF EXISTS `v_po_dtl` */;
 /*!50001 DROP VIEW IF EXISTS `v_po_dtl` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_dtl` AS (select `tbl_po_dtl`.`id` AS `id`,`tbl_po_dtl`.`po_reference_no` AS `po_reference_no`,`tbl_po_dtl`.`item_code` AS `item_code`,`tbl_items`.`SAP_item_code` AS `SAP_item_code`,`tbl_items`.`item_description` AS `item_description`,`tbl_items`.`item_type` AS `item_type`,`tbl_items`.`UOM` AS `UOM`,`tbl_po_dtl`.`price` AS `price`,`tbl_po_dtl`.`quantity` AS `quantity`,(`tbl_po_dtl`.`price` * `tbl_po_dtl`.`quantity`) AS `total`,`tbl_po_dtl`.`seqno` AS `seqno` from (`tbl_po_dtl` join `tbl_items` on((`tbl_items`.`item_code` = `tbl_po_dtl`.`item_code`)))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_dtl` AS (select `tbl_po_dtl`.`id` AS `id`,`tbl_po_dtl`.`po_reference_no` AS `po_reference_no`,`tbl_po_dtl`.`item_code` AS `item_code`,`tbl_items`.`SAP_item_code` AS `SAP_item_code`,`tbl_items`.`item_description` AS `item_description`,`tbl_items`.`item_type` AS `item_type`,`tbl_items`.`UOM` AS `UOM`,`tbl_uom`.`description` AS `UOM_desc`,`tbl_po_dtl`.`price` AS `price`,`tbl_po_dtl`.`quantity` AS `quantity`,(`tbl_po_dtl`.`price` * `tbl_po_dtl`.`quantity`) AS `total`,`tbl_po_dtl`.`seqno` AS `seqno` from ((`tbl_po_dtl` join `tbl_items` on((`tbl_items`.`item_code` = `tbl_po_dtl`.`item_code`))) join `tbl_uom` on((`tbl_uom`.`uom_code` = `tbl_items`.`UOM`)))) */;
 
 /*View structure for view v_po_master */
 
@@ -2847,7 +2853,7 @@ DROP TABLE IF EXISTS `v_year`;
 /*!50001 DROP TABLE IF EXISTS `v_po_mst` */;
 /*!50001 DROP VIEW IF EXISTS `v_po_mst` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_mst` AS (select `tbl_po_mst`.`po_reference_no` AS `po_reference_no`,`tbl_po_mst`.`po_date` AS `po_date`,`tbl_po_mst`.`supplier_code` AS `supplier_code`,`tbl_suppliers`.`supplier_name` AS `supplier_name`,`tbl_po_mst`.`deliver_to` AS `deliver_to`,`tbl_po_mst`.`delivery_address` AS `delivery_address`,`tbl_po_mst`.`payment_code` AS `payment_code`,`tbl_payment_term`.`description` AS `payment_term`,`tbl_po_mst`.`discount` AS `discount`,`tbl_po_mst`.`sub_total` AS `sub_total`,`tbl_po_mst`.`vat` AS `vat`,`tbl_po_mst`.`total_amount` AS `total_amount`,`tbl_po_mst`.`special_instruction` AS `special_instruction`,`tbl_po_mst`.`status` AS `status`,`tbl_po_mst`.`created_date` AS `created_date`,`tbl_po_mst`.`created_by` AS `created_by` from ((`tbl_po_mst` join `tbl_suppliers` on((`tbl_suppliers`.`supplier_code` = `tbl_po_mst`.`supplier_code`))) join `tbl_payment_term` on((`tbl_payment_term`.`payment_term_code` = `tbl_po_mst`.`payment_code`)))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_mst` AS (select `tbl_po_mst`.`po_reference_no` AS `po_reference_no`,`tbl_po_mst`.`po_date` AS `po_date`,`tbl_po_mst`.`supplier_code` AS `supplier_code`,`tbl_suppliers`.`supplier_name` AS `supplier_name`,`tbl_po_mst`.`deliver_to` AS `deliver_to`,`tbl_po_mst`.`delivery_address` AS `delivery_address`,`tbl_po_mst`.`payment_code` AS `payment_code`,`tbl_payment_term`.`description` AS `payment_term`,`tbl_po_mst`.`discount` AS `discount`,`tbl_po_mst`.`sub_total` AS `sub_total`,`tbl_po_mst`.`vat` AS `vat`,`tbl_po_mst`.`total_amount` AS `total_amount`,`tbl_po_mst`.`special_instruction` AS `special_instruction`,`tbl_po_mst`.`status` AS `status`,(case when (`tbl_po_mst`.`status` = 0) then 'PENDING' when (`tbl_po_mst`.`status` = 1) then 'APPROVED' when (`tbl_po_mst`.`status` = 2) then 'DISAPPROVED' end) AS `status_desc`,`tbl_po_mst`.`created_date` AS `created_date`,`tbl_po_mst`.`created_by` AS `created_by` from ((`tbl_po_mst` join `tbl_suppliers` on((`tbl_suppliers`.`supplier_code` = `tbl_po_mst`.`supplier_code`))) join `tbl_payment_term` on((`tbl_payment_term`.`payment_term_code` = `tbl_po_mst`.`payment_code`)))) */;
 
 /*View structure for view v_sales */
 
