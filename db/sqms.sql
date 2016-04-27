@@ -130,7 +130,7 @@ CREATE TABLE `tbl_controlno` (
 
 /*Data for the table `tbl_controlno` */
 
-insert  into `tbl_controlno`(`id`,`control_type`,`digit`,`lastseqno`,`control_code`) values (1,'CUSTOMER',8,95,'CUST'),(2,'VEHICLE',8,118,'VEH'),(3,'COLOR',8,38,'COL'),(4,'EMPLOYEE',8,9,'EMP'),(11,'JOB',8,151,'JOB'),(5,'MAKE',8,52,'MAK'),(6,'MODEL',8,272,'MDL'),(7,'YEAR',8,26,'YR'),(8,'PARTS',8,451,'PAR'),(9,'MATERIAL',8,60,'MAT'),(10,'ACCESSORY',8,68,'ACC'),(12,'WOCATEGORY',8,38,'WOC'),(13,'IDLE',8,6,'IDL'),(14,'PAYMENT',8,4,'PAY'),(15,'ESTIMATEREFNO',8,192,'ER'),(16,'WORKORDER',8,166,'WO'),(17,'PURCHASEORDER',8,0,'PO'),(18,'BILLING',8,131,''),(19,'ONLINE_ESTIMATE',8,1,'OE'),(20,'PACKAGE',8,18,'PAC'),(21,'SUPPLIER',8,3,'SUP'),(22,'UOM',8,4,'UOM'),(23,'PAYMENT_TERM',8,4,'PT'),(24,'ITEM_TYPE',8,5,'IT'),(25,'ITEMS',8,4,'ITM'),(26,'PURCHASE_ORDER',8,2,'PO'),(27,'RECEIVING_REPORT',8,1,'RR'),(28,'RR_POSTING',8,0,'RP'),(29,'CV_REFERENCE',8,0,'CV');
+insert  into `tbl_controlno`(`id`,`control_type`,`digit`,`lastseqno`,`control_code`) values (1,'CUSTOMER',8,95,'CUST'),(2,'VEHICLE',8,118,'VEH'),(3,'COLOR',8,38,'COL'),(4,'EMPLOYEE',8,9,'EMP'),(11,'JOB',8,151,'JOB'),(5,'MAKE',8,52,'MAK'),(6,'MODEL',8,272,'MDL'),(7,'YEAR',8,26,'YR'),(8,'PARTS',8,451,'PAR'),(9,'MATERIAL',8,60,'MAT'),(10,'ACCESSORY',8,68,'ACC'),(12,'WOCATEGORY',8,38,'WOC'),(13,'IDLE',8,6,'IDL'),(14,'PAYMENT',8,4,'PAY'),(15,'ESTIMATEREFNO',8,192,'ER'),(16,'WORKORDER',8,166,'WO'),(17,'PURCHASEORDER',8,0,'PO'),(18,'BILLING',8,131,''),(19,'ONLINE_ESTIMATE',8,1,'OE'),(20,'PACKAGE',8,18,'PAC'),(21,'SUPPLIER',8,3,'SUP'),(22,'UOM',8,4,'UOM'),(23,'PAYMENT_TERM',8,4,'PT'),(24,'ITEM_TYPE',8,5,'IT'),(25,'ITEMS',8,4,'ITM'),(26,'PURCHASE_ORDER',8,2,'PO'),(27,'RECEIVING_REPORT',8,1,'RR'),(28,'RR_POSTING',8,2,'PR'),(29,'CV_REFERENCE',8,2,'CV');
 
 /*Table structure for table `tbl_customer` */
 
@@ -713,6 +713,7 @@ CREATE TABLE `tbl_po_mst` (
   `rr_post_reference_no` varchar(20) DEFAULT NULL,
   `rr_post_date` datetime DEFAULT NULL,
   `cv_reference_no` varchar(20) DEFAULT NULL,
+  `payment_date` datetime DEFAULT NULL,
   `difference` int(11) DEFAULT NULL,
   `supplier_code` varchar(20) DEFAULT NULL,
   `deliver_to` varchar(100) DEFAULT NULL,
@@ -726,6 +727,11 @@ CREATE TABLE `tbl_po_mst` (
   `status` int(2) DEFAULT '0',
   `approved_date` datetime DEFAULT NULL,
   `approved_by` varchar(20) DEFAULT NULL,
+  `received_date` datetime DEFAULT NULL,
+  `received_by` varchar(20) DEFAULT NULL,
+  `posted_date` datetime DEFAULT NULL,
+  `posted_by` varchar(20) DEFAULT NULL,
+  `closed_by` varchar(20) DEFAULT NULL,
   `created_date` datetime DEFAULT NULL,
   `created_by` varchar(20) DEFAULT NULL,
   `modified_date` datetime DEFAULT NULL,
@@ -735,7 +741,7 @@ CREATE TABLE `tbl_po_mst` (
 
 /*Data for the table `tbl_po_mst` */
 
-insert  into `tbl_po_mst`(`po_reference_no`,`po_date`,`rr_reference_no`,`rr_date`,`rr_quantity`,`rr_post_reference_no`,`rr_post_date`,`cv_reference_no`,`difference`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`approved_date`,`approved_by`,`created_date`,`created_by`,`modified_date`,`modified_by`) values ('PO00000002','2016-04-27 15:07:46','RR00000001','2016-04-27 15:08:12',5,NULL,NULL,NULL,0,'SUP00000002','ASDF','ASDF','PT00000002','5.00','69.00','8.28','71.68','ASDF',10,'2016-04-27 15:07:56','alladinx','2016-04-27 15:07:46','alladinx',NULL,NULL);
+insert  into `tbl_po_mst`(`po_reference_no`,`po_date`,`rr_reference_no`,`rr_date`,`rr_quantity`,`rr_post_reference_no`,`rr_post_date`,`cv_reference_no`,`payment_date`,`difference`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`approved_date`,`approved_by`,`received_date`,`received_by`,`posted_date`,`posted_by`,`closed_by`,`created_date`,`created_by`,`modified_date`,`modified_by`) values ('PO00000002','2016-04-27 15:07:46','RR00000001','2016-04-27 15:08:12',5,'PR00000002','2016-04-27 18:45:35','CV00000002','2016-04-27 19:13:24',0,'SUP00000002','ASDF','ASDF','PT00000002','5.00','69.00','8.28','71.68','ASDF',1,'2016-04-27 15:07:56','alladinx',NULL,NULL,'2016-04-27 18:45:35','alladinx','alladinx','2016-04-27 15:07:46','alladinx',NULL,NULL);
 
 /*Table structure for table `tbl_service_detail` */
 
@@ -1774,6 +1780,7 @@ DROP TABLE IF EXISTS `v_po_mst`;
  `rr_post_reference_no` varchar(20) ,
  `rr_post_date` datetime ,
  `cv_reference_no` varchar(20) ,
+ `payment_date` datetime ,
  `supplier_code` varchar(20) ,
  `supplier_name` varchar(200) ,
  `deliver_to` varchar(100) ,
@@ -1790,6 +1797,11 @@ DROP TABLE IF EXISTS `v_po_mst`;
  `special_instruction` text ,
  `approved_by` varchar(20) ,
  `approved_date` datetime ,
+ `received_by` varchar(20) ,
+ `received_date` datetime ,
+ `posted_by` varchar(20) ,
+ `posted_date` datetime ,
+ `closed_by` varchar(20) ,
  `status` int(2) ,
  `status_desc` varchar(11) ,
  `created_date` datetime ,
@@ -2870,7 +2882,7 @@ DROP TABLE IF EXISTS `v_year`;
 /*!50001 DROP TABLE IF EXISTS `v_po_mst` */;
 /*!50001 DROP VIEW IF EXISTS `v_po_mst` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_mst` AS (select `tbl_po_mst`.`po_reference_no` AS `po_reference_no`,`tbl_po_mst`.`po_date` AS `po_date`,`tbl_po_mst`.`rr_reference_no` AS `rr_reference_no`,`tbl_po_mst`.`rr_date` AS `rr_date`,`tbl_po_mst`.`rr_post_reference_no` AS `rr_post_reference_no`,`tbl_po_mst`.`rr_post_date` AS `rr_post_date`,`tbl_po_mst`.`cv_reference_no` AS `cv_reference_no`,`tbl_po_mst`.`supplier_code` AS `supplier_code`,`tbl_suppliers`.`supplier_name` AS `supplier_name`,`tbl_po_mst`.`deliver_to` AS `deliver_to`,`tbl_po_mst`.`delivery_address` AS `delivery_address`,`tbl_po_mst`.`payment_code` AS `payment_code`,`tbl_payment_term`.`description` AS `payment_term`,(select sum(`tbl_po_dtl`.`quantity`) AS `SUM(tbl_po_dtl.quantity)` from `tbl_po_dtl` where (`tbl_po_dtl`.`po_reference_no` = `tbl_po_mst`.`po_reference_no`)) AS `po_quantity`,`tbl_po_mst`.`rr_quantity` AS `rr_quantity`,`tbl_po_mst`.`difference` AS `difference`,`tbl_po_mst`.`discount` AS `discount`,`tbl_po_mst`.`sub_total` AS `sub_total`,`tbl_po_mst`.`vat` AS `vat`,`tbl_po_mst`.`total_amount` AS `total_amount`,`tbl_po_mst`.`special_instruction` AS `special_instruction`,`tbl_po_mst`.`approved_by` AS `approved_by`,`tbl_po_mst`.`approved_date` AS `approved_date`,`tbl_po_mst`.`status` AS `status`,(case when (`tbl_po_mst`.`status` = 0) then 'PENDING' when (`tbl_po_mst`.`status` = 1) then 'APPROVED' when (`tbl_po_mst`.`status` = 2) then 'DISAPPROVED' when (`tbl_po_mst`.`status` = 10) then 'RECEIVED' when (`tbl_po_mst`.`status` = 11) then 'POSTED' when (`tbl_po_mst`.`status` = 100) then 'CLOSED' end) AS `status_desc`,`tbl_po_mst`.`created_date` AS `created_date`,`tbl_po_mst`.`created_by` AS `created_by` from ((`tbl_po_mst` join `tbl_suppliers` on((`tbl_suppliers`.`supplier_code` = `tbl_po_mst`.`supplier_code`))) join `tbl_payment_term` on((`tbl_payment_term`.`payment_term_code` = `tbl_po_mst`.`payment_code`)))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_mst` AS (select `tbl_po_mst`.`po_reference_no` AS `po_reference_no`,`tbl_po_mst`.`po_date` AS `po_date`,`tbl_po_mst`.`rr_reference_no` AS `rr_reference_no`,`tbl_po_mst`.`rr_date` AS `rr_date`,`tbl_po_mst`.`rr_post_reference_no` AS `rr_post_reference_no`,`tbl_po_mst`.`rr_post_date` AS `rr_post_date`,`tbl_po_mst`.`cv_reference_no` AS `cv_reference_no`,`tbl_po_mst`.`payment_date` AS `payment_date`,`tbl_po_mst`.`supplier_code` AS `supplier_code`,`tbl_suppliers`.`supplier_name` AS `supplier_name`,`tbl_po_mst`.`deliver_to` AS `deliver_to`,`tbl_po_mst`.`delivery_address` AS `delivery_address`,`tbl_po_mst`.`payment_code` AS `payment_code`,`tbl_payment_term`.`description` AS `payment_term`,(select sum(`tbl_po_dtl`.`quantity`) AS `SUM(tbl_po_dtl.quantity)` from `tbl_po_dtl` where (`tbl_po_dtl`.`po_reference_no` = `tbl_po_mst`.`po_reference_no`)) AS `po_quantity`,`tbl_po_mst`.`rr_quantity` AS `rr_quantity`,`tbl_po_mst`.`difference` AS `difference`,`tbl_po_mst`.`discount` AS `discount`,`tbl_po_mst`.`sub_total` AS `sub_total`,`tbl_po_mst`.`vat` AS `vat`,`tbl_po_mst`.`total_amount` AS `total_amount`,`tbl_po_mst`.`special_instruction` AS `special_instruction`,`tbl_po_mst`.`approved_by` AS `approved_by`,`tbl_po_mst`.`approved_date` AS `approved_date`,`tbl_po_mst`.`received_by` AS `received_by`,`tbl_po_mst`.`received_date` AS `received_date`,`tbl_po_mst`.`posted_by` AS `posted_by`,`tbl_po_mst`.`posted_date` AS `posted_date`,`tbl_po_mst`.`closed_by` AS `closed_by`,`tbl_po_mst`.`status` AS `status`,(case when (`tbl_po_mst`.`status` = 0) then 'PENDING' when (`tbl_po_mst`.`status` = 1) then 'APPROVED' when (`tbl_po_mst`.`status` = 2) then 'DISAPPROVED' when (`tbl_po_mst`.`status` = 10) then 'RECEIVED' when (`tbl_po_mst`.`status` = 11) then 'POSTED' when (`tbl_po_mst`.`status` = 100) then 'CLOSED' end) AS `status_desc`,`tbl_po_mst`.`created_date` AS `created_date`,`tbl_po_mst`.`created_by` AS `created_by` from ((`tbl_po_mst` join `tbl_suppliers` on((`tbl_suppliers`.`supplier_code` = `tbl_po_mst`.`supplier_code`))) join `tbl_payment_term` on((`tbl_payment_term`.`payment_term_code` = `tbl_po_mst`.`payment_code`)))) */;
 
 /*View structure for view v_sales */
 
