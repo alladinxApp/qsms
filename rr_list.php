@@ -10,7 +10,7 @@
 		$rrrefno = $_POST['txtrrrefno'];
 		$cnt = 0;
 
-		$where = "WHERE 1 ";
+		$where = "WHERE status = '1' ";
 
 		if(!empty($porefno)){
 			$where .= " AND po_reference_no = '$porefno'";
@@ -96,6 +96,12 @@
 		<?
 			$cnt = 1; 
 			foreach($respomst as $rowpomst){
+				switch($rowpomst['status']){
+					case 10:
+						$color = "color: #00ff00;"; break;
+					default:
+						$color = "color: #000;"; break;
+				}
 				if($cnt%2){
 					$bg = "background: none;";
 				}else{
@@ -109,17 +115,17 @@
 				}
 		?>
 		<tr>
-			<td align="center" style="<?=$bg . $color;?>"><a href="rr_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=$cnt;?></td>
-			<td style="<?=$bg . $color;?>"><?=$rowpomst['po_reference_no'];?></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=dateFormat($rowpomst['approved_date'],"M d, Y");?></td>
-			<td style="<?=$bg . $color;?>"><?=$rowpomst['rr_reference_no'];?></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=dateFormat($rowpomst['rr_date'],"M d, Y");?></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=$rowpomst['po_quantity'];?></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=$rowpomst['rr_quantity'];?> <?=$diff;?></td>
-			<td align="right" style="<?=$bg . $color;?>"><?=number_format($rowpomst['total_amount'],2);?></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=$rowpomst['status_desc'];?></td>
-			<td style="<?=$bg . $color;?>"><?=$rowpomst['supplier_name'];?></td>
+			<td align="center" style="<?=$style;?>"><a href="rr_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
+			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
+			<td style="<?=$style;?>"><?=$rowpomst['po_reference_no'];?></td>
+			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['approved_date'],"M d, Y");?></td>
+			<td style="<?=$style;?>"><?=$rowpomst['rr_reference_no'];?></td>
+			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['rr_date'],"M d, Y");?></td>
+			<td align="center" style="<?=$style;?>"><?=$rowpomst['po_quantity'];?></td>
+			<td align="center" style="<?=$style;?>"><?=$rowpomst['rr_quantity'];?> <?=$diff;?></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($rowpomst['total_amount'],2);?></td>
+			<td align="center" style="<?=$style;?>"><?=$rowpomst['status_desc'];?></td>
+			<td style="<?=$style;?>"><?=$rowpomst['supplier_name'];?></td>
 		</tr>
 		<? $cnt++; } ?>
 	</table>

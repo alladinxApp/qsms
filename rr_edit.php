@@ -75,22 +75,19 @@
 		$paymentterm = $_POST['payment_terms'];
 		$newnum = getNewNum('RECEIVING_REPORT');
 
-		switch($status){
-			case 0: $po_upd = ",modified_date = '$today',modified_by = '$_SESSION[username]'"; break;
-			default: $po_upd = ",approved_date = '$today',approved_by = '$_SESSION[username]'"; break;
-		}
-
 		$po_mst_upd = "UPDATE tbl_po_mst 
 			SET rr_quantity = '$rrquantity'
 				,difference = '$difference'
 				,rr_reference_no = '$newnum'
 				,rr_date = '$today'
+				,received_by = '$_SESSION[username]'
+				,received_date = '$today'
 				,status = '10'
 			WHERE po_reference_no = '$id'";
 
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RECEIVING_REPORT' ";
 		
-		$res = mysql_query($po_mst_upd) or die("UPDATE PO ".mysql_error());
+		$res = mysql_query($po_mst_upd) or die("UPDATE RR ".mysql_error());
 		
 		if(!$res){
 			echo '<script>alert("There has been an error on saving your RR! Please double check all the data and save.");</script>';

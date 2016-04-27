@@ -35,6 +35,7 @@
 		$totalamount = $row['total_amount'];
 		$special = $row['special_instruction'];
 		$status = $row['status'];
+		$statusdesc = $row['status_desc'];
 	}
 
 	$readonly = null;
@@ -279,7 +280,7 @@
 		{ text-align: right; }
 </style>
 <body>
-	<? if($status == 1){ ?>
+	<? if($status != 0 && $status != 2){ ?>
 	<table>
 		<tr>
 			<td valign="middle">
@@ -326,6 +327,10 @@
 			<td class ="input">
 				<textarea name="special" id="special" <?=$readonly;?> cols="36" rows="5"><?=$special;?></textarea>
 			</td>
+		</tr>
+		<tr>
+			<td class ="label"><label name="status_desc">Status:</label>
+			<td class ="input"><input readonly type="text" name="status_desc" id="status_desc" value="<?=$statusdesc;?>" style="width:272px"></td>
 		</tr>
 	</table>
 	</fieldset>
