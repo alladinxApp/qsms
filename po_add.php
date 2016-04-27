@@ -28,7 +28,7 @@
 		$item = explode("|",$_POST['arrItems']);
 		$newnum = getNewNum('PURCHASE_ORDER');
 
-		$po_mst_insert = "INSERT INTO tbl_po_mst (po_reference_no,po_date,supplier_code,deliver_to,delivery_address,payment_code,discount,sub_total,vat,total_amount,special_instruction,created_date) VALUES
+		$po_mst_insert = "INSERT INTO tbl_po_mst (po_reference_no,po_date,supplier_code,deliver_to,delivery_address,payment_code,discount,sub_total,vat,total_amount,special_instruction,created_date,created_by) VALUES
 		('".$newnum."',
 		'".$today."',
 		'".$supplier."',
@@ -40,7 +40,8 @@
 		'".$vat."',
 		'".$totalamount."',
 		'".$special."',
-		'".$today."')";
+		'".$today."',
+		'".$_SESSION['username']."')";
 		
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'PURCHASE_ORDER' ";
 		

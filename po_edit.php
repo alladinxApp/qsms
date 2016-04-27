@@ -72,6 +72,11 @@
 		$item = explode("|",$_POST['arrItems']);
 		$status = $_POST['status'];
 
+		switch($status){
+			case 0: $po_upd = ",modified_date = '$today',modified_by = '$_SESSION[username]'"; break;
+			default: $po_upd = ",approved_date = '$today',approved_by = '$_SESSION[username]'"; break;
+		}
+
 		$po_mst_upd = "UPDATE tbl_po_mst 
 			SET supplier_code = '$supplier'
 				,deliver_to = '$deliverto'
@@ -82,8 +87,7 @@
 				,vat = '$vat'
 				,total_amount = '$totalamount'
 				,special_instruction = '$special'
-				,modified_date = '$today'
-				,modified_by = '$_SESSION[username]'
+				".$po_upd."
 				,status = '$status'
 			WHERE po_reference_no = '$id'";
 		
