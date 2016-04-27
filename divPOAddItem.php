@@ -88,10 +88,10 @@
 			<td align="right"><?=number_format($total,2);?></td>
 			<td align="center"><a href="#" onClick="removeItem('<?=$val[0];?>');"><img src="images/del_ico.png" width="15" /></a></td>
 		</tr>
-		<? 
-			}
-		?>
-		<hr />
+		<? } ?>
+		<tr>
+			<td colspan="10"><hr /></td>
+		</tr>
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
@@ -120,19 +120,19 @@
 		</tr>    
 		<tr>
 			<td class ="label"><label name="discount">Discount:</label>
-			<td class ="input"><input onKeyup="return discounted();" style="text-align: right;" type="text" name="discount" id="discount" value="" onkeypress="return IsNumeric(discount);" style="width:170px"></td>
+			<td class ="input"><input onKeyup="return discounted();" type="text" name="discount" id="discount" value="" onkeypress="return IsNumeric(discount);" style="width:170px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="subtotal">Sub-Total:</label>
-			<td class ="input"><input style="text-align: right;" type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" style="width:170px"></td>
+			<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" style="width:170px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="vat">Vat:</label>
-			<td class ="input"><input style="text-align: right;" type="text" readonly name="vat" id="vat" value="<?=number_format($vat,2);?>" style="width:170px"></td>
+			<td class ="input"><input type="text" readonly name="vat" id="vat" value="<?=number_format($vat,2);?>" style="width:170px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="total_amount">Total Amount:</label>
-			<td class ="input"><input style="text-align: right;" type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamnt,2);?>" style="width:170px"></td>
+			<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamnt,2);?>" style="width:170px"></td>
 		</tr>
 	</table>
 </fieldset>

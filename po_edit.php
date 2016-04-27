@@ -6,6 +6,8 @@
 		session_start();
 	}
 	
+	$id = $_GET['id'];
+
 	$qry_supplier = "SELECT * FROM v_suppliers WHERE status = '1'";
 	$result_supplier = $dbo->query($qry_supplier);
 
@@ -15,7 +17,49 @@
 	$qry_items = "SELECT * FROM v_items WHERE status = '1'";
 	$result_items = $dbo->query($qry_items);
 
-	if (isset($_POST['save'])){
+	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$id'";
+	$result_po_mst = $dbo->query($qry_po_mst);
+
+	$qry_po_dtl = "SELECT * FROM v_po_dtl WHERE po_reference_no = '$id'";
+	$result_po_dtl = $dbo->query($qry_po_dtl);
+	$num_po_dtl = mysql_num_rows(mysql_query($qry_po_dtl));
+
+	foreach($result_po_mst as $row){
+		$suppliercode = $row['supplier_code'];
+		$deliverto = $row['deliver_to'];
+		$deliveryaddress = $row['delivery_address'];
+		$paymentterm = $row['payment_code'];
+		$discount = $row['discount'];
+		$subtotal = $row['sub_total'];
+		$vat = $row['vat'];
+		$totalamount = $row['total_amount'];
+		$special = $row['special_instruction'];
+		$status = $row['status'];
+	}
+
+	$readonly = null;
+	$disabled = null;
+	if($status > 0){
+		$readonly = 'readonly';
+		$disabled = 'disabled';
+	}
+
+	$nArrItems = null;
+	foreach($result_po_dtl as $row){
+		$itemcode = $row['item_code'];
+		$itemdesc = $row['item_description'];
+		$itemuom = $row['UOM'];
+		$itemuomdesc = $row['UOM_desc'];
+		$itemprice = $row['price'];
+		$itemqty = $row['quantity'];
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
+	}
+
+	if($num_po_dtl > 0){
+		$nArrItems = rtrim($nArrItems,"|");
+	}
+
+	if (isset($_POST['update'])){
 		$supplier = $_POST['supplier'];
 		$deliverto = $_POST['deliver_to'];
 		$deliveryaddress = $_POST['delivery_address'];
@@ -26,44 +70,53 @@
 		$vat = $_POST['vat'];
 		$totalamount = $_POST['total_amount'];
 		$item = explode("|",$_POST['arrItems']);
-		$newnum = getNewNum('PURCHASE_ORDER');
+		$status = $_POST['status'];
 
-		$po_mst_insert = "INSERT INTO tbl_po_mst (po_reference_no,po_date,supplier_code,deliver_to,delivery_address,payment_code,discount,sub_total,vat,total_amount,special_instruction,created_date) VALUES
-		('".$newnum."',
-		'".$today."',
-		'".$supplier."',
-		'".$deliverto."',
-		'".$deliveryaddress."',
-		'".$paymentterms."',
-		'".$discount."',
-		'".$subtotal."',
-		'".$vat."',
-		'".$totalamount."',
-		'".$special."',
-		'".$today."')";
+		$po_mst_upd = "UPDATE tbl_po_mst 
+			SET supplier_code = '$supplier'
+				,deliver_to = '$deliverto'
+				,delivery_address = '$deliveryaddress'
+				,payment_code = '$paymentterms'
+				,discount = '$discount'
+				,sub_total = '$subtotal'
+				,vat = '$vat'
+				,total_amount = '$totalamount'
+				,special_instruction = '$special'
+				,modified_date = '$today'
+				,modified_by = '$_SESSION[username]'
+				,status = '$status'
+			WHERE po_reference_no = '$id'";
 		
-		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'PURCHASE_ORDER' ";
-		
-		$res = mysql_query($po_mst_insert) or die("INSERT PO ".mysql_error());
+		$res = mysql_query($po_mst_upd) or die("UPDATE PO ".mysql_error());
 		
 		if(!$res){
 			echo '<script>alert("There has been an error on saving your RO! Please double check all the data and save.");</script>';
 		}else{
 			$cnt = 1;
+			mysql_query("DELETE FROM tbl_po_dtl WHERE po_reference_no = '$id'");
 			for($i=0;$i<count($item);$i++){
 				$val = explode(":",$item[$i]);
 				$qry_dtl = mysql_query("INSERT INTO tbl_po_dtl(po_reference_no,item_code,price,quantity,seqno) VALUES
-					('".$newnum."',
+					('".$id."',
 					'".$val[0]."',
 					'".$val[4]."',
 					'".$val[5]."',
 					'".$cnt."')");
 				$cnt++;
 			}
+
+			$msg = 'PO successfully ';
+			$url = 'po_list.php';
+			switch($status){
+				case "1": $msg .= 'approved.'; $url = 'po_edit.php?id='.$id; break;
+				case "2": $msg .= 'disapproved.'; break;
+				default: $msg .= 'updated'; break;
+			}
+
 			mysql_query($update_controlno);
-			echo '<script>alert("PO successfully saved.");</script>';
+			echo '<script>alert("' . $msg . '");</script>';
 		}
-		echo '<script>window.location="po_list.php";</script>';
+		echo '<script>window.location="'.$url.'";</script>';
 	}
 ?>
 <html>
@@ -222,6 +275,16 @@
 		{ text-align: right; }
 </style>
 <body>
+	<? if($status == 1){ ?>
+	<table>
+		<tr>
+			<td valign="middle">
+				<a href="po_print.php?id=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_est.png" width="67" height="47" style="pointer: cursor; width: 67px;" border="0" /></div></a>
+			</td>
+		</tr>
+	</table>
+	<? } ?>
+
 	<form method="post" name="parts_po" class="form" onSubmit="return ValidateMe();">
 	<fieldset form="form_po" name="form_po">
 	<legend>
@@ -229,33 +292,40 @@
 	<table>
 		<tr>
 			<td class ="label"><label name="po_no">PO Reference No:</label>
-			<td class ="input"><input type="text" name="po_no" value="[SYSTEM GENERATED]" readonly style="width:272px"></td>
+			<td class ="input"><input type="text" name="po_no" value="<?=$id;?>" readonly style="width:272px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="supplier">Supplier:</label>
-			<td class ="input"><select name="supplier" id="supplier">
+			<td class ="input"><select name="supplier" id="supplier" <?=$disabled;?>>
 				<option value="">-- Select Supplier --</option>
-				<? foreach($result_supplier as $row_supplier){ ?>
-					<option value="<?=$row_supplier['supplier_code'];?>"><?=$row_supplier['supplier_name'];?></option>
+				<? 
+					foreach($result_supplier as $row_supplier){
+						$selected = null;
+						if($row_supplier['supplier_code'] == $suppliercode){
+							$selected = 'selected';
+						}
+				?>
+					<option value="<?=$row_supplier['supplier_code'];?>" <?=$selected;?>><?=$row_supplier['supplier_name'];?></option>
 				<? } ?>
 			</select></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="deliver_to">Deliver To:</label>
-			<td class ="input"><input type="text" name="deliver_to" id="deliver_to" value="" style="width:272px"></td>
+			<td class ="input"><input <?=$readonly;?> type="text" name="deliver_to" id="deliver_to" value="<?=$deliverto;?>" style="width:272px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="delivery_address">Delivery Address:</label>
-			<td class ="input"><input type="text" name="delivery_address" id="delivery_address" value="" style="width:272px"></td>
+			<td class ="input"><input <?=$readonly;?> type="text" name="delivery_address" id="delivery_address" value="<?=$deliveryaddress;?>" style="width:272px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="total_amount">Special Instructions:</label>
 			<td class ="input">
-				<textarea name="special" id="special" cols="36" rows="5"></textarea>
+				<textarea name="special" id="special" <?=$readonly;?> cols="36" rows="5"><?=$special;?></textarea>
 			</td>
 		</tr>
 	</table>
 	</fieldset>
+	<? if($status == 0){ ?>
 	<div>
 	<table>
 		<tr>
@@ -271,19 +341,57 @@
 		</tr>
 	</table>
 	</div>
+	<? } ?>
 	<span id="divPODtls">
 	<fieldset form="form_dtls" name="form_dtls">
 	<legend><p id="title">Details</p></legend>
 		<div class="PODtls">
 		<table>
 			<tr>
-				<th width="100">ITEM CODE</th>
-				<th width="200">DESCRIPTION</th>
-				<th width="100">UOM</th>
-				<th width="100">PRICE</th>
-				<th width="100">QUANTITY</th>
-				<th width="100">TOTAL</th>
-			</tr>
+			<th width="100">ITEM CODE</th>
+			<th width="200">DESCRIPTION</th>
+			<th width="100">UOM</th>
+			<th width="100">PRICE</th>
+			<th width="100">QUANTITY</th>
+			<th width="100">TOTAL</th>
+			<th width="50">&nbsp;</th>
+		</tr>
+		<? 
+			$subtotal = 0;
+			$totalqty = 0;
+			$nArrItem = explode("|",$nArrItems); 
+			for($i=0;$i<count($nArrItem);$i++){ 
+				$val = explode(":",$nArrItem[$i]);
+
+				$total = ($val[4] * $val[5]);
+				$subtotal += $total;
+				$totalqty += $val[5];
+		?>
+		<tr>
+			<td><?=$val[0];?></td>
+			<td><?=$val[1];?></td>
+			<td align="center"><?=$val[3];?></td>
+			<td align="right"><?=number_format($val[4],2);?></td>
+			<td align="center"><?=$val[5];?></td>
+			<td align="right"><?=number_format($total,2);?></td>
+			<td align="center">
+				<? if($status == 0){ ?><a href="#" onClick="removeItem('<?=$val[0];?>');"><img src="images/del_ico.png" width="15" /></a><? } ?>
+			</td>
+		</tr>
+		<? } ?>
+		<tr>
+			<td colspan="10"><hr /></td>
+		</tr>
+		<tr>
+			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
+			<td align="center"><b><?=$totalqty;?></b></td>
+			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
+			<td>&nbsp;</td>
+		</tr>
+		<?
+			$vat = ($subtotal * 0.12);
+			$totalamnt = ($subtotal + $vat);
+		?>
 		</table>
 		</div>
 	</fieldset>
@@ -293,39 +401,56 @@
 		<table>
 			<tr>
 				<td class ="label"><label name="payment_terms">Payment Terms:</label>
-				<td class ="input"><select name="payment_terms" id="payment_terms">
+				<td class ="input"><select <?=$disabled;?> name="payment_terms" id="payment_terms">
 					<option value="">-- Select Payment Terms --</option>
-					<? foreach($result_payterms as $row_payterms){ ?>
-						<option value="<?=$row_payterms['payment_term_code'];?>"><?=$row_payterms['description'];?></option>
+					<? 
+						foreach($result_payterms as $row_payterms){
+							$selected = null;
+							if($row_payterms['payment_term_code'] == $paymentterm){
+								$selected = 'selected';
+							}
+					?>
+						<option value="<?=$row_payterms['payment_term_code'];?>" <?=$selected;?>><?=$row_payterms['description'];?></option>
 					<? } ?>
 				</select></td>
 			</tr>    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
-				<td class ="input"><input type="text" name="discount" id="discount" value="" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
+				<td class ="input"><input <?=$readonly;?> type="text" name="discount" id="discount" value="<?=number_format($discount,2);?>" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
-				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="vat">Vat:</label>
-				<td class ="input"><input type="text" readonly name="vat" id="vat" value="" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="vat" id="vat" value="<?=number_format($vat,2);?>" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="total_amount">Total Amount:</label>
-				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>
 			</tr>
+			<? if($status == 0){ ?>
+			<tr>
+				<td class ="label"><label name="status">Status:</label>
+				<td class ="input"><select name="status" id="status">
+					<option value="0">Pending/Update</option>
+					<option value="1">Approve</option>
+					<option value="2">Cancel/Disapprove</option>
+				</select></td>
+			</tr>
+			<? } ?>
 		</table>
 	</fieldset>
-	<input type="hidden" name="arrItems" id="arrItems" value="" />
+	<input type="hidden" name="arrItems" id="arrItems" value="<?=$nArrItems;?>" />
 	</span>
-
+	<? if($status == 0){ ?>
 	<p class="button">
-		<input type="submit" value="" name="save" />
+		<input type="submit" value="" name="update" />
 		<a href="po_add.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>
 		<br /><br />
 	</p>
+	<? } ?>
 	</form>
 	<script type="text/javascript">
 		
