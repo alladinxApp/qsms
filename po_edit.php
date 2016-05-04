@@ -66,10 +66,10 @@
 		$deliveryaddress = $_POST['delivery_address'];
 		$special = $_POST['special'];
 		$paymentterms = $_POST['payment_terms'];
-		$discount = $_POST['discount'];
-		$subtotal = $_POST['subtotal'];
-		$vat = $_POST['vat'];
-		$totalamount = $_POST['total_amount'];
+		$discount = str_replace(",","",$_POST['discount']);
+		$subtotal = str_replace(",","",$_POST['subtotal']);
+		$vat = str_replace(",","",$_POST['vat']);
+		$totalamount = str_replace(",","",$_POST['total_amount']);
 		$item = explode("|",$_POST['arrItems']);
 		$status = $_POST['status'];
 
@@ -257,8 +257,12 @@
 	function discounted(){
 		var subt = document.getElementById("subtotal").value;
 		var disc = document.getElementById("discount").value;
+		
+		if(disc == ""){
+			disc = 0;
+		}
 
-		var discounted = (parseFloat(subt) - parseFloat(disc));
+		var discounted = (parseFloat(subt.replace(/,/g, '')) - parseFloat(disc.replace(/,/g, '')));
 
 		var vat = (parseFloat(discounted) * 0.12);
 		document.getElementById("vat").value = vat.toFixed(2);
@@ -280,7 +284,7 @@
 		{ text-align: right; }
 </style>
 <body>
-	<? if($status != 0 && $status != 2){ ?>
+	<? if($status != 2){ ?>
 	<table>
 		<tr>
 			<td valign="middle">
@@ -346,7 +350,7 @@
 				<? } ?>
 			</select></td>
 			<td class ="input"><input type="text" name="qty" id="qty" value="" style="width:100px"></td>
-			<td><input type="button" value="" onClick="return addItem();" style="cursor: pointer;" /></td>
+			<td><input type="add" value="" onClick="return addItem();" style="cursor: pointer;" /></td>
 		</tr>
 	</table>
 	</div>
@@ -397,10 +401,6 @@
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>
-		<?
-			$vat = ($subtotal * 0.12);
-			$totalamnt = ($subtotal + $vat);
-		?>
 		</table>
 		</div>
 	</fieldset>

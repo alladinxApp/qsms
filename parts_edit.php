@@ -9,6 +9,9 @@
 	
 	$qryparts = "SELECT * FROM tbl_parts WHERE parts_id  = '$parts_id'";
 	$resparts = $dbo->query($qryparts);
+
+	$qry_items = "SELECT * FROM v_items WHERE status = '1' ORDER BY item_description";
+	$result_items = $dbo->query($qry_items);
 	
 	foreach($resparts as $row){
 		$parts = $row['parts'];
@@ -17,6 +20,8 @@
 		$parts_lowstock = $row['parts_lowstock'];
 		$part_onhand = $row['part_onhand'];
 		$partstatus = $row['partstatus'];
+		$item_code = $row['item_code'];
+		$parts_used = $row['parts_used'];
 	}
 	
 	if (isset($_POST['update'])){
@@ -26,6 +31,8 @@
 		$part_onhand = mysql_real_escape_string($_POST['part_onhand']);
 		$parts_lowstock = $_POST['parts_lowstock'];
 		$partstatus = $_POST['partstatus'];
+		$item_code = $row['item_code'];
+		$parts_used = $row['parts_used'];
 	  
 		$parts_update = "UPDATE tbl_parts SET 
 			parts='$parts',  
@@ -33,7 +40,11 @@
 			part_srp='$part_srp', 
 			part_onhand='$part_onhand',  
 			parts_lowstock='$parts_lowstock', 
-			partstatus='$partstatus' WHERE parts_id = '$parts_id'  ";
+			partstatus='$partstatus',
+			parts_used = '$parts_used',
+			item_code = '$item_code',
+			modified_date = '$today',
+			modified_by = '$_SESSION[username]' WHERE parts_id = '$parts_id'  ";
 						
 		$res = mysql_query($parts_update) or die("UPDATE PARTS ITEM ".mysql_error());
 		
@@ -165,7 +176,25 @@
 			<td class="label"><label name="lbl_parts_lowstock">Low Stock Quantity:</label></td>
 			<td class="input"><input type="text" name="parts_lowstock" id="parts_lowstock" value="<?=$parts_lowstock;?>" onkeypress="return isNumberKey(event);" style="width:91px"></td>
 		</tr>
-		
+		<tr>
+			<td class ="label"><label name="item_code">Item Mapper:</label>
+			<td class ="input"><select name="item_code" id="item_code">
+				<option value="">-- Select Item --</option>
+				<? 
+					foreach($result_items as $row){ 
+						$selected = null;
+						if($row['item_code'] == $item_code){
+							$selected = 'selected';
+						}
+				?>
+					<option value="<?=$row['item_code'];?>" <?=$selected;?>><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+				<? } ?>
+			</select></td>
+		</tr>
+		<tr>
+			<td class="label"><label name="parts_used">Parts Used:</label></td>
+			<td class="input"><input type="text" name="parts_used" id="parts_used" value="<?=$access_used;?>" onkeypress="return isNumberKey(event);" style="width:91px"></td>
+		</tr>
 		<tr>
 			<td class="label"><label name="lbl_partstatus">Parts Status:</label></td>
 			<td class="input">

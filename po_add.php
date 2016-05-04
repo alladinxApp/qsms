@@ -21,10 +21,10 @@
 		$deliveryaddress = $_POST['delivery_address'];
 		$special = $_POST['special'];
 		$paymentterms = $_POST['payment_terms'];
-		$discount = $_POST['discount'];
-		$subtotal = $_POST['subtotal'];
-		$vat = $_POST['vat'];
-		$totalamount = $_POST['total_amount'];
+		$discount = str_replace(",","",$_POST['discount']);
+		$subtotal = str_replace(",","",$_POST['subtotal']);
+		$vat = str_replace(",","",$_POST['vat']);
+		$totalamount = str_replace(",","",$_POST['total_amount']);
 		$item = explode("|",$_POST['arrItems']);
 		$newnum = getNewNum('PURCHASE_ORDER');
 
@@ -201,7 +201,11 @@
 		var subt = document.getElementById("subtotal").value;
 		var disc = document.getElementById("discount").value;
 
-		var discounted = (parseFloat(subt) - parseFloat(disc));
+		if(disc == ""){
+			disc = 0;
+		}
+
+		var discounted = (parseFloat(subt.replace(/,/g, '')) - parseFloat(disc.replace(/,/g, '')));
 
 		var vat = (parseFloat(discounted) * 0.12);
 		document.getElementById("vat").value = vat.toFixed(2);
@@ -268,7 +272,7 @@
 				<? } ?>
 			</select></td>
 			<td class ="input"><input type="text" name="qty" id="qty" value="" style="width:100px"></td>
-			<td><input type="button" value="" onClick="return addItem();" style="cursor: pointer;" /></td>
+			<td><input type="add" value="" onClick="return addItem();" style="cursor: pointer;" /></td>
 		</tr>
 	</table>
 	</div>

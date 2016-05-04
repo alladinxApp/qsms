@@ -5,6 +5,9 @@
 	if(!isset($_SESSION)){
 		session_start();
 	}
+
+	$qry_items = "SELECT * FROM v_items WHERE status = '1' ORDER BY item_description";
+	$result_items = $dbo->query($qry_items);
 	
 	if (isset($_POST['save'])){
 		$parts = strtoupper($_POST['parts']);
@@ -14,9 +17,10 @@
 		$parts_lowstock = $_POST['parts_lowstock'];
 		$partstatus = $_POST['partstatus'];
 		$new_price_date	= date("Y-m-d h:i:s");
+		$item_code = $_POST['item_code'];
 		$newnum = getNewNum('PARTS');
 		
-		$parts_insert = "INSERT INTO tbl_parts (parts_id, parts, parts_discount, part_srp, part_onhand, parts_lowstock, partstatus, part_created, new_price_date) VALUES
+		$parts_insert = "INSERT INTO tbl_parts (parts_id, parts, parts_discount, part_srp, part_onhand, parts_lowstock, partstatus, part_created, new_price_date,item_code) VALUES
 		('".$newnum."',
 		'".$parts."',
 		'".$parts_discount."',
@@ -25,7 +29,8 @@
 		'".$parts_lowstock."',
 		'".$partstatus."',
 		'".$today."',
-		'".$new_price_date."')";
+		'".$new_price_date."',
+		'".$item_code."')";
 		
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'PARTS' ";
 		
@@ -152,7 +157,16 @@
 		<tr>
 			<td class ="label"><label name="lbl_parts_lowstock">Low Stock Quantity:</label>
 			<td class ="input"><input type="text" name="parts_lowstock" id="parts_lowstock" value="" onkeypress="return isNumberKey(event);" style="width:272px"></td>
-		</tr>    
+		</tr>
+		<tr>
+			<td class ="label"><label name="item_code">Item Mapper:</label>
+			<td class ="input"><select name="item_code" id="item_code">
+				<option value="">-- Select Item --</option>
+				<? foreach($result_items as $row){ ?>
+					<option value="<?=$row['item_code'];?>"><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+				<? } ?>
+			</select></td>
+		</tr>
 		<tr>
 			<td class ="label"><label name="lbl_partstatus">Parts Status:</label>
 			<td class="input"><input type="radio" name="partstatus" id="partstatus" value="Active" checked>Active <input type="radio" name="partstatus" id="partstatus" value="Inactive">Inactive</td>
@@ -174,6 +188,7 @@
 			var part_onhand = document.getElementById("part_onhand");
 			var parts_lowstock = document.getElementById("parts_lowstock");
 			var partstatus = document.getElementById("partstatus");
+			var item_code = document.getElementById("item_code");
 			
 			if(parts.value == ""){
 				alert("Parts is required! Please enter parts.");
@@ -194,6 +209,9 @@
 			}else if(parts_lowstock.value == ""){
 				alert("Parts low stock QTY is required! Please enter parts low stock QTY.");
 				parts_lowstock.focus();
+				return false;
+			}else if(item_code.value == ""){
+				alert("Item is required! Please select item.");
 				return false;
 			}else if(getSRP() > 0){
 				alert("Please enter a valid Parts Standard Retail Price! \n formula: discounted price * 35% + discounted price.");

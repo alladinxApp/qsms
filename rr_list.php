@@ -10,7 +10,7 @@
 		$rrrefno = $_POST['txtrrrefno'];
 		$cnt = 0;
 
-		$where = "WHERE status = '1' ";
+		$where = "WHERE (status = '1' OR status = '10') ";
 
 		if(!empty($porefno)){
 			$where .= " AND po_reference_no = '$porefno'";
@@ -107,7 +107,7 @@
 				}else{
 					$bg = "background: #eee;";
 				}
-				$style = $bg;
+				$style = $bg . $color;
 
 				$diff = null;
 				if( $rowpomst['difference'] > 0){

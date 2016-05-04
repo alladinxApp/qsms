@@ -12,7 +12,7 @@
 		$cvrefno = $_POST['txtcvrefno'];
 		$cnt = 0;
 
-		$where = "WHERE (status = '11' OR status = '12') AND rr_post_reference_no IS NOT NULL ";
+		$where = "WHERE (status = '12' OR status = '100')";
 
 		if(!empty($porefno)){
 			$where .= " AND po_reference_no = '$porefno'";
@@ -29,6 +29,11 @@
 			$cnt++;
 		}
 
+		if(!empty($cvrefno)){
+			$where .= " AND cv_reference_no = '$cvrefno'";
+			$cnt++;
+		}
+
 		if(!empty($_POST['txtdatefrom']) || !empty($_POST['txtdateto']) || $cnt == 0){
 			$datefrom = Date("Y-m-d 00:00");
 			$dateto = Date("Y-m-d 23:59");
@@ -41,7 +46,7 @@
 				$dateto = $_POST['txtdateto'] . " 23:59";
 			}
 
-			$where .= " AND (rr_post_date between '$datefrom' AND '$dateto') ";
+			$where .= " AND (payment_date between '$datefrom' AND '$dateto') ";
 		}		
 		
 		$qrypomst = "SELECT * FROM v_po_mst " . $where;
@@ -84,7 +89,7 @@
 		if(isset($_POST['search']) && !empty($_POST['search']) && $_POST['search'] == 1){
 	?>
 	<fieldset form="form_estimate_list" name="form_estimate_list">
-	<p id="title">PO PAYMENT LIST</p>
+	<p id="title">PO BILLED LIST</p>
 	<div class="divEstimateList">
 	<table width="1250">
 		<tr>
@@ -106,7 +111,7 @@
 			$cnt = 1; 
 			foreach($respomst as $rowpomst){
 				switch($rowpomst['status']){
-					case 12:
+					case 100:
 						$color = "color: #00ff00;"; break;
 					default:
 						$color = "color: #000;"; break;
@@ -119,7 +124,7 @@
 				$style = $bg;
 		?>
 		<tr>
-			<td align="center" style="<?=$style;?>"><a href="po_payment_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
+			<td align="center" style="<?=$style;?>"><a href="po_posting_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['po_reference_no'];?></td>
 			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['approved_date'],"M d, Y");?></td>
@@ -138,7 +143,7 @@
 	</div>
 	</fieldset>
 	<? }else{ ?>
-	<p id="title">Search RR Posted LIST</p>
+	<p id="title">Search PO Billed LIST</p>
 	<form method="Post">
 	<div class="estimate_approval">
 	<table>

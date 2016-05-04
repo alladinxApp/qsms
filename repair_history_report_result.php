@@ -111,9 +111,9 @@
 		<tr>
 			<th width="10">#</th>
 			<th width="100">Plate No</th>
-			<th width="300">Service Remarks</th>
+			<th width="200">Service Remarks</th>
 			<th width="100">Date</th>
-			<th width="200">Customer</th>
+			<th width="300">Customer</th>
 		</tr>
 		<?
 			$cnt = 1; 
@@ -130,8 +130,8 @@
 			<td><?=$cnt;?></td>
 			<td style="<?=$style;?>"><?=$row['plate_no'];?></td>
 			<td style="<?=$style;?>"><?=$row['remarks'];?></td>
-			<td style="<?=$style;?>"><?=dateFormat($row['transaction_date'],"m/d/Y");?></td>
-			<td align="right" style="<?=$style;?>"><?=$row['customername'];?></td>
+			<td style="<?=$style;?>" align="center"><?=dateFormat($row['transaction_date'],"m/d/Y");?></td>
+			<td style="<?=$style;?>"><?=$row['customername'];?></td>
 		</tr>
 		<? $cnt++; } ?>
 	</table>

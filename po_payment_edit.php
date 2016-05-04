@@ -78,19 +78,19 @@
 		$po_mst_upd = "UPDATE tbl_po_mst 
 			SET cv_reference_no = '$newnum'
 				,payment_date = '$today'
-				,closed_by = '$_SESSION[username]'
-				,status = '100'
+				,billed_by = '$_SESSION[username]'
+				,status = '12'
 			WHERE po_reference_no = '$id'";
 
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'CV_REFERENCE' ";
 		
-		$res = mysql_query($po_mst_upd) or die("UPDATE Posting ".mysql_error());
+		$res = mysql_query($po_mst_upd) or die("UPDATE Billing ".mysql_error());
 		
 		if(!$res){
-			echo '<script>alert("There has been an error on saving your Posting! Please double check all the data and save.");</script>';
+			echo '<script>alert("There has been an error on saving your Billing! Please double check all the data and save.");</script>';
 		}else{
 			mysql_query($update_controlno);
-			echo '<script>alert("Payment successfully saved.");</script>';
+			echo '<script>alert("Billing successfully saved.");</script>';
 		}
 		echo '<script>window.location="po_payment_edit.php?id='.$id.'";</script>';
 	}
@@ -117,18 +117,17 @@
 	table tr td input#difference
 		{ text-align: right; }
 </style>
-<script type="text/javascript">
-	function getDifference(){
-		var poqty = document.getElementById("po_quantity").value;
-		var rrqty = document.getElementById("rr_quantity").value;
-
-		var diff = parseInt(rrqty - poqty);
-
-		document.getElementById("difference").value = diff;
-	}
-</script>
 <body>
-	<form method="post" name="parts_po" class="form" onSubmit="return ValidateMe();">
+	<? if(!empty($paymentdate)){ ?>
+	<table>
+		<tr>
+			<td valign="middle">
+				<a href="po_payment_print.php?porefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_est.png" width="67" height="47" style="pointer: cursor; width: 67px;" border="0" /></div></a>
+			</td>
+		</tr>
+	</table>
+	<? } ?>
+	<form method="post" name="parts_po" class="form">
 	<fieldset form="form_po" name="form_po">
 	<legend>
 	<p id="title">PAYMENT</p></legend>
@@ -175,7 +174,7 @@
 				<textarea name="special" id="special" disabled cols="36" rows="5"><?=$special;?></textarea>
 			</td>
 		</tr>
-		<tr>
+		<!-- <tr>
 			<td class ="label"><label name="po_quantity">PO Quantity:</label>
 			<td class ="input"><input readonly type="text" name="po_quantity" id="po_quantity" value="<?=$poquantity;?>" style="width:272px"></td>
 			<td class ="label"><label name="rr_quantity">RR Qty:</label>
@@ -184,7 +183,7 @@
 		<tr>
 			<td class ="label"><label name="difference">Difference:</label>
 			<td class ="input"><input readonly type="text" name="difference" id="difference" value="<?=$difference;?>" style="width:272px"></td>
-		</tr>
+		</tr> -->
 		<tr>
 			<td class ="label"><label name="status">Status:</label>
 			<td class ="input"><input readonly type="text" name="status" id="status" value="<?=$statusdesc;?>" style="width:272px"></td>
@@ -282,23 +281,5 @@
 	</p>
 	<? } ?>
 	</form>
-	<script type="text/javascript">
-		
-		function ValidateMe(){
-			var rrqty = document.getElementById("rr_quantity");
-			var paymentterms = document.getElementById("payment_terms");
-			
-			if(rrqty.value == ""){
-				alert("RR Qty is required! Please enter RR quantity.");
-				rrqty.focus();
-				return false;
-			}else if(paymentterms.value == ""){
-				alert("Payment terms is required! Please select payment terms");
-				return false;
-			}else{
-				return true;
-			}
-		}
-	</script>
 </body>
 </html>

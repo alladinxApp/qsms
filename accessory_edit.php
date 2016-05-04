@@ -7,8 +7,11 @@
 
 	$accessory_id =$_GET['accessoryid'];
 	
-	$qryacc = "SELECT * FROM v_accessory WHERE accessory_id  = '$accessory_id'";
+	$qryacc = "SELECT * FROM v_accessory WHERE accessory_id = '$accessory_id'";
 	$resacc = $dbo->query($qryacc);
+
+	$qry_items = "SELECT * FROM v_items WHERE status = '1' ORDER BY item_description";
+	$result_items = $dbo->query($qry_items);
 	
 	foreach($resacc as $row){
 		$accessory = $row['accessory'];
@@ -16,7 +19,9 @@
 		$access_srp = $row['access_srp'];
 		$access_low = $row['access_low'];
 		$access_onhand = $row['access_onhand'];
-		$acces_status = $row['access_status'];
+		$access_status = $row['access_status'];
+		$item_code = $row['item_code'];
+		$access_used = $row['access_used'];
 	}
 	
 	if (isset($_POST['update'])){
@@ -26,14 +31,38 @@
 		$access_onhand = mysql_real_escape_string($_POST['access_onhand']);
 		$access_low = $_POST['access_low'];
 		$access_status = $_POST['access_status'];
+		$item_code = $_POST['item_code'];
+		$access_used = $_POST['access_used'];
+
+		// $sql_chkaccess = "SELECT accessory_id,accessory AS description,item_code FROM v_accessory WHERE item_code = '$item_code' 
+		// 				UNION
+		// 				SELECT material_id,material AS description,item_code FROM v_material WHERE item_code = '$item_code'
+		// 				UNION
+		// 				SELECT parts_id,parts AS description,item_code FROM v_parts WHERE item_code = '$item_code'";
+		// $qry_chkaccess = mysql_query($sql_chkaccess);
+		// $num_chkaccess = mysql_num_rows($qry_chkaccess);
+
+		// while($row = mysql_fetch_array($qry_chkaccess)){
+		// 	$access_desc = $row['accessory'];
+		// }
+
+		// if($num_chkaccess > 0){
+		// 	echo '<script>alert("Item is already in used/mapped to '.$access_desc.'! please select another Item.");</script>';
+		// 	echo '<script>window.location="accessory_edit.php?accessoryid='.$accessory_id.'";</script>';
+		// 	exit();
+		// }
 	  
 		$accessory_update = "UPDATE tbl_accessory SET 
-				accessory='$accessory',  
-				access_disc='$access_disc', 
-				access_srp='$access_srp', 
-				access_onhand='$access_onhand',  
-				access_low='$access_low', 
-				access_status='$access_status' WHERE accessory_id='$accessory_id'  ";
+				accessory = '$accessory',  
+				access_disc = '$access_disc', 
+				access_srp = '$access_srp', 
+				access_onhand = '$access_onhand',  
+				access_low = '$access_low', 
+				access_status = '$access_status',
+				access_used = '$access_used',
+				item_code = '$item_code',
+				modified_date = '$today',
+				modified_by = '$_SESSION[username]' WHERE accessory_id = '$accessory_id'  ";
 						
 									 
 		$res = mysql_query($accessory_update) or die("UPDATE ACCESSORY ITEM ".mysql_error());
@@ -170,12 +199,30 @@
 			<td class="label"><label name="lbl_access_low">Low Stock Quantity:</label></td>
 			<td class="input"><input type="text" name="access_low" id="access_low" value="<?=$access_low;?>" onkeypress="return isNumberKey(event);" style="width:91px"></td>
 		</tr>
-		
+		<tr>
+			<td class ="label"><label name="item_code">Item Mapper:</label>
+			<td class ="input"><select name="item_code" id="item_code">
+				<option value="">-- Select Item --</option>
+				<? 
+					foreach($result_items as $row){ 
+						$selected = null;
+						if($row['item_code'] == $item_code){
+							$selected = 'selected';
+						}
+				?>
+					<option value="<?=$row['item_code'];?>" <?=$selected;?>><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+				<? } ?>
+			</select></td>
+		</tr>
+		<tr>
+			<td class="label"><label name="acces_used">Accessory Used:</label></td>
+			<td class="input"><input type="text" name="acces_used" id="acces_used" value="<?=$access_used;?>" onkeypress="return isNumberKey(event);" style="width:91px"></td>
+		</tr>
 		<tr>
 			<td class="label"><label name="lbl_access_status">Accessory Status:</label></td>
 			<td class="input">
 				<input type="radio" name="access_status" id="access_status" value="Active" <? if($access_status == "Active"){ echo 'checked'; } ?>>Active 
-				<input type="radio" name="access_status" id="access_status" value="Inactive" <? if($access_status == "Active"){ echo 'checked'; } ?>>Inactive
+				<input type="radio" name="access_status" id="access_status" value="Inactive" <? if($access_status == "Inactive"){ echo 'checked'; } ?>>Inactive
 			</td>
 		</tr>
 	</table>
@@ -192,6 +239,7 @@
 			var access_srp = document.getElementById("access_srp");
 			var access_onhand = document.getElementById("access_onhand");
 			var access_low = document.getElementById("access_low");
+			var item_code = document.getElementById("item_code");
 			
 			if(accessory.value == ""){
 				alert("Accessory is required! Please enter accessory.");
@@ -212,6 +260,9 @@
 			}else if(access_low.value == ""){
 				alert("Accessory low stock is required! Please enter accessory low stock.");
 				access_low.focus();
+				return false;
+			}else if(item_code.value == ""){
+				alert("Item is required! Please select item.");
 				return false;
 			}else if(getSRP() > 0){
 				alert("Please enter a valid Accessory Standard Retail Price! \n formula: discounted price * 35% + discounted price.");

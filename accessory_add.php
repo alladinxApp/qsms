@@ -6,6 +6,9 @@
 		session_start();
 	}
 	
+	$qry_items = "SELECT * FROM v_items WHERE status = '1' ORDER BY item_description";
+	$result_items = $dbo->query($qry_items);
+
 	if (isset($_POST['save'])){
 		$accessory = strtoupper($_POST['accessory']);
 		$access_disc = str_replace(",","",$_POST['access_disc']);
@@ -13,9 +16,28 @@
 		$access_onhand = $_POST['access_onhand'];
 		$access_low = $_POST['access_low'];
 		$access_status = $_POST['access_status'];
+		$item_code = $_POST['item_code'];
 		$newnum = getNewNum('ACCESSORY');
+
+		// $sql_chkaccess = "SELECT accessory_id,accessory AS description,item_code FROM v_accessory WHERE item_code = '$item_code' 
+		// 				UNION
+		// 				SELECT material_id,material AS description,item_code FROM v_material WHERE item_code = '$item_code'
+		// 				UNION
+		// 				SELECT parts_id,parts AS description,item_code FROM v_parts WHERE item_code = '$item_code'";
+		// $qry_chkaccess = mysql_query($sql_chkaccess);
+		// $num_chkaccess = mysql_num_rows($qry_chkaccess);
+
+		// while($row = mysql_fetch_array($qry_chkaccess)){
+		// 	$access_desc = $row['accessory'];
+		// }
+
+		// if($num_chkaccess > 0){
+		// 	echo '<script>alert("Item is already in used/mapped to '.$access_desc.'! please select another Item.");</script>';
+		// 	echo '<script>window.location="accessory_add.php";</script>';
+		// 	exit();
+		// }
 		
-		$accessory_insert = "INSERT INTO tbl_accessory (accessory_id, accessory, access_disc, access_srp, access_onhand, access_low, access_status, access_created) VALUES 
+		$accessory_insert = "INSERT INTO tbl_accessory (accessory_id, accessory, access_disc, access_srp, access_onhand, access_low, access_status, access_created, item_code) VALUES 
 		('".$newnum."',
 		'".$accessory."',
 		'".$access_disc."',
@@ -23,7 +45,8 @@
 		'".$access_onhand."',
 		'".$access_low."',
 		'".$access_status."',
-		'".$today."')";
+		'".$today."',
+		'".$item_code."')";
 		
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'ACCESSORY' ";
 		
@@ -149,7 +172,16 @@
 		<tr>
 			<td class ="label"><label name="lbl_access_low">Low Stock Quantity:</label>
 			<td class ="input"><input type="text" name="access_low" id="access_low" value="" onkeypress="return isNumberKey(event);" style="width:272px"></td>
-		</tr>    
+		</tr>
+		<tr>
+			<td class ="label"><label name="item_code">Item Mapper:</label>
+			<td class ="input"><select name="item_code" id="item_code">
+				<option value="">-- Select Item --</option>
+				<? foreach($result_items as $row){ ?>
+					<option value="<?=$row['item_code'];?>"><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+				<? } ?>
+			</select></td>
+		</tr>
 		<tr>
 			<td class ="label"><label name="lbl_access_status">Accessory Status:</label>
 			<td class="input"><input type="radio" name="access_status" id="access_status" value="Active" checked>Active <input type="radio" name="access_status" id="access_status" value="Inactive">Inactive</td>
@@ -169,6 +201,7 @@
 			var access_srp = document.getElementById("access_srp");
 			var access_onhand = document.getElementById("access_onhand");
 			var access_low = document.getElementById("access_low");
+			var item_code = document.getElementById("item_code");
 			
 			if(accessory.value == ""){
 				alert("Accessory is required! Please enter accessory.");
@@ -189,6 +222,9 @@
 			}else if(access_low.value == ""){
 				alert("Accessory low stock is required! Please enter accessory low stock.");
 				access_low.focus();
+				return false;
+			}else if(item_code.value == ""){
+				alert("Item is required! Please select item.");
 				return false;
 			}else if(getSRP() > 0){
 				alert("Please enter a valid Accessory Standard Retail Price! \n formula: discounted price * 35% + discounted price.");

@@ -19,7 +19,6 @@
 			$this->serviceadviser = $serviceadviser;
 		}
 		public function setServiceMaster($servicemst){
-			print_r($servicemst);
 			$this->servicemst = $servicemst;
 		}
 		public function setJobclock($jobclock){
@@ -205,8 +204,9 @@
 			$this->Ln();
 
 			if($this->senior == 0){
-				$vat = ($grand_total - $this->total_discount) * 0.12;
-				$sub_total = $grand_total - $this->total_discount;
+				$discounted = ($grand_total - $this->total_discount);
+				$vat = ($discounted * 0.12);
+				$total_amount = $discounted + $vat;
 
 				$this->Cell(15,4,null,0,0,'L');
 				$this->Cell(40,4,null,0,0,'L');
@@ -217,6 +217,9 @@
 				$this->Cell(30,4,number_format($vat,2),0,0,'R');
 				$this->Cell(15,4,null,0,0,'R');
 				$this->Ln();
+			}else{
+				$discounted = ($grand_total - $this->total_discount);
+				$total_amount = $discounted;
 			}
 
 			$this->Cell(15,4,null,0,0,'L');
@@ -225,7 +228,7 @@
 			$this->Cell(1,4,null,0,0,'C');
 			$this->Cell(29,4,null,0,0,'C');
 			$this->Cell(60,4,'Grand Total >>>>>>>>>>',0,0,'R');
-			$this->Cell(30,4,number_format($this->billingmst['total_amount'],2),"T",2,'R');
+			$this->Cell(30,4,number_format($total_amount,2),"T",2,'R');
 			$this->Cell(15,4,null,0,0,'R');
 			$this->Ln();
 			

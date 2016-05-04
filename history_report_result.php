@@ -107,11 +107,11 @@
 		</tr>
 	</table>
 	<div class="divEstimateList">
-	<table width="510">
+	<table width="760">
 		<tr>
 			<th width="10">#</th>
-			<th width="100">Service Type</th>
-			<th width="150">Customer</th>
+			<th width="300">Service Type</th>
+			<th width="300">Customer</th>
 			<th width="150">Work Order Ref. No</th>
 			<th width="100">Amount</th>
 		</tr>

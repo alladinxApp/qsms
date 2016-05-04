@@ -116,16 +116,6 @@
 	table tr td input#difference
 		{ text-align: right; }
 </style>
-<script type="text/javascript">
-	function getDifference(){
-		var poqty = document.getElementById("po_quantity").value;
-		var rrqty = document.getElementById("rr_quantity").value;
-
-		var diff = parseInt(rrqty - poqty);
-
-		document.getElementById("difference").value = diff;
-	}
-</script>
 <body>
 	<form method="post" name="parts_po" class="form" onSubmit="return ValidateMe();">
 	<fieldset form="form_po" name="form_po">
@@ -168,7 +158,7 @@
 				<textarea name="special" id="special" disabled cols="36" rows="5"><?=$special;?></textarea>
 			</td>
 		</tr>
-		<tr>
+		<!-- <tr>
 			<td class ="label"><label name="po_quantity">PO Quantity:</label>
 			<td class ="input"><input readonly type="text" name="po_quantity" id="po_quantity" value="<?=$poquantity;?>" style="width:272px"></td>
 			<td class ="label"><label name="rr_quantity">RR Qty:</label>
@@ -177,7 +167,7 @@
 		<tr>
 			<td class ="label"><label name="difference">Difference:</label>
 			<td class ="input"><input readonly type="text" name="difference" id="difference" value="<?=$difference;?>" style="width:272px"></td>
-		</tr>
+		</tr> -->
 		<tr>
 			<td class ="label"><label name="status">Status:</label>
 			<td class ="input"><input readonly type="text" name="status" id="status" value="<?=$statusdesc;?>" style="width:272px"></td>

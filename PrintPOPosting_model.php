@@ -1,6 +1,6 @@
 <?
 	require_once('fpdf.php');
-	class PrintPO extends FPDF{
+	class PrintPOPosting extends FPDF{
 		public function setImageLogo($img){
 			$this->logo = $img;
 		}
@@ -19,7 +19,7 @@
 			$this->Image($this->logo, 10, 0, 55);
 			
 			$this->SetFont('Courier','B',30);
-			$this->Cell(190,4,'PURCHASE ORDER',0,0,'R');
+			$this->Cell(190,4,'PO POSTING',0,0,'R');
 			$this->Ln(10);
 			
 			$this->SetFont('Courier','B',8);
@@ -28,10 +28,10 @@
 			$this->SetFont('Courier','',8);
 			$this->Cell(115,4,$this->companyaddr,0,0,'L');
 			$this->SetFont('Courier','B',8);
-			$this->Cell(20,4,'PO Reference',0,0,'L');
+			$this->Cell(20,4,'CV Reference',0,0,'L');
 			$this->Cell(5,4,':',0,0,'C');
 			$this->SetFont('Courier','',8);
-			$this->Cell(25,4,$this->mst['po_reference_no'],0,0,'L');
+			$this->Cell(25,4,$this->mst['cv_reference_no'],0,0,'L');
 			$this->Ln();
 
 			$this->SetFont('Courier','B',8);
@@ -43,7 +43,7 @@
 			$this->Cell(20,4,'Date',0,0,'L');
 			$this->Cell(5,4,':',0,0,'C');
 			$this->SetFont('Courier','',8);
-			$this->Cell(25,4,$this->mst['po_date'],0,0,'L');
+			$this->Cell(25,4,$this->mst['payment_date'],0,0,'L');
 			$this->Ln();
 
 			$this->SetFont('Courier','B',8);

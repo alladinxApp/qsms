@@ -6,6 +6,9 @@
 		session_start();
 	}
 	
+	$qry_items = "SELECT * FROM v_items WHERE status = '1' ORDER BY item_description";
+	$result_items = $dbo->query($qry_items);
+
 	if (isset($_POST['save'])){
 		$material = strtoupper($_POST['material']);
 		$material_disc = str_replace(",","",$_POST['material_disc']);
@@ -13,9 +16,28 @@
 		$material_onhand = $_POST['material_onhand'];
 		$material_lowstock = $_POST['material_lowstock'];
 		$material_status = $_POST['material_status'];
+		$item_code = $_POST['item_code'];
 		$newnum = getNewNum('MATERIAL');
+
+		// $sql_chkmaterial = "SELECT accessory_id,accessory AS description,item_code FROM v_accessory WHERE item_code = '$item_code'
+		// 				UNION
+		// 				SELECT material_id,material AS description,item_code FROM v_material WHERE item_code = '$item_code'
+		// 				UNION
+		// 				SELECT parts_id,parts AS description,item_code FROM v_parts WHERE item_code = '$item_code'";
+		// $qry_chkmaterial = mysql_query($sql_chkmaterial);
+		// $num_chkmaterial = mysql_num_rows($qry_chkmaterial);
+
+		// while($row = mysql_fetch_array($qry_chkmaterial)){
+		// 	$material_desc = $row['material'];
+		// }
+
+		// if($num_chkmaterial > 0){
+		// 	echo '<script>alert("Item is already in used/mapped to '.$material_desc.'! please select another Item.");</script>';
+		// 	echo '<script>window.location="material_add.php";</script>';
+		// 	exit();
+		// }
 					   
-		$material_insert = "INSERT INTO tbl_material (material_id, material, material_disc, material_srp, material_onhand, material_lowstock, material_status, material_created) VALUES
+		$material_insert = "INSERT INTO tbl_material (material_id, material, material_disc, material_srp, material_onhand, material_lowstock, material_status, material_created,item_code) VALUES
 		('".$newnum."',
 		'".$material."',
 		'".$material_disc."',
@@ -23,7 +45,8 @@
 		'".$material_onhand."',
 		'".$material_lowstock."',
 		'".$material_status."',
-		'".$today."')";
+		'".$today."',
+		'".$item_code."')";
 		
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'MATERIAL' ";
 		
@@ -151,7 +174,16 @@
 		<tr>
 			<td class ="label"><label name="lbl_material_lowstock">Low Stock Quantity:</label>
 			<td class ="input"><input type="text" name="material_lowstock" id="material_lowstock" value="" onkeypress="return isNumberKey(event);" style="width:272px"></td>
-		</tr>    
+		</tr>
+		<tr>
+			<td class ="label"><label name="item_code">Item Mapper:</label>
+			<td class ="input"><select name="item_code" id="item_code">
+				<option value="">-- Select Item --</option>
+				<? foreach($result_items as $row){ ?>
+					<option value="<?=$row['item_code'];?>"><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+				<? } ?>
+			</select></td>
+		</tr>
 		<tr>
 			<td class ="label"><label name="lbl_material_status">Material Status:</label>
 			<td class="input"><input type="radio" name="material_status" id="material_status" value="Active" checked>Active <input type="radio" name="material_status" id="material_status" value="Inactive">Inactive</td>
@@ -171,6 +203,7 @@
 			var material_srp = document.getElementById("material_srp");
 			var material_onhand = document.getElementById("material_onhand");
 			var material_lowstock = document.getElementById("material_lowstock");
+			var item_code = document.getElementById("item_code");
 			
 			if(material.value == ""){
 				alert("Material is required! Please enter material.");
@@ -191,6 +224,9 @@
 			}else if(material_lowstock.value == ""){
 				alert("Material low stock QTY is required! Please enter material low stock QTY.");
 				material_lowstock.focus();
+				return false;
+			}else if(item_code.value == ""){
+				alert("Item is required! Please select item.");
 				return false;
 			}else if(getSRP() > 0){
 				alert("Please enter a valid Material Standard Retail Price! \n formula: discounted price * 35% + discounted price.");

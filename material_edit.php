@@ -9,6 +9,9 @@
 
 	$qrymat = "SELECT * FROM v_material WHERE material_id  = '$material_id'";
 	$resmat = $dbo->query($qrymat);
+
+	$qry_items = "SELECT * FROM v_items WHERE status = '1' ORDER BY item_description";
+	$result_items = $dbo->query($qry_items);
 	
 	foreach($resmat as $row){
 		$material = $row['material'];
@@ -17,6 +20,8 @@
 		$material_lowstock = $row['material_lowstock'];
 		$material_onhand = $row['material_onhand'];
 		$material_status = $row['material_status'];
+		$item_code = $row['item_code'];
+		$material_used = $row['material_used'];
 	}
 	
 	if (isset($_POST['update'])){
@@ -26,14 +31,38 @@
 		$material_onhand = mysql_real_escape_string($_POST['material_onhand']);
 		$material_lowstock = $_POST['material_lowstock'];
 		$material_status = $_POST['material_status'];
-	  
+		$item_code = $row['item_code'];
+		$material_used = $row['material_used'];
+	  	
+	 	// $sql_chkmaterial = "SELECT accessory_id,accessory AS description,item_code FROM v_accessory WHERE item_code = '$item_code'
+		// 				UNION
+		// 				SELECT material_id,material AS description,item_code FROM v_material WHERE item_code = '$item_code'
+		// 				UNION
+		// 				SELECT parts_id,parts AS description,item_code FROM v_parts WHERE item_code = '$item_code'";
+		// $qry_chkmaterial = mysql_query($sql_chkmaterial);
+		// $num_chkmaterial = mysql_num_rows($qry_chkmaterial);
+
+		// while($row = mysql_fetch_array($qry_chkmaterial)){
+		// 	$material_desc = $row['material'];
+		// }
+
+		// if($num_chkmaterial > 0){
+		// 	echo '<script>alert("Item is already in used/mapped to '.$material_desc.'! please select another Item.");</script>';
+		// 	echo '<script>window.location="material_edit.php?materialid='.$material_id.'";</script>';
+		// 	exit();
+		// }
+
 		$material_update = "UPDATE tbl_material SET 
-						material='$material',  
-						material_disc='$material_disc', 
-						material_srp='$material_srp', 
-						material_onhand='$material_onhand',  
-						material_lowstock='$material_lowstock', 
-						material_status='$material_status' WHERE material_id='$material_id'  ";
+						material = '$material',  
+						material_disc = '$material_disc', 
+						material_srp = '$material_srp', 
+						material_onhand = '$material_onhand',  
+						material_lowstock = '$material_lowstock', 
+						material_status = '$material_status',
+						material_used = '$material_used',
+						item_code = '$item_code',
+						modified_date = '$today',
+						modified_by = '$_SESSION[username]' WHERE material_id = '$material_id'  ";
 						
 		$res = mysql_query($material_update) or die("UPDATE MATERIAL ITEM ".mysql_error());
 		
@@ -170,7 +199,25 @@
 			<td class="label"><label name="lbl_material_lowstock">Low Stock Quantity:</label></td>
 			<td class="input"><input type="text" name="material_lowstock" id="material_lowstock" value="<?=$material_lowstock;?>" onkeypress="return isNumberKey(event);" style="width:91px"></td>
 		</tr>
-		
+		<tr>
+			<td class ="label"><label name="item_code">Item Mapper:</label>
+			<td class ="input"><select name="item_code" id="item_code">
+				<option value="">-- Select Item --</option>
+				<? 
+					foreach($result_items as $row){ 
+						$selected = null;
+						if($row['item_code'] == $item_code){
+							$selected = 'selected';
+						}
+				?>
+					<option value="<?=$row['item_code'];?>" <?=$selected;?>><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+				<? } ?>
+			</select></td>
+		</tr>
+		<tr>
+			<td class="label"><label name="material_used">Material Used:</label></td>
+			<td class="input"><input type="text" name="material_used" id="material_used" value="<?=$access_used;?>" onkeypress="return isNumberKey(event);" style="width:91px"></td>
+		</tr>
 		<tr>
 			<td class="label"><label name="lbl_material_status">Material Status:</label></td>
 			<td class="input">
@@ -192,6 +239,7 @@
 			var material_srp = document.getElementById("material_srp");
 			var material_onhand = document.getElementById("material_onhand");
 			var material_lowstock = document.getElementById("material_lowstock");
+			var item_code = document.getElementById("item_code");
 			
 			if(material.value == ""){
 				alert("Material is required! Please enter material.");
@@ -212,6 +260,9 @@
 			}else if(material_lowstock.value == ""){
 				alert("Material low stock QTY is required! Please enter material low stock QTY.");
 				material_lowstock.focus();
+				return false;
+			}else if(item_code.value == ""){
+				alert("Item is required! Please select item.");
 				return false;
 			}else if(getSRP() > 0){
 				alert("Please enter a valid Material Standard Retail Price! \n formula: discounted price * 35% + discounted price.");

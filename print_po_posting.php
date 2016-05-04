@@ -1,7 +1,7 @@
 <?
 	session_start();
 	require_once("conf/db_connection.php");
-	require_once("PrintPO_model.php");
+	require_once("PrintPOPosting_model.php");
 	require_once("functions.php");
 	
 	$image = 'images/logo1.png';
@@ -19,8 +19,8 @@
 	}
 
 	while($row = mysql_fetch_array($qrypo_mst)){
-		$pomst = array("po_reference_no" => $row['po_reference_no']
-					,"po_date" => dateFormat($row['po_date'],"M d, Y")
+		$pomst = array("cv_reference_no" => $row['cv_reference_no']
+					,"payment_date" => dateFormat($row['payment_date'],"M d, Y")
 					,"supplier_name" => $row['supplier_name']
 					,"supplier_addr" => $row['supplier_address']
 					,"supplier_phone" => $row['supplier_phone']
@@ -44,7 +44,7 @@
 	$company = array("companyname" => "FAST QUICK SERVICE"
 					,"companyaddr" => "#100 President Ave. BF Home Paranaque, City"
 					,"companytelno" => "801-6291");
-	$pdf = new PrintPO;
+	$pdf = new PrintPOPosting;
 	
 	// Data loading
 	$pdf->setImageLogo($image);

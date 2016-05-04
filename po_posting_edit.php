@@ -29,7 +29,7 @@
 		$suppliername = $row['supplier_name'];
 		$deliverto = $row['deliver_to'];
 		$deliveryaddress = $row['delivery_address'];
-		$paymentterm = $row['payment_code'];
+		$paymentterm = $row['payment_term'];
 		$discount = $row['discount'];
 		$subtotal = $row['sub_total'];
 		$vat = $row['vat'];
@@ -40,17 +40,19 @@
 		$poquantity = $row['po_quantity'];
 		$rrquantity = $row['rr_quantity'];
 		$difference = $row['difference'];
+		$rrrefno = $row['rr_reference_no'];
+		$rrdate = $row['rr_date'];
+		$postrefno = $row['rr_post_reference_no'];
+		$postdate = $row['rr_post_date'];
 
-		$rrrefno = '[SYSTEM GENERATED]';
-		if(!empty($row['rr_reference_no'])){
-			$rrrefno = $row['rr_reference_no'];
-			$readonly = 'readonly';
-			$disabled = 'disabled';
+		$cvrefno = '[SYSTEM GENERATED]';
+		if(!empty($row['cv_reference_no'])){
+			$cvrefno = $row['cv_reference_no'];
 		}
 
-		$rrdate = null;
-		if(!empty($row['rr_date'])){
-			$rrdate = $row['rr_date'];
+		$paymentdate = null;
+		if(!empty($row['payment_date'])){
+			$paymentdate = $row['payment_date'];
 		}
 	}
 
@@ -62,8 +64,7 @@
 		$itemuomdesc = $row['UOM_desc'];
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
-		$itemrr = $row['rr_quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . "|";
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
 	}
 
 	if($num_po_dtl > 0){
@@ -71,37 +72,22 @@
 	}
 
 	if (isset($_POST['update'])){
-		$difference = $_POST['difference'];
-		$paymentterm = $_POST['payment_terms'];
-		$item = explode(":",$_POST['txtItemsArr']);
-		$newnum = getNewNum('RECEIVING_REPORT');
 
 		$po_mst_upd = "UPDATE tbl_po_mst 
-			SET difference = '$difference'
-				,rr_reference_no = '$newnum'
-				,rr_date = '$today'
-				,received_by = '$_SESSION[username]'
-				,received_date = '$today'
-				,status = '10'
+			SET posted_date = '$today'
+				,posted_by = '$_SESSION[username]'
+				,status = '100'
 			WHERE po_reference_no = '$id'";
-
-		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RECEIVING_REPORT' ";
 		
-		$res = mysql_query($po_mst_upd) or die("UPDATE RR ".mysql_error());
+		$res = mysql_query($po_mst_upd) or die("UPDATE Posting ".mysql_error());
 		
 		if(!$res){
-			echo '<script>alert("There has been an error on saving your RR! Please double check all the data and save.");</script>';
+			echo '<script>alert("There has been an error on saving your Posting! Please double check all the data and save.");</script>';
 		}else{
-			for($i=0;$i<count($item);$i++){
-				$itemcode = $item[$i];
-				$qty = $_POST['txt'.$itemcode];
-				$sql_dtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = '$qty' WHERE po_reference_no = '$id' AND item_code = '$itemcode'";
-				mysql_query($sql_dtl_upd);
-			}
 			mysql_query($update_controlno);
-			echo '<script>alert("RR successfully saved.");</script>';
+			echo '<script>alert("Payment successfully posted.");</script>';
 		}
-		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+		echo '<script>window.location="po_posting_edit.php?id='.$id.'";</script>';
 	}
 ?>
 <html>
@@ -120,62 +106,49 @@
 	span#divPODtls table tr td input#subtotal,
 	span#divPODtls table tr td input#vat,
 	span#divPODtls table tr td input#total_amount,
+	span#divPODtls table tr td input#payterm,
 	table tr td input#po_quantity,
 	table tr td input#rr_quantity,
-	table tr td input#difference,
-	table tr td input#rr_qty,
-	table tr td input#total_qty_rr	
+	table tr td input#difference
 		{ text-align: right; }
 </style>
 <script type="text/javascript">
-	function isNumberKey(evt){
-		var charCode = (evt.which) ? evt.which : event.keyCode
-		if (charCode > 31 && (charCode < 48 || charCode > 57)){
-			return false;
-		}else{
-			return true;
-		}
-	}
-	function computeQtyRR(){
-		var dtlcnt = document.getElementById("txtDtlCnt").value;
-		var arrItems = document.getElementById("txtItemsArr").value;
-		var item = arrItems.split(':');
-		var total = 0;
-		var fld = 0;
-		for(var i=0;i<item.length;i++){
-			if(document.getElementById("txt"+item[i]).value == ""){
-			}else{
-				if(!isNaN(document.getElementById("txt"+item[i]).value)){
-					total = (parseFloat(total) + parseFloat(document.getElementById("txt"+item[i]).value));
-				}else{
-					alert("please enter correct quantity!");
-					document.getElementById("txt"+item[i]).focus();
-					document.getElementById("txt"+item[i]).value = 0;
+	function getDifference(){
+		var poqty = document.getElementById("po_quantity").value;
+		var rrqty = document.getElementById("rr_quantity").value;
 
-					total = (parseFloat(total) + 0.00);
-				}
-			}
-		}
-		
-		document.getElementById("total_qty_rr").value = total;
+		var diff = parseInt(rrqty - poqty);
+
+		document.getElementById("difference").value = diff;
 	}
 </script>
 <body>
-	<? if(!empty($rrdate)){ ?>
+	<? if($status == 100){ ?>
 	<table>
 		<tr>
 			<td valign="middle">
-				<a href="rr_print.php?porefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_est.png" width="67" height="47" style="pointer: cursor; width: 67px;" border="0" /></div></a>
+				<a href="po_posting_print.php?porefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_est.png" width="67" height="47" style="pointer: cursor; width: 67px;" border="0" /></div></a>
 			</td>
 		</tr>
 	</table>
 	<? } ?>
-
-	<form method="post" name="parts_po" class="form" onSubmit="return ValidateMe();">
+	<form method="post" name="parts_po" class="form">
 	<fieldset form="form_po" name="form_po">
 	<legend>
-	<p id="title">RECEIVING</p></legend>
+	<p id="title">PAYMENT</p></legend>
 	<table>
+		<tr>
+			<td class ="label"><label name="po_no">CV Reference No:</label>
+			<td class ="input"><input type="text" readonly name="po_no" value="<?=$cvrefno;?>" style="width:272px"></td>
+			<td class ="label"><label name="po_no">CV Date:</label>
+			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($paymentdate,"M d, Y");?>" style="width:272px"></td>
+		</tr>
+		<tr>
+			<td class ="label"><label name="po_no">Post Reference No:</label>
+			<td class ="input"><input type="text" readonly name="po_no" value="<?=$postrefno;?>" style="width:272px"></td>
+			<td class ="label"><label name="po_no">Post Date:</label>
+			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($postdate,"M d, Y");?>" style="width:272px"></td>
+		</tr>
 		<tr>
 			<td class ="label"><label name="po_no">RR Reference No:</label>
 			<td class ="input"><input type="text" readonly name="rr_no" value="<?=$rrrefno;?>" style="width:272px"></td>
@@ -209,6 +182,12 @@
 		<!-- <tr>
 			<td class ="label"><label name="po_quantity">PO Quantity:</label>
 			<td class ="input"><input readonly type="text" name="po_quantity" id="po_quantity" value="<?=$poquantity;?>" style="width:272px"></td>
+			<td class ="label"><label name="rr_quantity">RR Qty:</label>
+			<td class ="input"><input onKeyup="return getDifference();" type="text" readonly name="rr_quantity" id="rr_quantity" value="<?=$rrquantity;?>" style="width:272px"></td>
+		</tr>
+		<tr>
+			<td class ="label"><label name="difference">Difference:</label>
+			<td class ="input"><input readonly type="text" name="difference" id="difference" value="<?=$difference;?>" style="width:272px"></td>
 		</tr> -->
 		<tr>
 			<td class ="label"><label name="status">Status:</label>
@@ -228,52 +207,34 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
-			<th width="100">RR QUANTITY</th>
 			<th width="100">TOTAL</th>
 		</tr>
 		<? 
 			$subtotal = 0;
 			$totalqty = 0;
-			$cnt = 1;
-			$arrItems = null;
-			$nArrItem = explode("|",$nArrItems);
-			$ttlrrqty = 0;
+			$nArrItem = explode("|",$nArrItems); 
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
 				$total = ($val[4] * $val[5]);
 				$subtotal += $total;
 				$totalqty += $val[5];
-
-				$arrItems .= $val[0] . ":";
-
-				if($val[6] == "" || $val[6] == 0){
-					$rrqty = null;
-				}
-				$ttlrrqty += $val[6];
 		?>
-		<style type="text/css">
-			table tr td input#txt<?=$val[0];?>{ text-align: right; }
-		</style>
 		<tr>
 			<td><?=$val[0];?></td>
 			<td><?=$val[1];?></td>
 			<td align="center"><?=$val[3];?></td>
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
-			<td align="center"><input type="text" name="txt<?=$val[0];?>" id="txt<?=$val[0];?>" value="<?=$val[6];?>" <?=$readonly;?> size="10" onBlur="return computeQtyRR();" /></td>
 			<td align="right"><?=number_format($total,2);?></td>
 		</tr>
-		<? $cnt++; } $arrItems = rtrim($arrItems,":"); ?>
-		<input type="hidden" name="txtDtlCnt" id="txtDtlCnt" value="<?=$cnt-1;?>" />
-		<input type="hidden" name="txtItemsArr" id="txtItemsArr" value="<?=$arrItems;?>">
+		<? } ?>
 		<tr>
 			<td colspan="10"><hr /></td>
 		</tr>
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
-			<td align="center"><input type="text" readonly name="total_qty_rr" id="total_qty_rr" size="10" value="<?=$ttlrrqty;?>" /></td>
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>
@@ -286,18 +247,7 @@
 		<table>
 			<tr>
 				<td class ="label"><label name="payment_terms">Payment Terms:</label>
-				<td class ="input"><select <?=$disabled;?> name="payment_terms" id="payment_terms">
-					<option value="">-- Select Payment Terms --</option>
-					<? 
-						foreach($result_payterms as $row_payterms){
-							$selected = null;
-							if($row_payterms['payment_term_code'] == $paymentterm){
-								$selected = 'selected';
-							}
-					?>
-						<option value="<?=$row_payterms['payment_term_code'];?>" <?=$selected;?>><?=$row_payterms['description'];?></option>
-					<? } ?>
-				</select></td>
+				<td class ="input"><input readonly type="text" name="payterm" id="payterm" value="<?=$paymentterm;?>" style="width:170px"></td>
 			</tr>    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
@@ -328,7 +278,7 @@
 		</table>
 	</fieldset>
 	</span>
-	<? if(empty($rrdate)){ ?>
+	<? if($status == 12){ ?>
 	<p class="button">
 		<input type="submit" value="" name="update" />
 		<a href="rr_list.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>
@@ -336,23 +286,5 @@
 	</p>
 	<? } ?>
 	</form>
-	<script type="text/javascript">
-		
-		function ValidateMe(){
-			var rrqty = document.getElementById("rr_quantity");
-			var paymentterms = document.getElementById("payment_terms");
-			
-			if(rrqty.value == ""){
-				alert("RR Qty is required! Please enter RR quantity.");
-				rrqty.focus();
-				return false;
-			}else if(paymentterms.value == ""){
-				alert("Payment terms is required! Please select payment terms");
-				return false;
-			}else{
-				return true;
-			}
-		}
-	</script>
 </body>
 </html>
