@@ -134,7 +134,7 @@ CREATE TABLE `tbl_controlno` (
 
 /*Data for the table `tbl_controlno` */
 
-insert  into `tbl_controlno`(`id`,`control_type`,`digit`,`lastseqno`,`control_code`) values (1,'CUSTOMER',8,95,'CUST'),(2,'VEHICLE',8,118,'VEH'),(3,'COLOR',8,38,'COL'),(4,'EMPLOYEE',8,9,'EMP'),(11,'JOB',8,151,'JOB'),(5,'MAKE',8,52,'MAK'),(6,'MODEL',8,272,'MDL'),(7,'YEAR',8,26,'YR'),(8,'PARTS',8,452,'PAR'),(9,'MATERIAL',8,64,'MAT'),(10,'ACCESSORY',8,70,'ACC'),(12,'WOCATEGORY',8,38,'WOC'),(13,'IDLE',8,6,'IDL'),(14,'PAYMENT',8,4,'PAY'),(15,'ESTIMATEREFNO',8,192,'ER'),(16,'WORKORDER',8,166,'WO'),(17,'PURCHASEORDER',8,0,'PO'),(18,'BILLING',8,131,''),(19,'ONLINE_ESTIMATE',8,1,'OE'),(20,'PACKAGE',8,18,'PAC'),(21,'SUPPLIER',8,3,'SUP'),(22,'UOM',8,4,'UOM'),(23,'PAYMENT_TERM',8,4,'PT'),(24,'ITEM_TYPE',8,5,'IT'),(25,'ITEMS',8,4,'ITM'),(26,'PURCHASE_ORDER',8,4,'PO'),(27,'RECEIVING_REPORT',8,1,'RR'),(28,'RR_POSTING',8,2,'PR'),(29,'CV_REFERENCE',8,2,'CV');
+insert  into `tbl_controlno`(`id`,`control_type`,`digit`,`lastseqno`,`control_code`) values (1,'CUSTOMER',8,95,'CUST'),(2,'VEHICLE',8,118,'VEH'),(3,'COLOR',8,38,'COL'),(4,'EMPLOYEE',8,9,'EMP'),(11,'JOB',8,151,'JOB'),(5,'MAKE',8,52,'MAK'),(6,'MODEL',8,272,'MDL'),(7,'YEAR',8,26,'YR'),(8,'PARTS',8,452,'PAR'),(9,'MATERIAL',8,64,'MAT'),(10,'ACCESSORY',8,70,'ACC'),(12,'WOCATEGORY',8,38,'WOC'),(13,'IDLE',8,6,'IDL'),(14,'PAYMENT',8,4,'PAY'),(15,'ESTIMATEREFNO',8,192,'ER'),(16,'WORKORDER',8,166,'WO'),(17,'PURCHASEORDER',8,0,'PO'),(18,'BILLING',8,131,''),(19,'ONLINE_ESTIMATE',8,1,'OE'),(20,'PACKAGE',8,18,'PAC'),(21,'SUPPLIER',8,3,'SUP'),(22,'UOM',8,4,'UOM'),(23,'PAYMENT_TERM',8,4,'PT'),(24,'ITEM_TYPE',8,5,'IT'),(25,'ITEMS',8,4,'ITM'),(26,'PURCHASE_ORDER',8,8,'PO'),(27,'RECEIVING_REPORT',8,5,'RR'),(28,'RR_POSTING',8,4,'PR'),(29,'CV_REFERENCE',8,3,'CV');
 
 /*Table structure for table `tbl_customer` */
 
@@ -679,14 +679,15 @@ CREATE TABLE `tbl_po_dtl` (
   `po_reference_no` varchar(20) DEFAULT NULL,
   `item_code` varchar(20) DEFAULT NULL,
   `price` decimal(10,2) DEFAULT NULL,
-  `quantity` int(11) DEFAULT NULL,
+  `quantity` decimal(10,0) DEFAULT '1',
   `seqno` int(11) DEFAULT NULL,
+  `rr_quantity` decimal(10,0) DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=50 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
 /*Data for the table `tbl_po_dtl` */
 
-insert  into `tbl_po_dtl`(`id`,`po_reference_no`,`item_code`,`price`,`quantity`,`seqno`) values (48,'PO00000003','ITM00000004','120.00',200,1),(47,'PO00000002','ITM00000002','12.00',2,2),(46,'PO00000002','ITM00000003','15.00',3,1),(49,'PO00000004','ITM00000003','15.00',1500,1);
+insert  into `tbl_po_dtl`(`id`,`po_reference_no`,`item_code`,`price`,`quantity`,`seqno`,`rr_quantity`) values (6,'PO00000008','ITM00000004','120.00','100',3,'100'),(5,'PO00000008','ITM00000003','15.00','100',2,'100'),(4,'PO00000008','ITM00000002','12.00','100',1,'100');
 
 /*Table structure for table `tbl_po_master` */
 
@@ -754,7 +755,7 @@ CREATE TABLE `tbl_po_mst` (
 
 /*Data for the table `tbl_po_mst` */
 
-insert  into `tbl_po_mst`(`po_reference_no`,`po_date`,`rr_reference_no`,`rr_date`,`rr_quantity`,`rr_post_reference_no`,`rr_post_date`,`cv_reference_no`,`payment_date`,`billed_by`,`difference`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`approved_date`,`approved_by`,`received_date`,`received_by`,`posted_date`,`posted_by`,`closed_by`,`created_date`,`created_by`,`modified_date`,`modified_by`) values ('PO00000002','2016-04-27 15:07:46','RR00000001','2016-04-27 15:08:12',5,'PR00000002','2016-04-27 18:45:35','CV00000002','2016-04-27 19:13:24',NULL,0,'SUP00000002','ASDF','ASDF','PT00000002','5.00','69.00','8.28','71.68','ASDF',10,'2016-04-27 15:07:56','alladinx',NULL,NULL,NULL,NULL,NULL,'2016-04-27 15:07:46','alladinx',NULL,NULL),('PO00000003','2016-04-29 11:49:06',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'SUP00000002','sdg','df','PT00000002','1000.00','24.00','2760.00','25760.00','df',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2016-04-29 11:49:06','alladinx',NULL,NULL),('PO00000004','2016-04-29 13:33:26',NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'SUP00000002','asdfasdf','asdfasdf','PT00000002','150.00','22500.00','2682.00','25032.00','asdfasdf',0,NULL,NULL,NULL,NULL,NULL,NULL,NULL,'2016-04-29 13:33:26','alladinx',NULL,NULL);
+insert  into `tbl_po_mst`(`po_reference_no`,`po_date`,`rr_reference_no`,`rr_date`,`rr_quantity`,`rr_post_reference_no`,`rr_post_date`,`cv_reference_no`,`payment_date`,`billed_by`,`difference`,`supplier_code`,`deliver_to`,`delivery_address`,`payment_code`,`discount`,`sub_total`,`vat`,`total_amount`,`special_instruction`,`status`,`approved_date`,`approved_by`,`received_date`,`received_by`,`posted_date`,`posted_by`,`closed_by`,`created_date`,`created_by`,`modified_date`,`modified_by`) values ('PO00000008','2016-05-04 10:59:50','RR00000005','2016-05-04 11:01:38',NULL,'PR00000004','2016-05-04 11:10:45','CV00000003','2016-05-04 11:12:17','alladinx',0,'SUP00000002','asdf','asdf','PT00000003','200.00','14700.00','1740.00','16240.00','asdfasdf',100,'2016-05-04 11:00:21','alladinx','2016-05-04 11:01:38','alladinx','2016-05-04 11:24:11','alladinx',NULL,'2016-05-04 10:59:50','alladinx',NULL,NULL);
 
 /*Table structure for table `tbl_service_detail` */
 
@@ -1761,9 +1762,10 @@ DROP TABLE IF EXISTS `v_po_dtl`;
  `UOM` varchar(20) ,
  `UOM_desc` varchar(100) ,
  `price` decimal(10,2) ,
- `quantity` int(11) ,
+ `quantity` decimal(10,0) ,
  `total` decimal(20,2) ,
- `seqno` int(11) 
+ `seqno` int(11) ,
+ `rr_quantity` decimal(10,0) 
 )*/;
 
 /*Table structure for table `v_po_master` */
@@ -2896,7 +2898,7 @@ DROP TABLE IF EXISTS `v_year`;
 /*!50001 DROP TABLE IF EXISTS `v_po_dtl` */;
 /*!50001 DROP VIEW IF EXISTS `v_po_dtl` */;
 
-/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_dtl` AS (select `tbl_po_dtl`.`id` AS `id`,`tbl_po_dtl`.`po_reference_no` AS `po_reference_no`,`tbl_po_dtl`.`item_code` AS `item_code`,`tbl_items`.`SAP_item_code` AS `SAP_item_code`,`tbl_items`.`item_description` AS `item_description`,`tbl_items`.`item_type` AS `item_type`,`tbl_items`.`UOM` AS `UOM`,`tbl_uom`.`description` AS `UOM_desc`,`tbl_po_dtl`.`price` AS `price`,`tbl_po_dtl`.`quantity` AS `quantity`,(`tbl_po_dtl`.`price` * `tbl_po_dtl`.`quantity`) AS `total`,`tbl_po_dtl`.`seqno` AS `seqno` from ((`tbl_po_dtl` join `tbl_items` on((`tbl_items`.`item_code` = `tbl_po_dtl`.`item_code`))) join `tbl_uom` on((`tbl_uom`.`uom_code` = `tbl_items`.`UOM`)))) */;
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_dtl` AS (select `tbl_po_dtl`.`id` AS `id`,`tbl_po_dtl`.`po_reference_no` AS `po_reference_no`,`tbl_po_dtl`.`item_code` AS `item_code`,`tbl_items`.`SAP_item_code` AS `SAP_item_code`,`tbl_items`.`item_description` AS `item_description`,`tbl_items`.`item_type` AS `item_type`,`tbl_items`.`UOM` AS `UOM`,`tbl_uom`.`description` AS `UOM_desc`,`tbl_po_dtl`.`price` AS `price`,`tbl_po_dtl`.`quantity` AS `quantity`,(`tbl_po_dtl`.`price` * `tbl_po_dtl`.`quantity`) AS `total`,`tbl_po_dtl`.`seqno` AS `seqno`,`tbl_po_dtl`.`rr_quantity` AS `rr_quantity` from ((`tbl_po_dtl` join `tbl_items` on((`tbl_items`.`item_code` = `tbl_po_dtl`.`item_code`))) join `tbl_uom` on((`tbl_uom`.`uom_code` = `tbl_items`.`UOM`)))) */;
 
 /*View structure for view v_po_master */
 
