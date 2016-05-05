@@ -122,7 +122,7 @@
 	<table>
 		<tr>
 			<td valign="middle">
-				<a href="po_payment_print.php?porefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_est.png" width="67" height="47" style="pointer: cursor; width: 67px;" border="0" /></div></a>
+				<a href="po_payment_print.php?porefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_CV.png" width="80" height="48" style="pointer: cursor; width: 67px;" border="0" /></div></a>
 			</td>
 		</tr>
 	</table>
