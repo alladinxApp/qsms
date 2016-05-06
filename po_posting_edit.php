@@ -64,7 +64,8 @@
 		$itemuomdesc = $row['UOM_desc'];
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
+		$itemrr = $row['rr_quantity'];
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . "|";
 	}
 
 	if($num_po_dtl > 0){
@@ -207,6 +208,8 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
+			<th width="100">QTY RECEIVED</th>
+			<th width="100">VARIANCE</th>
 			<th width="100">TOTAL</th>
 		</tr>
 		<? 
@@ -219,6 +222,9 @@
 				$total = ($val[4] * $val[5]);
 				$subtotal += $total;
 				$totalqty += $val[5];
+				$totalrrqty += $val[6];
+				$var = ($val[5] - $val[6]);
+				$totalvar += $var;
 		?>
 		<tr>
 			<td><?=$val[0];?></td>
@@ -226,6 +232,8 @@
 			<td align="center"><?=$val[3];?></td>
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
+			<td align="center"><?=$val[6];?></td>
+			<td align="center"><?=$var;?></td>
 			<td align="right"><?=number_format($total,2);?></td>
 		</tr>
 		<? } ?>
@@ -235,6 +243,8 @@
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
+			<td align="center"><b><?=$totalrrqty;?></b></td>
+			<td align="center"><b><?=$totalvar;?></b></td>
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>

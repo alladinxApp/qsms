@@ -34,11 +34,11 @@
 			$dateto = Date("Y-m-d 23:59");
 		
 			if(!empty($_POST['txtdatefrom'])){
-				$datefrom = $_POST['txtdatefrom'] . " 00:00";
+				$datefrom = dateFormat($_POST['txtdatefrom'],"Y-m-d") . " 00:00";
 			}
 
 			if(!empty($_POST['txtdateto'])){
-				$dateto = $_POST['txtdateto'] . " 23:59";
+				$dateto = dateFormat($_POST['txtdateto'],"Y-m-d") . " 23:59";
 			}
 
 			$where .= " AND (rr_post_date between '$datefrom' AND '$dateto') ";
@@ -116,7 +116,7 @@
 				}else{
 					$bg = "background: #eee;";
 				}
-				$style = $bg;
+				$style = $bg . $color;
 		?>
 		<tr>
 			<td align="center" style="<?=$style;?>"><a href="po_payment_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>

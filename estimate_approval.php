@@ -63,11 +63,10 @@
 	$qrycost_job = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
 	$rescost_job = $dbo->query($qrycost_job);
 	
-	$qrycost_make = "SELECT * FROM v_service_detail_make WHERE estimate_refno = '$estimaterefno'";
-	$rescost_make = $dbo->query($qrycost_make);
-	
 	$qrycost_material = "SELECT * FROM v_service_detail_material WHERE estimate_refno = '$estimaterefno'";
 	$rescost_material = $dbo->query($qrycost_material);
+	$result2 = mysql_query($qrycost_material);
+	$numrow2 = mysql_num_rows($result2);
 	
 	$qrycost_parts = "SELECT * FROM v_service_detail_parts WHERE estimate_refno = '$estimaterefno'";
 	$rescost_parts = $dbo->query($qrycost_parts);
@@ -88,7 +87,7 @@
 					if($numrow > 0){
 						while($row = mysql_fetch_array($result)){
 							$qty = $row['qty'];
-							$qry .= "UPDATE tbl_parts SET part_onhand = (part_onhand - $qty) WHERE parts_id = '$row[id]'; ";
+							$qry .= "UPDATE tbl_parts SET part_onhand = (part_onhand - $qty), parts_used = (parts_used + $qty) WHERE parts_id = '$row[id]'; ";
 						}
 					}
 
@@ -96,7 +95,15 @@
 					if($numrow1 > 0){
 						while($row = mysql_fetch_array($result1)){
 							$qty = $row['qty'];
-							$qry .= "UPDATE tbl_accessory SET access_onhand = (access_onhand - $qty) WHERE accessory_id = '$row[id]'";
+							$qry .= "UPDATE tbl_accessory SET access_onhand = (access_onhand - $qty), access_used = (access_used + $qty) WHERE accessory_id = '$row[id]'";
+						}
+					}
+
+					// MATERIAL
+					if($numrow2 > 0){
+						while($row = mysql_fetch_array($result2)){
+							$qty = $row['qty'];
+							$qry .= "UPDATE tbl_material SET material_onhand = (material_onhand - $qty), material_used = (material_used + $qty) WHERE material_id = '$row[id]'";
 						}
 					}
 

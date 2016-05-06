@@ -34,9 +34,12 @@
 	}
 
 	while($row = mysql_fetch_array($qrypo_dtl)){
+		$var = ($row['quantity'] - $row['rr_quantity']);
 		$podtl[] = array("item_code" => $row['item_code']
 					,"item_desc" => $row['item_description']
 					,"qty" => $row['quantity']
+					,"rr_qty" => $row['rr_quantity']
+					,"variance" => $var
 					,"price" => $row['price']
 					,"total" => $row['total']);
 	}

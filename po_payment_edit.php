@@ -64,7 +64,8 @@
 		$itemuomdesc = $row['UOM_desc'];
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
+		$itemrr = $row['rr_quantity'];
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . "|";
 	}
 
 	if($num_po_dtl > 0){
@@ -87,10 +88,10 @@
 		$res = mysql_query($po_mst_upd) or die("UPDATE Billing ".mysql_error());
 		
 		if(!$res){
-			echo '<script>alert("There has been an error on saving your Billing! Please double check all the data and save.");</script>';
+			echo '<script>alert("There has been an error on billing your PO! Please double check all the data and save.");</script>';
 		}else{
 			mysql_query($update_controlno);
-			echo '<script>alert("Billing successfully saved.");</script>';
+			echo '<script>alert("PO successfully billed.");</script>';
 		}
 		echo '<script>window.location="po_payment_edit.php?id='.$id.'";</script>';
 	}
@@ -135,8 +136,10 @@
 		<tr>
 			<td class ="label"><label name="po_no">CV Reference No:</label>
 			<td class ="input"><input type="text" readonly name="po_no" value="<?=$cvrefno;?>" style="width:272px"></td>
+			<? if(!empty($paymentdate)){ ?>
 			<td class ="label"><label name="po_no">CV Date:</label>
 			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($paymentdate,"M d, Y");?>" style="width:272px"></td>
+			<? } ?>
 		</tr>
 		<tr>
 			<td class ="label"><label name="po_no">Post Reference No:</label>
@@ -202,6 +205,8 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
+			<th width="100">RECEIVED</th>
+			<th width="100">VARIANCE</th>
 			<th width="100">TOTAL</th>
 		</tr>
 		<? 
@@ -214,6 +219,9 @@
 				$total = ($val[4] * $val[5]);
 				$subtotal += $total;
 				$totalqty += $val[5];
+				$totalrrqty += $val[6];
+				$var = ($val[5] - $val[6]);
+				$totalvar += $var;
 		?>
 		<tr>
 			<td><?=$val[0];?></td>
@@ -221,6 +229,8 @@
 			<td align="center"><?=$val[3];?></td>
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
+			<td align="center"><?=$val[6];?></td>
+			<td align="center"><?=$var;?></td>
 			<td align="right"><?=number_format($total,2);?></td>
 		</tr>
 		<? } ?>
@@ -230,6 +240,8 @@
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
+			<td align="center"><b><?=$totalrrqty;?></b></td>
+			<td align="center"><b><?=$totalvar;?></b></td>
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>

@@ -90,16 +90,28 @@
 		$res = mysql_query($po_mst_upd) or die("UPDATE RR ".mysql_error());
 		
 		if(!$res){
-			echo '<script>alert("There has been an error on saving your RR! Please double check all the data and save.");</script>';
+			echo '<script>alert("There has been an error on receiving your PO! Please double check all the data and save.");</script>';
 		}else{
 			for($i=0;$i<count($item);$i++){
 				$itemcode = $item[$i];
 				$qty = $_POST['txt'.$itemcode];
 				$sql_dtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = '$qty' WHERE po_reference_no = '$id' AND item_code = '$itemcode'";
 				mysql_query($sql_dtl_upd);
+
+				// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
+				$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";
+				mysql_query($sql_acc_upd);
+
+				// UPDATE ITEM ON HAND FOR MATERIALS
+				$sql_mat_upd = "UPDATE tbl_material SET material_onhand = (material_onhand + $qty) WHERE item_code = '$itemcode'";
+				mysql_query($sql_mat_upd);
+
+				// UPDATE ITEM ON HAND FOR PARTS
+				$sql_par_upd = "UPDATE tbl_parts SET part_onhand = (part_onhand + $qty) WHERE item_code = '$itemcode'";
+				mysql_query($sql_par_upd);
 			}
 			mysql_query($update_controlno);
-			echo '<script>alert("RR successfully saved.");</script>';
+			echo '<script>alert("PO successfully received.");</script>';
 		}
 		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 	}
@@ -124,7 +136,8 @@
 	table tr td input#rr_quantity,
 	table tr td input#difference,
 	table tr td input#rr_qty,
-	table tr td input#total_qty_rr	
+	table tr td input#total_qty_rr,
+	table tr td input#total_variance
 		{ text-align: right; }
 </style>
 <script type="text/javascript">
@@ -141,23 +154,35 @@
 		var arrItems = document.getElementById("txtItemsArr").value;
 		var item = arrItems.split(':');
 		var total = 0;
+		var totalvar = 0;
 		var fld = 0;
 		for(var i=0;i<item.length;i++){
+			var vari = 0;
 			if(document.getElementById("txt"+item[i]).value == ""){
 			}else{
 				if(!isNaN(document.getElementById("txt"+item[i]).value)){
 					total = (parseFloat(total) + parseFloat(document.getElementById("txt"+item[i]).value));
+					
+					vari = (parseFloat(document.getElementById("txt"+item[i]).value) - parseFloat(document.getElementById("txtpoed"+item[i]).value));
+					document.getElementById("txtvar"+item[i]).value = vari;
+					totalvar = (parseFloat(totalvar) + parseFloat(vari));
+					
 				}else{
 					alert("please enter correct quantity!");
-					document.getElementById("txt"+item[i]).focus();
 					document.getElementById("txt"+item[i]).value = 0;
+					document.getElementById("txt"+item[i]).focus();
 
 					total = (parseFloat(total) + 0.00);
+					
+					vari = (parseFloat(document.getElementById("txtpoed"+item[i]).value) - 0.00);
+					document.getElementById("txtvar"+item[i]).value = vari;
+					totalvar = (parseFloat(totalvar) + parseFloat(vari));
 				}
 			}
 		}
 		
 		document.getElementById("total_qty_rr").value = total;
+		document.getElementById("total_variance").value = totalvar;
 	}
 </script>
 <body>
@@ -185,8 +210,10 @@
 		<tr>
 			<td class ="label"><label name="po_no">PO Reference No:</label>
 			<td class ="input"><input type="text" readonly name="po_no" value="<?=$id;?>" style="width:272px"></td>
+			<? if(!empty($podate)){ ?>
 			<td class ="label"><label name="po_no">PO Date:</label>
 			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($podate,"M d, Y");?>" style="width:272px"></td>
+			<? } ?>
 		</tr>
 		<tr>
 			<td class ="label"><label name="supplier">Supplier:</label>
@@ -228,7 +255,8 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
-			<th width="100">RR QUANTITY</th>
+			<th width="100">QTY RECEIVED</th>
+			<th width="100">VARIANCE</th>
 			<th width="100">TOTAL</th>
 		</tr>
 		<? 
@@ -238,6 +266,7 @@
 			$arrItems = null;
 			$nArrItem = explode("|",$nArrItems);
 			$ttlrrqty = 0;
+			$ttlvari = 0;
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
@@ -250,10 +279,20 @@
 				if($val[6] == "" || $val[6] == 0){
 					$rrqty = null;
 				}
+				
 				$ttlrrqty += $val[6];
+				
+				$vari = ($val[5] - $val[6]);
+				if($val[6] == 0){
+					$vari = 0;
+				}
+
+				$ttlvari += $vari;
 		?>
 		<style type="text/css">
-			table tr td input#txt<?=$val[0];?>{ text-align: right; }
+			table tr td input#txt<?=$val[0];?>,
+			table tr td input#txtvar<?=$val[0];?>
+				{ text-align: right; }
 		</style>
 		<tr>
 			<td><?=$val[0];?></td>
@@ -261,7 +300,9 @@
 			<td align="center"><?=$val[3];?></td>
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
+			<input type="hidden" name="txtpoed<?=$val[0];?>" id="txtpoed<?=$val[0];?>" value="<?=$val[5];?>" />
 			<td align="center"><input type="text" name="txt<?=$val[0];?>" id="txt<?=$val[0];?>" value="<?=$val[6];?>" <?=$readonly;?> size="10" onBlur="return computeQtyRR();" /></td>
+			<td align="center"><input type="text" name="txtvar<?=$val[0];?>" id="txtvar<?=$val[0];?>" value="0" <?=$readonly;?> size="10" readonly /></td>
 			<td align="right"><?=number_format($total,2);?></td>
 		</tr>
 		<? $cnt++; } $arrItems = rtrim($arrItems,":"); ?>
@@ -274,6 +315,7 @@
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
 			<td align="center"><input type="text" readonly name="total_qty_rr" id="total_qty_rr" size="10" value="<?=$ttlrrqty;?>" /></td>
+			<td align="center"><input type="text" readonly name="total_variance" id="total_variance" size="10" value="<?=$ttlvari;?>" /></td>
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>
