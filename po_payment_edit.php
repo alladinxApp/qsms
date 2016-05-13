@@ -75,25 +75,38 @@
 	if (isset($_POST['update'])){
 		$newnum = getNewNum('CV_REFERENCE');
 
+		switch($_POST['status']){
+			case 1: // BILLED
+					$po_mst_upd = "UPDATE tbl_po_mst 
+						SET cv_reference_no = '$newnum'
+							,payment_date = '$today'
+							,billed_by = '$_SESSION[username]'
+							,status = '12'
+						WHERE po_reference_no = '$id'";
 
-		$po_mst_upd = "UPDATE tbl_po_mst 
-			SET cv_reference_no = '$newnum'
-				,payment_date = '$today'
-				,billed_by = '$_SESSION[username]'
-				,status = '12'
-			WHERE po_reference_no = '$id'";
-
-		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'CV_REFERENCE' ";
-		
-		$res = mysql_query($po_mst_upd) or die("UPDATE Billing ".mysql_error());
-		
-		if(!$res){
-			echo '<script>alert("There has been an error on billing your PO! Please double check all the data and save.");</script>';
-		}else{
-			mysql_query($update_controlno);
-			echo '<script>alert("PO successfully billed.");</script>';
+					$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'CV_REFERENCE' ";
+					
+					$res = mysql_query($po_mst_upd) or die("UPDATE Billing ".mysql_error());
+					
+					if(!$res){
+						echo '<script>alert("There has been an error on billing your PO! Please double check all the data and save.");</script>';
+					}else{
+						mysql_query($update_controlno);
+						echo '<script>alert("PO successfully billed.");</script>';
+					}
+					echo '<script>window.location="po_payment_edit.php?id='.$id.'";</script>';
+				break;
+			default:
+					$po_mst_upd = "UPDATE tbl_po_mst 
+							SET rr_post_reference_no = NULL
+								,rr_post_date = NULL
+								,status = '10'
+							WHERE po_reference_no = '$id'";
+					mysql_query($po_mst_upd);
+					echo '<script>alert("RR successfully unposted.");</script>';
+					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+				break;
 		}
-		echo '<script>window.location="po_payment_edit.php?id='.$id.'";</script>';
 	}
 ?>
 <html>
@@ -216,7 +229,7 @@
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
-				$total = ($val[4] * $val[5]);
+				$total = ($val[4] * $val[6]);
 				$subtotal += $total;
 				$totalqty += $val[5];
 				$totalrrqty += $val[6];
@@ -272,13 +285,12 @@
 				<td class ="label"><label name="total_amount">Total Amount:</label>
 				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>
 			</tr>
-			<? if($status == 0){ ?>
+			<? if($status == 10 || $status == 11){ ?>
 			<tr>
 				<td class ="label"><label name="status">Status:</label>
 				<td class ="input"><select name="status" id="status">
-					<option value="0">Pending/Update</option>
-					<option value="1">Approve</option>
-					<option value="2">Cancel/Disapprove</option>
+					<option value="1">Billed</option>
+					<option value="0">Unpost</option>
 				</select></td>
 			</tr>
 			<? } ?>

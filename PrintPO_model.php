@@ -110,7 +110,7 @@
 			$this->Cell(80,4,'DESCRIPTION',"LTRB",0,'C');
 			$this->Cell(30,4,'PRICE',"LTRB",0,'C');
 			$this->Cell(20,4,'QTY',"LTRB",0,'C');
-			$this->Cell(30,4,'ITEM CODE',"LTRB",0,'C');
+			$this->Cell(30,4,'TOTAL',"LTRB",0,'C');
 			$this->Ln();
 
 			$this->totalqty = 0;

@@ -63,7 +63,8 @@
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
 		$itemrr = $row['rr_quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . "|";
+		$itemrrttl = $row['rr_total'];
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . ":" . $itemrrttl . "|";
 	}
 
 	if($num_po_dtl > 0){
@@ -200,12 +201,13 @@
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
-				$total = ($val[4] * $val[5]);
+				$total = ($val[4] * $val[6]);
 				$subtotal += $total;
 				$totalqty += $val[5];
 				$totalrrqty += $val[6];
 				$var = ($val[5] - $val[6]);
 				$totalvar += $var;
+				$ttlrr += $val[7];
 		?>
 		<tr>
 			<td><?=$val[0];?></td>

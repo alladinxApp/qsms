@@ -106,8 +106,8 @@
 		
 		public function ImprovedTable(){
 			$this->SetFont('Courier','B',10);
-			$this->Cell(30,4,'ITEM CODE',"LTRB",0,'C');
-			$this->Cell(60,4,'DESCRIPTION',"LTRB",0,'C');
+			$this->Cell(25,4,'ITEM CODE',"LTRB",0,'C');
+			$this->Cell(65,4,'DESCRIPTION',"LTRB",0,'C');
 			$this->Cell(20,4,'PRICE',"LTRB",0,'C');
 			$this->Cell(20,4,'POed QTY',"LTRB",0,'C');
 			$this->Cell(20,4,'RCVD QTY',"LTRB",0,'C');
@@ -121,8 +121,8 @@
 			$this->total = 0;
 			for($i=0;$i<count($this->dtl);$i++){
 				$this->SetFont('Courier','',8);
-				$this->Cell(30,4,$this->dtl[$i]['item_code'],"LR",0,'C');
-				$this->Cell(60,4,$this->dtl[$i]['item_desc'],"LR",0,'L');
+				$this->Cell(25,4,$this->dtl[$i]['item_code'],"LR",0,'C');
+				$this->Cell(65,4,$this->dtl[$i]['item_desc'],"LR",0,'L');
 				$this->Cell(20,4,number_format($this->dtl[$i]['price'],2),"LR",0,'R');
 				$this->Cell(20,4,$this->dtl[$i]['qty'],"LR",0,'C');
 				$this->Cell(20,4,$this->dtl[$i]['rr_qty'],"LR",0,'C');

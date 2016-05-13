@@ -44,8 +44,6 @@
 		$rrrefno = '[SYSTEM GENERATED]';
 		if(!empty($row['rr_reference_no'])){
 			$rrrefno = $row['rr_reference_no'];
-			$readonly = 'readonly';
-			$disabled = 'disabled';
 		}
 
 		$rrdate = null;
@@ -63,7 +61,8 @@
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
 		$itemrr = $row['rr_quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . "|";
+		$itemrrttl = $row['rr_total'];
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . ":" . $itemrrttl . "|";
 	}
 
 	if($num_po_dtl > 0){
@@ -76,44 +75,58 @@
 		$item = explode(":",$_POST['txtItemsArr']);
 		$newnum = getNewNum('RECEIVING_REPORT');
 
-		$po_mst_upd = "UPDATE tbl_po_mst 
-			SET difference = '$difference'
-				,rr_reference_no = '$newnum'
-				,rr_date = '$today'
-				,received_by = '$_SESSION[username]'
-				,received_date = '$today'
-				,status = '10'
-			WHERE po_reference_no = '$id'";
+		switch($_POST['status']){
+			case 1: // UPDATE
+					$po_mst_upd = "UPDATE tbl_po_mst 
+						SET difference = '$difference'
+							,rr_reference_no = '$newnum'
+							,rr_date = '$today'
+							,received_by = '$_SESSION[username]'
+							,received_date = '$today'
+							,status = '10'
+						WHERE po_reference_no = '$id'";
 
-		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RECEIVING_REPORT' ";
-		
-		$res = mysql_query($po_mst_upd) or die("UPDATE RR ".mysql_error());
-		
-		if(!$res){
-			echo '<script>alert("There has been an error on receiving your PO! Please double check all the data and save.");</script>';
-		}else{
-			for($i=0;$i<count($item);$i++){
-				$itemcode = $item[$i];
-				$qty = $_POST['txt'.$itemcode];
-				$sql_dtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = '$qty' WHERE po_reference_no = '$id' AND item_code = '$itemcode'";
-				mysql_query($sql_dtl_upd);
+					$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RECEIVING_REPORT' ";
+					
+					$res = mysql_query($po_mst_upd) or die("UPDATE RR ".mysql_error());
+					
+					if(!$res){
+						echo '<script>alert("There has been an error on receiving your PO! Please double check all the data and save.");</script>';
+					}else{
+						for($i=0;$i<count($item);$i++){
+							$itemcode = $item[$i];
+							$qty = $_POST['txt'.$itemcode];
+							$sql_dtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = '$qty' WHERE po_reference_no = '$id' AND item_code = '$itemcode'";
+							mysql_query($sql_dtl_upd);
 
-				// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
-				$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";
-				mysql_query($sql_acc_upd);
+							// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
+							$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";
+							mysql_query($sql_acc_upd);
 
-				// UPDATE ITEM ON HAND FOR MATERIALS
-				$sql_mat_upd = "UPDATE tbl_material SET material_onhand = (material_onhand + $qty) WHERE item_code = '$itemcode'";
-				mysql_query($sql_mat_upd);
+							// UPDATE ITEM ON HAND FOR MATERIALS
+							$sql_mat_upd = "UPDATE tbl_material SET material_onhand = (material_onhand + $qty) WHERE item_code = '$itemcode'";
+							mysql_query($sql_mat_upd);
 
-				// UPDATE ITEM ON HAND FOR PARTS
-				$sql_par_upd = "UPDATE tbl_parts SET part_onhand = (part_onhand + $qty) WHERE item_code = '$itemcode'";
-				mysql_query($sql_par_upd);
-			}
-			mysql_query($update_controlno);
-			echo '<script>alert("PO successfully received.");</script>';
+							// UPDATE ITEM ON HAND FOR PARTS
+							$sql_par_upd = "UPDATE tbl_parts SET part_onhand = (part_onhand + $qty) WHERE item_code = '$itemcode'";
+							mysql_query($sql_par_upd);
+						}
+						mysql_query($update_controlno);
+						echo '<script>alert("PO successfully received.");</script>';
+					}
+					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+				break;
+			default:
+					for($i=0;$i<count($item);$i++){
+						$itemcode = $item[$i];
+						$qty = $_POST['txt'.$itemcode];
+						$sql_dtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = '$qty' WHERE po_reference_no = '$id' AND item_code = '$itemcode'";
+						mysql_query($sql_dtl_upd);
+					}
+					echo '<script>alert("RR successfully updated.");</script>';
+					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+				break;
 		}
-		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 	}
 ?>
 <html>
@@ -137,7 +150,8 @@
 	table tr td input#difference,
 	table tr td input#rr_qty,
 	table tr td input#total_qty_rr,
-	table tr td input#total_variance
+	table tr td input#total_variance,
+	table tr td input#total_rr
 		{ text-align: right; }
 </style>
 <script type="text/javascript">
@@ -156,15 +170,19 @@
 		var total = 0;
 		var totalvar = 0;
 		var fld = 0;
+		var totalrr = 0;
 		for(var i=0;i<item.length;i++){
 			var vari = 0;
+			var rrttl = 0;
 			if(document.getElementById("txt"+item[i]).value == ""){
 			}else{
 				if(!isNaN(document.getElementById("txt"+item[i]).value)){
 					total = (parseFloat(total) + parseFloat(document.getElementById("txt"+item[i]).value));
+					rrttl = (parseFloat(document.getElementById("txtprice"+item[i]).value) * parseFloat(document.getElementById("txt"+item[i]).value));
 					
 					vari = (parseFloat(document.getElementById("txt"+item[i]).value) - parseFloat(document.getElementById("txtpoed"+item[i]).value));
 					document.getElementById("txtvar"+item[i]).value = vari;
+					document.getElementById("txtrrtotal"+item[i]).value = rrttl;
 					totalvar = (parseFloat(totalvar) + parseFloat(vari));
 					
 				}else{
@@ -179,10 +197,12 @@
 					totalvar = (parseFloat(totalvar) + parseFloat(vari));
 				}
 			}
+			totalrr = (parseFloat(totalrr) + parseFloat(rrttl));
 		}
 		
 		document.getElementById("total_qty_rr").value = total;
 		document.getElementById("total_variance").value = totalvar;
+		document.getElementById("total_rr").value = totalrr;
 	}
 </script>
 <body>
@@ -288,10 +308,12 @@
 				}
 
 				$ttlvari += $vari;
+				$ttlrr += $val[7];
 		?>
 		<style type="text/css">
 			table tr td input#txt<?=$val[0];?>,
-			table tr td input#txtvar<?=$val[0];?>
+			table tr td input#txtvar<?=$val[0];?>,
+			table tr td input#txtrrtotal<?=$val[0];?>
 				{ text-align: right; }
 		</style>
 		<tr>
@@ -301,9 +323,11 @@
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
 			<input type="hidden" name="txtpoed<?=$val[0];?>" id="txtpoed<?=$val[0];?>" value="<?=$val[5];?>" />
+			<input type="hidden" name="txtprice<?=$val[0];?>" id="txtprice<?=$val[0];?>" value="<?=$val[4];?>" />
 			<td align="center"><input type="text" name="txt<?=$val[0];?>" id="txt<?=$val[0];?>" value="<?=$val[6];?>" <?=$readonly;?> size="10" onBlur="return computeQtyRR();" /></td>
-			<td align="center"><input type="text" name="txtvar<?=$val[0];?>" id="txtvar<?=$val[0];?>" value="0" <?=$readonly;?> size="10" readonly /></td>
-			<td align="right"><?=number_format($total,2);?></td>
+			<td align="center"><input type="text" name="txtvar<?=$val[0];?>" id="txtvar<?=$val[0];?>" value="<?=$vari;?>" <?=$readonly;?> size="10" readonly /></td>
+			<td align="center"><input type="text" name="txtrrtotal<?=$val[0];?>" id="txtrrtotal<?=$val[0];?>" value="<?=$val[7];?>" <?=$readonly;?> size="10" readonly /></td>
+			<!-- <td align="right"><? //=number_format($total,2);?></td> -->
 		</tr>
 		<? $cnt++; } $arrItems = rtrim($arrItems,":"); ?>
 		<input type="hidden" name="txtDtlCnt" id="txtDtlCnt" value="<?=$cnt-1;?>" />
@@ -316,7 +340,7 @@
 			<td align="center"><b><?=$totalqty;?></b></td>
 			<td align="center"><input type="text" readonly name="total_qty_rr" id="total_qty_rr" size="10" value="<?=$ttlrrqty;?>" /></td>
 			<td align="center"><input type="text" readonly name="total_variance" id="total_variance" size="10" value="<?=$ttlvari;?>" /></td>
-			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
+			<td align="center"><input type="text" readonly name="total_rr" id="total_rr" size="10" value="<?=$ttlrr;?>" /></td>
 			<td>&nbsp;</td>
 		</tr>
 		</table>
@@ -357,20 +381,19 @@
 				<td class ="label"><label name="total_amount">Total Amount:</label>
 				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>
 			</tr>
-			<? if($status == 0){ ?>
+			<? if($status == 1 || $status == 10){ ?>
 			<tr>
 				<td class ="label"><label name="status">Status:</label>
 				<td class ="input"><select name="status" id="status">
-					<option value="0">Pending/Update</option>
-					<option value="1">Approve</option>
-					<option value="2">Cancel/Disapprove</option>
+					<option value="0">Update RR</option>
+					<? if($status == 1){ ?><option value="1">Approve</option><? } ?>
 				</select></td>
 			</tr>
 			<? } ?>
 		</table>
 	</fieldset>
 	</span>
-	<? if(empty($rrdate)){ ?>
+	<? if($status == 1 || $status == 10){ ?>
 	<p class="button">
 		<input type="submit" value="" name="update" />
 		<a href="rr_list.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>

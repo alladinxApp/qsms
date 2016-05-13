@@ -31,7 +31,7 @@
 		$deliveryaddress = $row['delivery_address'];
 		$paymentterm = $row['payment_term'];
 		$discount = $row['discount'];
-		$subtotal = $row['sub_total'];
+		$sub_total = $row['sub_total'];
 		$vat = $row['vat'];
 		$totalamount = $row['total_amount'];
 		$special = $row['special_instruction'];
@@ -208,7 +208,7 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
-			<th width="100">QTY RECEIVED</th>
+			<th width="100">RECEIVED</th>
 			<th width="100">VARIANCE</th>
 			<th width="100">TOTAL</th>
 		</tr>
@@ -219,7 +219,7 @@
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
-				$total = ($val[4] * $val[5]);
+				$total = ($val[4] * $val[6]);
 				$subtotal += $total;
 				$totalqty += $val[5];
 				$totalrrqty += $val[6];
@@ -265,7 +265,7 @@
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
-				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($sub_total,2);?>" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="vat">Vat:</label>

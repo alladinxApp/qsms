@@ -41,7 +41,7 @@
 					,"rr_qty" => $row['rr_quantity']
 					,"variance" => $var
 					,"price" => $row['price']
-					,"total" => $row['total']);
+					,"total" => $row['rr_total']);
 	}
 	
 	$company = array("companyname" => "FAST QUICK SERVICE"
