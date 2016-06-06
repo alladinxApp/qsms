@@ -17,12 +17,24 @@
 	$qry_items = "SELECT * FROM v_items WHERE status = '1'";
 	$result_items = $dbo->query($qry_items);
 
-	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$id'";
+	$qry_rr_mst = "SELECT * FROM v_rr_mst WHERE rr_reference_no = '$id'";
+	$result_rr_mst = $dbo->query($qry_rr_mst);
+
+	$qry_rr_dtl = "SELECT * FROM v_rr_dtl WHERE rr_reference_no = '$id'";
+	$result_rr_dtl = $dbo->query($qry_rr_dtl);
+	$num_rr_dtl = mysql_num_rows(mysql_query($qry_rr_dtl));
+
+	foreach($result_rr_mst as $row){
+		$porefno = $row['po_reference_no'];
+		$rrdate = $row['rr_date'];
+	}
+
+	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$porefno'";
 	$result_po_mst = $dbo->query($qry_po_mst);
 
-	$qry_po_dtl = "SELECT * FROM v_po_dtl WHERE po_reference_no = '$id'";
-	$result_po_dtl = $dbo->query($qry_po_dtl);
-	$num_po_dtl = mysql_num_rows(mysql_query($qry_po_dtl));
+	// $qry_po_dtl = "SELECT * FROM v_po_dtl WHERE po_reference_no = '$porefno'";
+	// $result_po_dtl = $dbo->query($qry_po_dtl);
+	// $num_po_dtl = mysql_num_rows(mysql_query($qry_po_dtl));
 
 	foreach($result_po_mst as $row){
 		$podate = $row['po_date'];
@@ -40,8 +52,6 @@
 		$poquantity = $row['po_quantity'];
 		$rrquantity = $row['rr_quantity'];
 		$difference = $row['difference'];
-		$rrrefno = $row['rr_reference_no'];
-		$rrdate = $row['rr_date'];
 
 		$postrefno = '[SYSTEM GENERATED]';
 		if(!empty($row['rr_post_reference_no'])){
@@ -55,18 +65,16 @@
 	}
 
 	$nArrItems = null;
-	foreach($result_po_dtl as $row){
+	foreach($result_rr_dtl as $row){
 		$itemcode = $row['item_code'];
 		$itemdesc = $row['item_description'];
 		$itemuom = $row['UOM'];
 		$itemuomdesc = $row['UOM_desc'];
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
-		$itemrr = $row['rr_quantity'];
 		$itemrrttl = $row['rr_total'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . ":" . $itemrrttl . "|";
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrrttl . "|";
 	}
-
 	if($num_po_dtl > 0){
 		$nArrItems = rtrim($nArrItems,"|");
 	}
@@ -134,7 +142,7 @@
 		</tr>
 		<tr>
 			<td class ="label"><label name="po_no">RR Reference No:</label>
-			<td class ="input"><input type="text" readonly name="rr_no" value="<?=$rrrefno;?>" style="width:272px"></td>
+			<td class ="input"><input type="text" readonly name="rr_no" value="<?=$id;?>" style="width:272px"></td>
 			<td class ="label"><label name="po_no">RR Date:</label>
 			<td class ="input"><input type="text" readonly name="rr_date" value="<?=dateFormat($rrdate,"M d, Y");?>" style="width:272px"></td>
 		</tr>
@@ -190,8 +198,6 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
-			<th width="100">RECEIVED</th>
-			<th width="100">VARIANCE</th>
 			<th width="100">TOTAL</th>
 		</tr>
 		<? 
@@ -201,12 +207,9 @@
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
-				$total = ($val[4] * $val[6]);
+				$total =$val[6];
 				$subtotal += $total;
 				$totalqty += $val[5];
-				$totalrrqty += $val[6];
-				$var = ($val[5] - $val[6]);
-				$totalvar += $var;
 				$ttlrr += $val[7];
 		?>
 		<tr>
@@ -215,8 +218,6 @@
 			<td align="center"><?=$val[3];?></td>
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
-			<td align="center"><?=$val[6];?></td>
-			<td align="center"><?=$var;?></td>
 			<td align="right"><?=number_format($total,2);?></td>
 		</tr>
 		<? } ?>
@@ -226,8 +227,6 @@
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
-			<td align="center"><b><?=$totalrrqty;?></b></td>
-			<td align="center"><b><?=$totalvar;?></b></td>
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>
@@ -238,22 +237,22 @@
 	<fieldset form="form_payments" name="form_payments">
 	<legend><p id="title">Payments</p></legend>
 		<table>
-			<tr>
+			<!-- <tr>
 				<td class ="label"><label name="payment_terms">Payment Terms:</label>
 				<td class ="input"><input readonly type="text" name="payterm" id="payterm" value="<?=$paymentterm;?>" style="width:170px"></td>
-			</tr>    
+			</tr> -->    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
-				<td class ="input"><input readonly type="text" name="discount" id="discount" value="<?=number_format($discount,2);?>" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
+				<td class ="input"><input type="text" name="discount" id="discount" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
 				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" style="width:170px"></td>
 			</tr>
-			<tr>
+			<!-- <tr>
 				<td class ="label"><label name="vat">Vat:</label>
-				<td class ="input"><input type="text" readonly name="vat" id="vat" value="<?=number_format($vat,2);?>" style="width:170px"></td>
-			</tr>
+				<td class ="input"><input type="text" readonly name="vat" id="vat" style="width:170px"></td>
+			</tr> -->
 			<tr>
 				<td class ="label"><label name="total_amount">Total Amount:</label>
 				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>

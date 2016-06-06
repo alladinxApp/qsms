@@ -48,9 +48,7 @@
 			$where .= "AND payment_id = '$ptype'";
 		}
 
-		$sql_lbs_master = "SELECT v_sales.*,v_service_detail_job.job_name 
-			FROM v_sales
-				JOIN v_service_detail_job ON v_service_detail_job.estimate_refno = v_sales.estimate_refno
+		$sql_lbs_master = "SELECT * FROM v_sales
  			WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
  			ORDER BY v_sales.transaction_date";
 		$qry_lbs_master = mysql_query($sql_lbs_master);
@@ -173,11 +171,19 @@
 				$totalvat += $vat;
 
 				$style = $bg;
+
+				$job = null;
+				$sql_lbs_detail = "SELECT job_name FROM v_service_detail_job WHERE estimate_refno = '$row[estimate_refno]'";
+				$qry_lbs_detail = mysql_query($sql_lbs_detail);
+				while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
+					$job .= $row_lbs_detail['job_name'] . "<br />,";
+				}
+				$job = rtrim($job, "<br />,");
 		?>
 		<tr>
 			<td><?=$cnt;?></td>
 			<td style="<?=$style;?>"><?=$row['customername'];?></td>
-			<td style="<?=$style;?>"><?=$row['job_name'];?></td>
+			<td style="<?=$style;?>"><?=$job;?></td>
 			<td style="<?=$style;?>"><?=$row['payment_mode'];?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['labor'],2);?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['lubricants'],2);?></td>

@@ -40,16 +40,6 @@
 		$poquantity = $row['po_quantity'];
 		$rrquantity = $row['rr_quantity'];
 		$difference = $row['difference'];
-
-		$rrrefno = '[SYSTEM GENERATED]';
-		if(!empty($row['rr_reference_no'])){
-			$rrrefno = $row['rr_reference_no'];
-		}
-
-		$rrdate = null;
-		if(!empty($row['rr_date'])){
-			$rrdate = $row['rr_date'];
-		}
 	}
 
 	$nArrItems = null;
@@ -73,58 +63,123 @@
 		$difference = $_POST['difference'];
 		$paymentterm = $_POST['payment_terms'];
 		$item = explode(":",$_POST['txtItemsArr']);
-		$newnum = getNewNum('RECEIVING_REPORT');
+		$price = explode(":",$_POST['txtPricesArr']);
 
 		switch($_POST['status']){
-			case 1: // UPDATE
-					$po_mst_upd = "UPDATE tbl_po_mst 
-						SET difference = '$difference'
-							,rr_reference_no = '$newnum'
-							,rr_date = '$today'
-							,received_by = '$_SESSION[username]'
-							,received_date = '$today'
-							,status = '10'
-						WHERE po_reference_no = '$id'";
+			case 1: //UPDATE
+					$rrrefno = getNewNum('RECEIVING_REPORT');
+
+					$rr_mst = "INSERT INTO tbl_rr_mst(rr_reference_no,rr_date,po_reference_no,received_by,received_date)
+									VALUES('$rrrefno','$today','$id','$_SESSION[username]','$today')";
+
+					$res = mysql_query($rr_mst) or die("SAVING RR ".mysql_error());
 
 					$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RECEIVING_REPORT' ";
-					
-					$res = mysql_query($po_mst_upd) or die("UPDATE RR ".mysql_error());
-					
-					if(!$res){
-						echo '<script>alert("There has been an error on receiving your PO! Please double check all the data and save.");</script>';
-					}else{
-						for($i=0;$i<count($item);$i++){
-							$itemcode = $item[$i];
-							$qty = $_POST['txt'.$itemcode];
-							$sql_dtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = '$qty' WHERE po_reference_no = '$id' AND item_code = '$itemcode'";
-							mysql_query($sql_dtl_upd);
+					mysql_query($update_controlno);
 
-							// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
-							$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";
-							mysql_query($sql_acc_upd);
-
-							// UPDATE ITEM ON HAND FOR MATERIALS
-							$sql_mat_upd = "UPDATE tbl_material SET material_onhand = (material_onhand + $qty) WHERE item_code = '$itemcode'";
-							mysql_query($sql_mat_upd);
-
-							// UPDATE ITEM ON HAND FOR PARTS
-							$sql_par_upd = "UPDATE tbl_parts SET part_onhand = (part_onhand + $qty) WHERE item_code = '$itemcode'";
-							mysql_query($sql_par_upd);
-						}
-						mysql_query($update_controlno);
-						echo '<script>alert("PO successfully received.");</script>';
-					}
-					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
-				break;
-			default:
+					$cnt = 1;
 					for($i=0;$i<count($item);$i++){
 						$itemcode = $item[$i];
+						$itemprice = $price[$i];
 						$qty = $_POST['txt'.$itemcode];
-						$sql_dtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = '$qty' WHERE po_reference_no = '$id' AND item_code = '$itemcode'";
-						mysql_query($sql_dtl_upd);
+						
+						$sql_rr_dtl = "INSERT INTO tbl_rr_dtl(rr_reference_no,po_reference_no,item_code,price,quantity,seqno)
+								VALUES('$rrrefno','$id','$itemcode','$itemprice','$qty','$cnt')";
+						mysql_query($sql_rr_dtl);
+
+						// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
+						$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";
+						mysql_query($sql_acc_upd);
+
+						// UPDATE ITEM ON HAND FOR MATERIALS
+						$sql_mat_upd = "UPDATE tbl_material SET material_onhand = (material_onhand + $qty) WHERE item_code = '$itemcode'";
+						mysql_query($sql_mat_upd);
+
+						// UPDATE ITEM ON HAND FOR PARTS
+						$sql_par_upd = "UPDATE tbl_parts SET part_onhand = (part_onhand + $qty) WHERE item_code = '$itemcode'";
+						mysql_query($sql_par_upd);
+
+						$sql_podtl_upd = "UPDATE tbl_po_dtl SET rr_quantity = (rr_quantity + $qty), quantity = (quantity - $qty) WHERE item_code = '$itemcode' AND po_reference_no = '$id'";
+						mysql_query($sql_podtl_upd);
+
+						$cnt++;
 					}
-					echo '<script>alert("RR successfully updated.");</script>';
+
+					echo '<script>alert("Items successfully received.");</script>';
 					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+				break;
+			// case 1: // UPDATE
+			// 		if($rrexist > 0){
+			// 			$rr_mst = "INSERT INTO tbl_rr_mst(rr_reference_no,rr_date,po_reference_no,received_by,received_date)
+			// 						VALUES('$rrrefno','$today','$id','$_SESSION[username]','$today')";
+
+			// 			$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RECEIVING_REPORT' ";
+			// 		}else{
+			// 			$rr_mst = "UPDATE tbl_rr_mst SET rr_date = '$today', received_date = '$today' WHERE rr_reference_no = '$rrrefno'";
+			// 		}
+					
+			// 		$res = mysql_query($rr_mst) or die("UPDATE RR ".mysql_error());
+					
+			// 		if(!$res){
+			// 			echo '<script>alert("There has been an error on receiving your PO! Please double check all the data and save.");</script>';
+			// 		}else{
+			// 			for($i=0;$i<count($item);$i++){
+			// 				$itemcode = $item[$i];
+			// 				$qty = $_POST['txt'.$itemcode];
+			// 				$sql_dtl_upd = "UPDATE tbl_rr_dtl SET rr_quantity = '$qty' WHERE rr_reference_no = '$rrrefno' AND item_code = '$itemcode'";
+			// 				mysql_query($sql_dtl_upd);
+
+			// 				// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
+			// 				$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";
+			// 				mysql_query($sql_acc_upd);
+
+			// 				// UPDATE ITEM ON HAND FOR MATERIALS
+			// 				$sql_mat_upd = "UPDATE tbl_material SET material_onhand = (material_onhand + $qty) WHERE item_code = '$itemcode'";
+			// 				mysql_query($sql_mat_upd);
+
+			// 				// UPDATE ITEM ON HAND FOR PARTS
+			// 				$sql_par_upd = "UPDATE tbl_parts SET part_onhand = (part_onhand + $qty) WHERE item_code = '$itemcode'";
+			// 				mysql_query($sql_par_upd);
+			// 			}
+			// 			mysql_query($update_controlno);
+			// 			echo '<script>alert("Partial items successfully received.");</script>';
+			// 		}
+			// 		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+			// 	break;
+			// case 2: 
+			// 		$po_mst = "UPDATE tbl_po_mst SET status = '10' WHERE po_reference_no = '$id'";
+			// 		$res = mysql_query($po_mst) or die("UPDATE RR ".mysql_error());
+			// 		echo '<script>alert("RR successfully received.");</script>';
+			// 		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+			// 	break;
+			default:
+					// if($rrexist == 0){
+					// 	$rrrefno = getNewNum('RECEIVING_REPORT');
+
+					// 	$rr_mst = "INSERT INTO tbl_rr_mst(rr_reference_no,rr_date,po_reference_no,received_by,received_date)
+					// 				VALUES('$rrrefno','$today','$id','$_SESSION[username]','$today')";
+					// 	mysql_query($rr_mst);
+					// }
+
+					// for($i=0;$i<count($item);$i++){
+					// 	$itemcode = $item[$i];
+					// 	$qty = $_POST['txt'.$itemcode];
+
+					// 	$sqlchkrr = "SELECT * FROM v_rr_dtl WHERE rr_reference_no = '$rrrefno' AND item_code = '$itemcode'";
+					// 	$qrychkrr = mysql_query($sqlchkrr);
+					// 	$numchkrr = mysql_num_rows($qrychkrr);
+
+					// 	if($numchkrr > 0){
+					// 		$sql_rr_dtl = "UPDATE tbl_rr_dtl SET rr_quantity = '$qty' WHERE rr_reference_no = '$rrrefno' AND item_code = '$itemcode'";
+					// 	}else{
+					// 		$sql_rr_dtl = "INSERT INTO tbl_rr_dtl(rr_reference_no,po_reference_no,item_code,quantity)
+					// 						VALUES('$rrrefno','$id','$itemcode','$qty')";
+					// 	}
+
+					// 	mysql_query($sql_rr_dtl);
+					// }
+					// echo '<script>alert("RR successfully updated.");</script>';
+					// echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 				break;
 		}
 	}
@@ -202,7 +257,16 @@
 		
 		document.getElementById("total_qty_rr").value = total;
 		document.getElementById("total_variance").value = totalvar;
-		document.getElementById("total_rr").value = totalrr;
+		var discounted = totalrr;
+		if(document.getElementById("discount").value > 0){
+			discounted = (parseFloat(totalrr) - document.getElementById("discount").value);
+		}
+		document.getElementById("total_rr").value = discounted;
+		document.getElementById("subtotal").value = discounted;
+		var vat = (parseFloat(discounted) * 0.12);
+		document.getElementById("vat").value = vat.toFixed(2);
+		var totalamount = (parseFloat(totalrr) + parseFloat(vat));
+		document.getElementById("total_amount").value = totalamount.toFixed(2);
 	}
 </script>
 <body>
@@ -221,12 +285,12 @@
 	<legend>
 	<p id="title">RECEIVING</p></legend>
 	<table>
-		<tr>
+		<!-- <tr>
 			<td class ="label"><label name="po_no">RR Reference No:</label>
 			<td class ="input"><input type="text" readonly name="rr_no" value="<?=$rrrefno;?>" style="width:272px"></td>
 			<td class ="label"><label name="po_no">RR Date:</label>
 			<td class ="input"><input type="text" readonly name="rr_date" value="<?=dateFormat($rrdate,"M d, Y");?>" style="width:272px"></td>
-		</tr>
+		</tr> -->
 		<tr>
 			<td class ="label"><label name="po_no">PO Reference No:</label>
 			<td class ="input"><input type="text" readonly name="po_no" value="<?=$id;?>" style="width:272px"></td>
@@ -284,6 +348,7 @@
 			$totalqty = 0;
 			$cnt = 1;
 			$arrItems = null;
+			$arrPrices = null;
 			$nArrItem = explode("|",$nArrItems);
 			$ttlrrqty = 0;
 			$ttlvari = 0;
@@ -295,6 +360,7 @@
 				$totalqty += $val[5];
 
 				$arrItems .= $val[0] . ":";
+				$arrPrices .= $val[4] . ":";
 
 				if($val[6] == "" || $val[6] == 0){
 					$rrqty = null;
@@ -324,23 +390,24 @@
 			<td align="center"><?=$val[5];?></td>
 			<input type="hidden" name="txtpoed<?=$val[0];?>" id="txtpoed<?=$val[0];?>" value="<?=$val[5];?>" />
 			<input type="hidden" name="txtprice<?=$val[0];?>" id="txtprice<?=$val[0];?>" value="<?=$val[4];?>" />
-			<td align="center"><input type="text" name="txt<?=$val[0];?>" id="txt<?=$val[0];?>" value="<?=$val[6];?>" <?=$readonly;?> size="10" onBlur="return computeQtyRR();" /></td>
-			<td align="center"><input type="text" name="txtvar<?=$val[0];?>" id="txtvar<?=$val[0];?>" value="<?=$vari;?>" <?=$readonly;?> size="10" readonly /></td>
-			<td align="center"><input type="text" name="txtrrtotal<?=$val[0];?>" id="txtrrtotal<?=$val[0];?>" value="<?=$val[7];?>" <?=$readonly;?> size="10" readonly /></td>
+			<td align="center"><input type="text" name="txt<?=$val[0];?>" id="txt<?=$val[0];?>" value="0" <?=$readonly;?> size="10" onBlur="return computeQtyRR();" /></td>
+			<td align="center"><input type="text" name="txtvar<?=$val[0];?>" id="txtvar<?=$val[0];?>" value="0" <?=$readonly;?> size="10" readonly /></td>
+			<td align="center"><input type="text" name="txtrrtotal<?=$val[0];?>" id="txtrrtotal<?=$val[0];?>" value="0" <?=$readonly;?> size="10" readonly /></td>
 			<!-- <td align="right"><? //=number_format($total,2);?></td> -->
 		</tr>
-		<? $cnt++; } $arrItems = rtrim($arrItems,":"); ?>
+		<? $cnt++; } $arrItems = rtrim($arrItems,":"); $arrPrices = rtrim($arrPrices, ":"); ?>
 		<input type="hidden" name="txtDtlCnt" id="txtDtlCnt" value="<?=$cnt-1;?>" />
 		<input type="hidden" name="txtItemsArr" id="txtItemsArr" value="<?=$arrItems;?>">
+		<input type="hidden" name="txtPricesArr" id="txtPricesArr" value="<?=$arrPrices;?>">
 		<tr>
 			<td colspan="10"><hr /></td>
 		</tr>
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
-			<td align="center"><input type="text" readonly name="total_qty_rr" id="total_qty_rr" size="10" value="<?=$ttlrrqty;?>" /></td>
-			<td align="center"><input type="text" readonly name="total_variance" id="total_variance" size="10" value="<?=$ttlvari;?>" /></td>
-			<td align="center"><input type="text" readonly name="total_rr" id="total_rr" size="10" value="<?=$ttlrr;?>" /></td>
+			<td align="center"><input type="text" readonly name="total_qty_rr" id="total_qty_rr" size="10" value="0" /></td>
+			<td align="center"><input type="text" readonly name="total_variance" id="total_variance" size="10" value="0" /></td>
+			<td align="center"><input type="text" readonly name="total_rr" id="total_rr" size="10" value="0.00" /></td>
 			<td>&nbsp;</td>
 		</tr>
 		</table>
@@ -367,26 +434,28 @@
 			</tr>    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
-				<td class ="input"><input readonly type="text" name="discount" id="discount" value="<?=number_format($discount,2);?>" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
+				<td class ="input"><input type="text" name="discount" id="discount" value="0.00" onBlur="return computeQtyRR();" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
-				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="0.00" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="vat">Vat:</label>
-				<td class ="input"><input type="text" readonly name="vat" id="vat" value="<?=number_format($vat,2);?>" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="vat" id="vat" value="0.00" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="total_amount">Total Amount:</label>
-				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="0.00" style="width:170px"></td>
 			</tr>
 			<? if($status == 1 || $status == 10){ ?>
 			<tr>
 				<td class ="label"><label name="status">Status:</label>
 				<td class ="input"><select name="status" id="status">
-					<option value="0">Update RR</option>
-					<? if($status == 1){ ?><option value="1">Approve</option><? } ?>
+					<option value="1">Received</option>
+					<? if($status == 1){ ?>
+						<option value="2">Close</option>
+					<? } ?>
 				</select></td>
 			</tr>
 			<? } ?>
