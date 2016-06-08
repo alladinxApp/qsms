@@ -12,7 +12,7 @@
 		$cvrefno = $_POST['txtcvrefno'];
 		$cnt = 0;
 
-		$where = "WHERE (status = '11' OR status = '12') AND rr_post_reference_no IS NOT NULL ";
+		$where = "WHERE (status = '1' OR status = '10') AND rr_post_reference_no IS NOT NULL ";
 
 		if(!empty($porefno)){
 			$where .= " AND po_reference_no = '$porefno'";
@@ -44,7 +44,7 @@
 			$where .= " AND (rr_post_date between '$datefrom' AND '$dateto') ";
 		}		
 		
-		$qrypomst = "SELECT * FROM v_po_mst " . $where;
+		$qrypomst = "SELECT * FROM v_rr_mst " . $where;
 		$respomst = $dbo->query($qrypomst);
 	}
 ?>
@@ -91,7 +91,6 @@
 			<th width="30">&nbsp;</th>
 			<th width="20">#</th>
 			<th width="100">PO Ref No</th>
-			<th width="100">Approved Date</th>
 			<th width="100">RR Ref No</th>
 			<th width="100">RR Date</th>
 			<th width="100">Post Ref No</th>
@@ -119,10 +118,9 @@
 				$style = $bg . $color;
 		?>
 		<tr>
-			<td align="center" style="<?=$style;?>"><a href="po_payment_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
+			<td align="center" style="<?=$style;?>"><a href="po_payment_edit.php?id=<?=$rowpomst['rr_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['po_reference_no'];?></td>
-			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['approved_date'],"M d, Y");?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['rr_reference_no'];?></td>
 			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['rr_date'],"M d, Y");?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['rr_post_reference_no'];?></td>

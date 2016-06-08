@@ -27,6 +27,12 @@
 	foreach($result_rr_mst as $row){
 		$porefno = $row['po_reference_no'];
 		$rrdate = $row['rr_date'];
+		$totalamount = $row['total_amount'];
+		$discount = $row['discount'];
+		$subtotal = $row['sub_total'];
+		$vat = $row['vat'];
+		$totalamount = $row['total_amount'];
+		$status = $row['status'];
 	}
 
 	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$porefno'";
@@ -42,12 +48,10 @@
 		$deliverto = $row['deliver_to'];
 		$deliveryaddress = $row['delivery_address'];
 		$paymentterm = $row['payment_term'];
-		$discount = $row['discount'];
-		$subtotal = $row['sub_total'];
-		$vat = $row['vat'];
-		$totalamount = $row['total_amount'];
+		
+		
 		$special = $row['special_instruction'];
-		$status = $row['status'];
+		
 		$statusdesc = $row['status_desc'];
 		$poquantity = $row['po_quantity'];
 		$rrquantity = $row['rr_quantity'];
@@ -75,21 +79,19 @@
 		$itemrrttl = $row['rr_total'];
 		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrrttl . "|";
 	}
-	if($num_po_dtl > 0){
+	if($num_rr_dtl > 0){
 		$nArrItems = rtrim($nArrItems,"|");
 	}
-
 	if (isset($_POST['update'])){
 		$newnum = getNewNum('RR_POSTING');
 
 
-		$po_mst_upd = "UPDATE tbl_po_mst 
+		$po_mst_upd = "UPDATE tbl_rr_mst 
 			SET rr_post_reference_no = '$newnum'
 				,rr_post_date = '$today'
-				,status = '11'
+				,status = '1'
 				,posted_by = '$_SESSION[username]'
-				,posted_date = '$today'
-			WHERE po_reference_no = '$id'";
+			WHERE rr_reference_no = '$id'";
 
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RR_POSTING' ";
 		
@@ -148,7 +150,7 @@
 		</tr>
 		<tr>
 			<td class ="label"><label name="po_no">PO Reference No:</label>
-			<td class ="input"><input type="text" readonly name="po_no" value="<?=$id;?>" style="width:272px"></td>
+			<td class ="input"><input type="text" readonly name="po_no" value="<?=$porefno;?>" style="width:272px"></td>
 			<td class ="label"><label name="po_no">PO Date:</label>
 			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($podate,"M d, Y");?>" style="width:272px"></td>
 		</tr>
@@ -243,30 +245,30 @@
 			</tr> -->    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
-				<td class ="input"><input type="text" name="discount" id="discount" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
+				<td class ="input"><input type="text" name="discount" id="discount" readonly value="<?=number_format($discount,2);?>" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
 				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($subtotal,2);?>" style="width:170px"></td>
 			</tr>
-			<!-- <tr>
+			<tr>
 				<td class ="label"><label name="vat">Vat:</label>
-				<td class ="input"><input type="text" readonly name="vat" id="vat" style="width:170px"></td>
-			</tr> -->
+				<td class ="input"><input type="text" readonly name="vat" id="vat" value="<?=number_format($vat,2);?>" style="width:170px"></td>
+			</tr>
 			<tr>
 				<td class ="label"><label name="total_amount">Total Amount:</label>
 				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>
 			</tr>
-			<? if($status == 0){ ?>
-			<tr>
+			<? //if($status == 0){ ?>
+			<!-- <tr>
 				<td class ="label"><label name="status">Status:</label>
 				<td class ="input"><select name="status" id="status">
 					<option value="0">Pending/Update</option>
 					<option value="1">Approve</option>
 					<option value="2">Cancel/Disapprove</option>
 				</select></td>
-			</tr>
-			<? } ?>
+			</tr> -->
+			<? //} ?>
 		</table>
 	</fieldset>
 	</span>

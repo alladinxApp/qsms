@@ -17,33 +17,21 @@
 	$qry_items = "SELECT * FROM v_items WHERE status = '1'";
 	$result_items = $dbo->query($qry_items);
 
-	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$id'";
-	$result_po_mst = $dbo->query($qry_po_mst);
+	$qry_rr_mst = "SELECT * FROM v_rr_mst WHERE rr_reference_no = '$id'";
+	$result_rr_mst = $dbo->query($qry_rr_mst);
 
-	$qry_po_dtl = "SELECT * FROM v_po_dtl WHERE po_reference_no = '$id'";
-	$result_po_dtl = $dbo->query($qry_po_dtl);
-	$num_po_dtl = mysql_num_rows(mysql_query($qry_po_dtl));
-
-	foreach($result_po_mst as $row){
-		$podate = $row['po_date'];
-		$suppliername = $row['supplier_name'];
-		$deliverto = $row['deliver_to'];
-		$deliveryaddress = $row['delivery_address'];
-		$paymentterm = $row['payment_term'];
+	foreach($result_rr_mst as $row){
+		$porefno = $row['po_reference_no'];
+		$status = $row['status'];
+		$statusdesc = $row['status_desc'];
+		$postrefno = $row['rr_post_reference_no'];
+		$postdate = $row['rr_post_date'];
+		$rrrefno = $row['rr_reference_no'];
+		$rrdate = $row['rr_date'];
 		$discount = $row['discount'];
 		$subtotal = $row['sub_total'];
 		$vat = $row['vat'];
 		$totalamount = $row['total_amount'];
-		$special = $row['special_instruction'];
-		$status = $row['status'];
-		$statusdesc = $row['status_desc'];
-		$poquantity = $row['po_quantity'];
-		$rrquantity = $row['rr_quantity'];
-		$difference = $row['difference'];
-		$rrrefno = $row['rr_reference_no'];
-		$rrdate = $row['rr_date'];
-		$postrefno = $row['rr_post_reference_no'];
-		$postdate = $row['rr_post_date'];
 
 		$cvrefno = '[SYSTEM GENERATED]';
 		if(!empty($row['cv_reference_no'])){
@@ -56,8 +44,38 @@
 		}
 	}
 
+	$qry_rr_dtl = "SELECT * FROM v_rr_dtl WHERE rr_reference_no = '$id'";
+	$result_rr_dtl = $dbo->query($qry_rr_dtl);
+	$num_rr_dtl = mysql_num_rows(mysql_query($qry_rr_dtl));
+
+	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$porefno'";
+	$result_po_mst = $dbo->query($qry_po_mst);
+
+	$qry_po_dtl = "SELECT * FROM v_po_dtl WHERE po_reference_no = '$porefno'";
+	$result_po_dtl = $dbo->query($qry_po_dtl);
+	$num_po_dtl = mysql_num_rows(mysql_query($qry_po_dtl));
+
+	foreach($result_po_mst as $row){
+		$podate = $row['po_date'];
+		$suppliername = $row['supplier_name'];
+		$deliverto = $row['deliver_to'];
+		$deliveryaddress = $row['delivery_address'];
+		$paymentterm = $row['payment_term'];
+		
+		$special = $row['special_instruction'];
+		
+		
+		$poquantity = $row['po_quantity'];
+		$rrquantity = $row['rr_quantity'];
+		$difference = $row['difference'];
+		
+		
+
+		
+	}
+
 	$nArrItems = null;
-	foreach($result_po_dtl as $row){
+	foreach($result_rr_dtl as $row){
 		$itemcode = $row['item_code'];
 		$itemdesc = $row['item_description'];
 		$itemuom = $row['UOM'];
@@ -65,10 +83,10 @@
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
 		$itemrr = $row['rr_quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . "|";
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
 	}
 
-	if($num_po_dtl > 0){
+	if($num_rr_dtl > 0){
 		$nArrItems = rtrim($nArrItems,"|");
 	}
 
@@ -77,12 +95,12 @@
 
 		switch($_POST['status']){
 			case 1: // BILLED
-					$po_mst_upd = "UPDATE tbl_po_mst 
+					$po_mst_upd = "UPDATE tbl_rr_mst 
 						SET cv_reference_no = '$newnum'
 							,payment_date = '$today'
 							,billed_by = '$_SESSION[username]'
-							,status = '12'
-						WHERE po_reference_no = '$id'";
+							,status = '10'
+						WHERE rr_reference_no = '$id'";
 
 					$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'CV_REFERENCE' ";
 					
@@ -97,11 +115,11 @@
 					echo '<script>window.location="po_payment_edit.php?id='.$id.'";</script>';
 				break;
 			default:
-					$po_mst_upd = "UPDATE tbl_po_mst 
+					$po_mst_upd = "UPDATE tbl_rr_mst 
 							SET rr_post_reference_no = NULL
 								,rr_post_date = NULL
-								,status = '10'
-							WHERE po_reference_no = '$id'";
+								,status = '0'
+							WHERE rr_reference_no = '$id'";
 					mysql_query($po_mst_upd);
 					echo '<script>alert("RR successfully unposted.");</script>';
 					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
@@ -168,7 +186,7 @@
 		</tr>
 		<tr>
 			<td class ="label"><label name="po_no">PO Reference No:</label>
-			<td class ="input"><input type="text" readonly name="po_no" value="<?=$id;?>" style="width:272px"></td>
+			<td class ="input"><input type="text" readonly name="po_no" value="<?=$porefno;?>" style="width:272px"></td>
 			<td class ="label"><label name="po_no">PO Date:</label>
 			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($podate,"M d, Y");?>" style="width:272px"></td>
 		</tr>
@@ -218,8 +236,6 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
-			<th width="100">RECEIVED</th>
-			<th width="100">VARIANCE</th>
 			<th width="100">TOTAL</th>
 		</tr>
 		<? 
@@ -229,12 +245,10 @@
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
-				$total = ($val[4] * $val[6]);
+				$total = ($val[4] * $val[5]);
 				$subtotal += $total;
 				$totalqty += $val[5];
 				$totalrrqty += $val[6];
-				$var = ($val[5] - $val[6]);
-				$totalvar += $var;
 		?>
 		<tr>
 			<td><?=$val[0];?></td>
@@ -242,8 +256,6 @@
 			<td align="center"><?=$val[3];?></td>
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
-			<td align="center"><?=$val[6];?></td>
-			<td align="center"><?=$var;?></td>
 			<td align="right"><?=number_format($total,2);?></td>
 		</tr>
 		<? } ?>
@@ -253,8 +265,6 @@
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
-			<td align="center"><b><?=$totalrrqty;?></b></td>
-			<td align="center"><b><?=$totalvar;?></b></td>
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>
@@ -285,7 +295,7 @@
 				<td class ="label"><label name="total_amount">Total Amount:</label>
 				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>
 			</tr>
-			<? if($status == 10 || $status == 11){ ?>
+			<? if($status == 1){ ?>
 			<tr>
 				<td class ="label"><label name="status">Status:</label>
 				<td class ="input"><select name="status" id="status">

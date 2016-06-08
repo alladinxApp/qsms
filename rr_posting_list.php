@@ -102,7 +102,7 @@
 			$cnt = 1; 
 			foreach($respomst as $rowpomst){
 				switch($rowpomst['status']){
-					case 11:
+					case 1:
 						$color = "color: #00ff00;"; break;
 					default:
 						$color = "color: #000;"; break;

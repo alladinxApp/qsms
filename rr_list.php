@@ -85,10 +85,7 @@
 			<th width="20">#</th>
 			<th width="100">PO Ref No</th>
 			<th width="100">Approved Date</th>
-			<th width="100">RR Ref No</th>
-			<th width="100">RR Date</th>
 			<th width="100">PO QTY</th>
-			<th width="100">RR QTY (DIFF)</th>
 			<th width="100">Total Amount</th>
 			<th width="100">Status</th>
 			<th width="200">Supplier</th>
@@ -119,10 +116,7 @@
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['po_reference_no'];?></td>
 			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['approved_date'],"M d, Y");?></td>
-			<td style="<?=$style;?>"><?=$rowpomst['rr_reference_no'];?></td>
-			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['rr_date'],"M d, Y");?></td>
 			<td align="center" style="<?=$style;?>"><?=$rowpomst['po_quantity'];?></td>
-			<td align="center" style="<?=$style;?>"><?=$rowpomst['rr_quantity'];?> <?=$diff;?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($rowpomst['total_amount'],2);?></td>
 			<td align="center" style="<?=$style;?>"><?=$rowpomst['status_desc'];?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['supplier_name'];?></td>

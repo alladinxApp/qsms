@@ -43,6 +43,7 @@
 	}
 
 	$nArrItems = null;
+	$ttlqty = 0;
 	foreach($result_po_dtl as $row){
 		$itemcode = $row['item_code'];
 		$itemdesc = $row['item_description'];
@@ -52,6 +53,7 @@
 		$itemqty = $row['quantity'];
 		$itemrr = $row['rr_quantity'];
 		$itemrrttl = $row['rr_total'];
+		$ttlqty += $itemqty;
 		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . ":" . $itemrrttl . "|";
 	}
 
@@ -64,13 +66,20 @@
 		$paymentterm = $_POST['payment_terms'];
 		$item = explode(":",$_POST['txtItemsArr']);
 		$price = explode(":",$_POST['txtPricesArr']);
+		$discount = str_replace(",","",$_POST['discount']);
+		$subtotal = str_replace(",","",$_POST['subtotal']);
+		$vat = str_replace(",","",$_POST['vat']);
+		$totalamount = str_replace(",","",$_POST['total_amount']);
 
 		switch($_POST['status']){
 			case 1: //UPDATE
 					$rrrefno = getNewNum('RECEIVING_REPORT');
 
-					$rr_mst = "INSERT INTO tbl_rr_mst(rr_reference_no,rr_date,po_reference_no,received_by,received_date)
-									VALUES('$rrrefno','$today','$id','$_SESSION[username]','$today')";
+					$rr_mst = "INSERT INTO tbl_rr_mst(rr_reference_no,rr_date,po_reference_no,received_by,received_date,discount,sub_total,vat,total_amount)
+									VALUES('$rrrefno','$today','$id','$_SESSION[username]','$today','$discount',
+											'$subtotal',
+											'$vat',
+											'$totalamount')";
 
 					$res = mysql_query($rr_mst) or die("SAVING RR ".mysql_error());
 
@@ -78,10 +87,12 @@
 					mysql_query($update_controlno);
 
 					$cnt = 1;
+					$ttlrrqty = 0;
 					for($i=0;$i<count($item);$i++){
 						$itemcode = $item[$i];
 						$itemprice = $price[$i];
 						$qty = $_POST['txt'.$itemcode];
+						$ttlrrqty += $qty;
 						
 						$sql_rr_dtl = "INSERT INTO tbl_rr_dtl(rr_reference_no,po_reference_no,item_code,price,quantity,seqno)
 								VALUES('$rrrefno','$id','$itemcode','$itemprice','$qty','$cnt')";
@@ -105,7 +116,11 @@
 						$cnt++;
 					}
 
-					echo '<script>alert("Items successfully received.");</script>';
+					if($ttlqty <= $ttlrrqty){
+						mysql_query("UPDATE tbl_po_mst set status = '10', closed_by = '$_SESSION[username]' WHERE po_reference_no = '$id'");
+					}
+					$scmsge = "Items successfully received and RR was created (".$rrrefno.").";
+					echo '<script>alert("'.$scmsge.'");</script>';
 					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 				break;
 			// case 1: // UPDATE
@@ -146,12 +161,13 @@
 			// 		}
 			// 		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 			// 	break;
-			// case 2: 
-			// 		$po_mst = "UPDATE tbl_po_mst SET status = '10' WHERE po_reference_no = '$id'";
-			// 		$res = mysql_query($po_mst) or die("UPDATE RR ".mysql_error());
-			// 		echo '<script>alert("RR successfully received.");</script>';
-			// 		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
-			// 	break;
+			case 2: 
+					$po_mst = "UPDATE tbl_po_mst set status = '10', closed_by = '$_SESSION[username]' WHERE po_reference_no = 'id'";
+					$res = mysql_query($po_mst) or die("UPDATE RR ".mysql_error());
+					$scmsge = "Items successfully received and RR was created (".$rrrefno.").";
+					echo '<script>alert("'.$scmsge.'");</script>';
+					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
+				break;
 			default:
 					// if($rrexist == 0){
 					// 	$rrrefno = getNewNum('RECEIVING_REPORT');
@@ -259,13 +275,21 @@
 		document.getElementById("total_variance").value = totalvar;
 		var discounted = totalrr;
 		if(document.getElementById("discount").value > 0){
-			discounted = (parseFloat(totalrr) - document.getElementById("discount").value);
+			discounted = (parseFloat(totalrr) - parseFloat(document.getElementById("discount").value));
+			alert(totalrr);
 		}
-		document.getElementById("total_rr").value = discounted;
+		document.getElementById("total_rr").value = totalrr;
 		document.getElementById("subtotal").value = discounted;
 		var vat = (parseFloat(discounted) * 0.12);
 		document.getElementById("vat").value = vat.toFixed(2);
-		var totalamount = (parseFloat(totalrr) + parseFloat(vat));
+		var totalamount = (parseFloat(discounted) + parseFloat(vat));
+		document.getElementById("total_amount").value = totalamount.toFixed(2);
+	}
+	function discounted(disc){
+		var subtotal = ((document.getElementById("total_rr").value) - disc);
+		var vat = (parseFloat(subtotal) * 0.12);
+		document.getElementById("vat").value = vat.toFixed(2);
+		var totalamount = (parseFloat(subtotal) + parseFloat(vat));
 		document.getElementById("total_amount").value = totalamount.toFixed(2);
 	}
 </script>
@@ -434,7 +458,7 @@
 			</tr>    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
-				<td class ="input"><input type="text" name="discount" id="discount" value="0.00" onBlur="return computeQtyRR();" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
+				<td class ="input"><input type="text" name="discount" id="discount" value="0.00" onBlur="return discounted(this.value);" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
@@ -450,19 +474,17 @@
 			</tr>
 			<? if($status == 1 || $status == 10){ ?>
 			<tr>
-				<td class ="label"><label name="status">Status:</label>
+				<td class ="label"><label name="status" <?=$disabled?>>Status:</label>
 				<td class ="input"><select name="status" id="status">
-					<option value="1">Received</option>
-					<? if($status == 1){ ?>
-						<option value="2">Close</option>
-					<? } ?>
+					<option value="1" <? if($status == 1){ echo 'selected'; } ?>>Received</option>
+					<option value="2" <? if($status == 10){ echo 'selected'; } ?>>Close</option>
 				</select></td>
 			</tr>
 			<? } ?>
 		</table>
 	</fieldset>
 	</span>
-	<? if($status == 1 || $status == 10){ ?>
+	<? if($status == 1){ ?>
 	<p class="button">
 		<input type="submit" value="" name="update" />
 		<a href="rr_list.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>
