@@ -17,14 +17,14 @@
 	$qry_items = "SELECT * FROM v_items WHERE status = '1'";
 	$result_items = $dbo->query($qry_items);
 
-	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$id'";
-	$result_po_mst = $dbo->query($qry_po_mst);
+	$qry_rr_mst = "SELECT * FROM v_rr_mst WHERE rr_reference_no = '$id'";
+	$result_rr_mst = $dbo->query($qry_rr_mst);
 
-	$qry_po_dtl = "SELECT * FROM v_po_dtl WHERE po_reference_no = '$id'";
-	$result_po_dtl = $dbo->query($qry_po_dtl);
-	$num_po_dtl = mysql_num_rows(mysql_query($qry_po_dtl));
+	$qry_rr_dtl = "SELECT * FROM v_rr_dtl WHERE rr_reference_no = '$id'";
+	$result_rr_dtl = $dbo->query($qry_rr_dtl);
+	$num_rr_dtl = mysql_num_rows(mysql_query($qry_rr_dtl));
 
-	foreach($result_po_mst as $row){
+	foreach($result_rr_mst as $row){
 		$podate = $row['po_date'];
 		$suppliername = $row['supplier_name'];
 		$deliverto = $row['deliver_to'];
@@ -57,28 +57,27 @@
 	}
 
 	$nArrItems = null;
-	foreach($result_po_dtl as $row){
+	foreach($result_rr_dtl as $row){
 		$itemcode = $row['item_code'];
 		$itemdesc = $row['item_description'];
 		$itemuom = $row['UOM'];
 		$itemuomdesc = $row['UOM_desc'];
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
-		$itemrr = $row['rr_quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrr . "|";
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
 	}
 
-	if($num_po_dtl > 0){
+	if($num_rr_dtl > 0){
 		$nArrItems = rtrim($nArrItems,"|");
 	}
 
 	if (isset($_POST['update'])){
 
-		$po_mst_upd = "UPDATE tbl_po_mst 
-			SET posted_date = '$today'
-				,posted_by = '$_SESSION[username]'
+		$po_mst_upd = "UPDATE tbl_rr_mst 
+			SET bill_posted_date = '$today'
+				,bill_posted_by = '$_SESSION[username]'
 				,status = '100'
-			WHERE po_reference_no = '$id'";
+			WHERE rr_reference_no = '$id'";
 		
 		$res = mysql_query($po_mst_upd) or die("UPDATE Posting ".mysql_error());
 		
@@ -128,7 +127,7 @@
 	<table>
 		<tr>
 			<td valign="middle">
-				<a href="po_posting_print.php?porefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_CV_post.png" width="80" height="48" style="pointer: cursor; width: 67px;" border="0" /></div></a>
+				<a href="po_posting_print.php?rrrefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_CV_post.png" width="80" height="48" style="pointer: cursor; width: 67px;" border="0" /></div></a>
 			</td>
 		</tr>
 	</table>
@@ -288,7 +287,7 @@
 		</table>
 	</fieldset>
 	</span>
-	<? if($status == 12){ ?>
+	<? if($status == 10){ ?>
 	<p class="button">
 		<input type="submit" value="" name="update" />
 		<a href="rr_list.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>

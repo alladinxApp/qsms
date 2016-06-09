@@ -33,6 +33,16 @@
 		$vat = $row['vat'];
 		$totalamount = $row['total_amount'];
 		$status = $row['status'];
+		
+		$postrefno = '[SYSTEM GENERATED]';
+		if(!empty($row['rr_post_reference_no'])){
+			$postrefno = $row['rr_post_reference_no'];
+		}
+
+		$postdate = null;
+		if(!empty($row['rr_post_date'])){
+			$postdate = $row['rr_post_date'];
+		}
 	}
 
 	$qry_po_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$porefno'";
@@ -57,15 +67,7 @@
 		$rrquantity = $row['rr_quantity'];
 		$difference = $row['difference'];
 
-		$postrefno = '[SYSTEM GENERATED]';
-		if(!empty($row['rr_post_reference_no'])){
-			$postrefno = $row['rr_post_reference_no'];
-		}
-
-		$postdate = null;
-		if(!empty($row['rr_post_date'])){
-			$postdate = $row['rr_post_date'];
-		}
+		
 	}
 
 	$nArrItems = null;

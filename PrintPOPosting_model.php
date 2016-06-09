@@ -107,12 +107,10 @@
 		public function ImprovedTable(){
 			$this->SetFont('Courier','B',10);
 			$this->Cell(25,4,'ITEM CODE',"LTRB",0,'C');
-			$this->Cell(65,4,'DESCRIPTION',"LTRB",0,'C');
-			$this->Cell(20,4,'PRICE',"LTRB",0,'C');
-			$this->Cell(20,4,'POed QTY',"LTRB",0,'C');
-			$this->Cell(20,4,'RCVD QTY',"LTRB",0,'C');
-			$this->Cell(20,4,'VARIANCE',"LTRB",0,'C');
-			$this->Cell(20,4,'TOTAL',"LTRB",0,'C');
+			$this->Cell(85,4,'DESCRIPTION',"LTRB",0,'C');
+			$this->Cell(30,4,'PRICE',"LTRB",0,'C');
+			$this->Cell(20,4,'QTY',"LTRB",0,'C');
+			$this->Cell(30,4,'TOTAL',"LTRB",0,'C');
 			$this->Ln();
 
 			$this->totalqty = 0;
@@ -122,12 +120,10 @@
 			for($i=0;$i<count($this->dtl);$i++){
 				$this->SetFont('Courier','',8);
 				$this->Cell(25,4,$this->dtl[$i]['item_code'],"LR",0,'C');
-				$this->Cell(65,4,$this->dtl[$i]['item_desc'],"LR",0,'L');
-				$this->Cell(20,4,number_format($this->dtl[$i]['price'],2),"LR",0,'R');
+				$this->Cell(85,4,$this->dtl[$i]['item_desc'],"LR",0,'L');
+				$this->Cell(30,4,number_format($this->dtl[$i]['price'],2),"LR",0,'R');
 				$this->Cell(20,4,$this->dtl[$i]['qty'],"LR",0,'C');
-				$this->Cell(20,4,$this->dtl[$i]['rr_qty'],"LR",0,'C');
-				$this->Cell(20,4,$this->dtl[$i]['variance'],"LR",0,'C');
-				$this->Cell(20,4,number_format($this->dtl[$i]['total'],2),"LR",0,'R');
+				$this->Cell(30,4,number_format($this->dtl[$i]['total'],2),"LR",0,'R');
 				$this->Ln();
 
 				$this->totalqty += $this->dtl[$i]['qty'];
@@ -137,18 +133,14 @@
 			}
 
 			$this->SetFont('Courier','B',8);
-			$this->Cell(110,8,'TOTAL >>>>>>>>>>',"LTRB",0,'R');
+			$this->Cell(140,8,'TOTAL >>>>>>>>>>',"LTRB",0,'R');
 			$this->Cell(20,8,$this->totalqty,"LTRB",0,'C');
-			$this->Cell(20,8,$this->totalrrqty,"LTRB",0,'C');
-			$this->Cell(20,8,$this->totalvar,"LTRB",0,'C');
-			$this->Cell(20,8,number_format($this->total,2),"LTRB",0,'R');
+			$this->Cell(30,8,number_format($this->total,2),"LTRB",0,'R');
 			$this->Ln();
 
-			$this->Cell(110,0,'',"LRB",0,'C');
+			$this->Cell(140,0,'',"LRB",0,'C');
 			$this->Cell(20,0,'',"LRB",0,'C');
-			$this->Cell(20,0,'',"LRB",0,'C');
-			$this->Cell(20,0,'',"LRB",0,'C');
-			$this->Cell(20,0,'',"LRB",0,'C');
+			$this->Cell(30,0,'',"LRB",0,'C');
 			$this->Ln(4);
 
 			$this->SetFont('Courier','B',8);
