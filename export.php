@@ -51,10 +51,9 @@
 						$where .= "AND payment_id = '$ptype'";
 					}
 
-					$sql_lbs_master = "SELECT v_sales.*,v_service_detail_job.job_name 
+					$sql_lbs_master = "SELECT *
 						FROM v_sales
-							JOIN v_service_detail_job ON v_service_detail_job.estimate_refno = v_sales.estimate_refno
-			 			WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
+						WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
 			 			ORDER BY v_sales.transaction_date";
 					$qry_lbs_master = mysql_query($sql_lbs_master);
 					$qry_mst = mysql_query($sql_lbs_master);
@@ -103,7 +102,19 @@
 						}
 						// $discounted = ($grandtotal - $row['discount']);
 						$totalamnt = ($discounted + $vat);
-						$ln .= $row['customername'] . "," . $row['job_name'] . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . number_format($vat,2,".","") . "," . $row['discount'] . "," . number_format($totalamnt,2,".","") . "\r\n";
+						
+						$job = null;
+						$sql_lbs_detail = "SELECT job_name FROM v_service_detail_job WHERE estimate_refno = '$row[estimate_refno]'";
+						$qry_lbs_detail = mysql_query($sql_lbs_detail);
+						while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
+							$job[] = $row_lbs_detail['job_name'];
+						}
+
+						$ln .= $row['customername'] . "," . $job[0] . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . number_format($vat,2,".","") . "," . $row['discount'] . "," . number_format($totalamnt,2,".","") . "\r\n";
+
+						for($i=1;$i<count($job);$i++){
+							$ln .= "," . $job[$i] . "\r\n";
+						}
 
 						$totallabor += $row['labor'];
 						$totallubricants += $row['lubricants'];

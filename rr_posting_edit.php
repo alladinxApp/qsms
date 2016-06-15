@@ -131,6 +131,13 @@
 		{ text-align: right; }
 </style>
 <body>
+	<table>
+		<tr>
+			<td valign="middle">
+				<a href="rr_print.php?rrrefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_PO.png" width="80" height="48" style="pointer: cursor; width: 67px;" border="0" /></div></a>
+			</td>
+		</tr>
+	</table>
 	<form method="post" name="parts_po" class="form" onSubmit="return ValidateMe();">
 	<fieldset form="form_po" name="form_po">
 	<legend>
