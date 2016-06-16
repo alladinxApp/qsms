@@ -11,20 +11,10 @@
 		$postrefno = $_POST['txtpostrefno'];
 		$cnt = 0;
 
-		$where = "WHERE (status = '0' OR status = '1')";
+		$where = "WHERE (v_po_mst.status = '10') && (tbl_rr_mst.status = '0' OR tbl_rr_mst.status = '1') ";
 
 		if(!empty($porefno)){
-			$where .= " AND po_reference_no = '$porefno'";
-			$cnt++;
-		}
-
-		if(!empty($rrrefno)){
-			$where .= " AND rr_reference_no = '$rrrefno'";
-			$cnt++;
-		}
-
-		if(!empty($postrefno)){
-			$where .= " AND rr_post_reference_no = '$postrefno'";
+			$where .= " AND v_po_mst.po_reference_no = '$porefno' ";
 			$cnt++;
 		}
 
@@ -40,10 +30,13 @@
 				$dateto = dateFormat($_POST['txtdateto'],"Y-m-d") . " 23:59";
 			}
 
-			$where .= " AND (rr_date between '$datefrom' AND '$dateto') ";
+			$where .= " AND (v_po_mst.po_date between '$datefrom' AND '$dateto') ";
 		}		
 		
-		$qrypomst = "SELECT * FROM v_rr_mst " . $where;
+		$qrypomst = "SELECT v_po_mst.* FROM v_po_mst JOIN tbl_rr_mst
+					ON tbl_rr_mst.po_reference_no = v_po_mst.po_reference_no "
+					. $where
+					. " group by tbl_rr_mst.po_reference_no";
 		$respomst = $dbo->query($qrypomst);
 	}
 ?>
@@ -90,10 +83,7 @@
 			<th width="30">&nbsp;</th>
 			<th width="20">#</th>
 			<th width="100">PO Ref No</th>
-			<th width="100">RR Ref No</th>
-			<th width="100">RR Date</th>
-			<th width="100">Post Ref No</th>
-			<th width="100">Post Date</th>
+			<th width="100">PO Date</th>
 			<th width="100">Total Amount</th>
 			<th width="100">Status</th>
 			<th width="200">Supplier</th>
@@ -101,11 +91,12 @@
 		<?
 			$cnt = 1; 
 			foreach($respomst as $rowpomst){
-				switch($rowpomst['status']){
-					case 1:
-						$color = "color: #00ff00;"; break;
-					default:
-						$color = "color: #000;"; break;
+				if(!empty($rowpomst['rr_post_date'])) {
+					$statdesc = "POSTED";
+					$color = "color: #00ff00;";
+				}else{
+					$statdesc = "RECEIVED";
+					$color = "color: #000;";
 				}
 				if($cnt%2){
 					$bg = "background: none;";
@@ -115,15 +106,12 @@
 				$style = $bg . $color;
 		?>
 		<tr>
-			<td align="center" style="<?=$style;?>"><a href="rr_posting_edit.php?id=<?=$rowpomst['rr_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
+			<td align="center" style="<?=$style;?>"><a href="rr_posting_edit.php?id=<?=$rowpomst['po_reference_no'];?>"><img src="images/edit.png" width="15" /></a></td>
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['po_reference_no'];?></td>
-			<td style="<?=$style;?>"><?=$rowpomst['rr_reference_no'];?></td>
-			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['rr_date'],"M d, Y");?></td>
-			<td style="<?=$style;?>"><?=$rowpomst['rr_post_reference_no'];?></td>
-			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['rr_post_date'],"M d, Y");?></td>
+			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['po_date'],"M d, Y");?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($rowpomst['total_amount'],2);?></td>
-			<td align="center" style="<?=$style;?>"><?=$rowpomst['status_desc'];?></td>
+			<td align="center" style="<?=$style;?>"><?=$statdesc;?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['supplier_name'];?></td>
 		</tr>
 		<? $cnt++; } ?>
@@ -146,16 +134,6 @@
 			<td >PO Ref No</td>
 			<td align="center">:</td>
 			<td colspan="3"><input type="text" id="txtporefno" name="txtporefno" style="width: 230"></td>
-		</tr>
-		<tr>
-			<td >RR Ref No</td>
-			<td align="center">:</td>
-			<td colspan="3"><input type="text" id="txtrrrefno" name="txtrrrefno" style="width: 230"></td>
-		</tr>
-		<tr>
-			<td >RR Posting Ref No</td>
-			<td align="center">:</td>
-			<td colspan="3"><input type="text" id="txtpostrefno" name="txtpostrefno" style="width: 230"></td>
 		</tr>
 		<tr>
 			<td >&nbsp;</td>

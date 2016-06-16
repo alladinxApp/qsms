@@ -17,44 +17,46 @@
 	$qry_items = "SELECT * FROM v_items WHERE status = '1'";
 	$result_items = $dbo->query($qry_items);
 
-	$qry_rr_mst = "SELECT * FROM v_rr_mst WHERE rr_reference_no = '$id'";
-	$result_rr_mst = $dbo->query($qry_rr_mst);
+	$qry_po_mst = "SELECT * FROM v_po_mst WHERE cv_reference_no = '$id'";
+	$result_po_mst = $dbo->query($qry_po_mst);
 
-	$qry_rr_dtl = "SELECT * FROM v_rr_dtl WHERE rr_reference_no = '$id'";
-	$result_rr_dtl = $dbo->query($qry_rr_dtl);
-	$num_rr_dtl = mysql_num_rows(mysql_query($qry_rr_dtl));
-
-	foreach($result_rr_mst as $row){
+	foreach($result_po_mst as $row){
 		$podate = $row['po_date'];
+		$porefno = $row['po_reference_no'];
+		$cvdate = $row['payment_date'];
 		$suppliername = $row['supplier_name'];
 		$deliverto = $row['deliver_to'];
 		$deliveryaddress = $row['delivery_address'];
 		$paymentterm = $row['payment_term'];
-		$discount = $row['discount'];
-		$sub_total = $row['sub_total'];
-		$vat = $row['vat'];
-		$totalamount = $row['total_amount'];
 		$special = $row['special_instruction'];
-		$status = $row['status'];
-		$statusdesc = $row['status_desc'];
-		$poquantity = $row['po_quantity'];
-		$rrquantity = $row['rr_quantity'];
-		$difference = $row['difference'];
-		$rrrefno = $row['rr_reference_no'];
-		$rrdate = $row['rr_date'];
-		$postrefno = $row['rr_post_reference_no'];
-		$postdate = $row['rr_post_date'];
+		$billpostedDt = $row['bill_posted_date'];
 
-		$cvrefno = '[SYSTEM GENERATED]';
-		if(!empty($row['cv_reference_no'])){
-			$cvrefno = $row['cv_reference_no'];
+		if(empty($billpostedDt)){
+			$statusdesc = "BILLED";
+		}else{
+			$statusdesc = "CLOSED";
 		}
 
-		$paymentdate = null;
-		if(!empty($row['payment_date'])){
-			$paymentdate = $row['payment_date'];
-		}
+		$cvrefno = $row['cv_reference_no'];
 	}
+
+	$qry_rr_mst = "SELECT * FROM v_rr_mst WHERE po_reference_no = '$porefno'";
+	$result_rr_mst = $dbo->query($qry_rr_mst);
+
+	$ttldiscount = 0;
+	$ttlsubtotal = 0;
+	$ttlvat = 0;
+	$ttltotal = 0;
+	foreach($result_rr_mst as $row){
+		$ttldiscount += $row['discount'];
+		$ttlsubtotal += $row['sub_total'];
+		$ttlvat += $row['vat'];
+		$ttltotal += $row['total_amount'];
+	}
+
+	$qry_rr_dtl = "SELECT * FROM v_rr_dtl WHERE po_reference_no = '$porefno'";
+	$result_rr_dtl = $dbo->query($qry_rr_dtl);
+	$num_rr_dtl = mysql_num_rows(mysql_query($qry_rr_dtl));
 
 	$nArrItems = null;
 	foreach($result_rr_dtl as $row){
@@ -64,22 +66,29 @@
 		$itemuomdesc = $row['UOM_desc'];
 		$itemprice = $row['price'];
 		$itemqty = $row['quantity'];
-		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . "|";
+		$itemrrttl = $row['rr_total'];
+		$nArrItems .= $itemcode . ":" . $itemdesc . ":" . $itemuom . ":" . $itemuomdesc . ":" . $itemprice . ":" . $itemqty . ":" . $itemrrttl . "|";
 	}
 
 	if($num_rr_dtl > 0){
 		$nArrItems = rtrim($nArrItems,"|");
 	}
 
-	if (isset($_POST['update'])){
+	if (isset($_POST['txtPost']) && !empty($_POST['txtPost']) && $_POST['txtPost'] == 1){
 
-		$po_mst_upd = "UPDATE tbl_rr_mst 
+		$po_mst_upd = "UPDATE tbl_po_mst 
+			SET bill_posted_date = '$today'
+				,bill_posted_by = '$_SESSION[username]'
+			WHERE cv_reference_no = '$id'";
+		
+		$rr_mst_upd = "UPDATE tbl_rr_mst 
 			SET bill_posted_date = '$today'
 				,bill_posted_by = '$_SESSION[username]'
 				,status = '100'
-			WHERE rr_reference_no = '$id'";
-		
+			WHERE cv_reference_no = '$id'";
+
 		$res = mysql_query($po_mst_upd) or die("UPDATE Posting ".mysql_error());
+		mysql_query($rr_mst_upd);
 		
 		if(!$res){
 			echo '<script>alert("There has been an error on saving your Posting! Please double check all the data and save.");</script>';
@@ -123,15 +132,13 @@
 	}
 </script>
 <body>
-	<? if($status == 100){ ?>
 	<table>
 		<tr>
 			<td valign="middle">
-				<a href="po_posting_print.php?rrrefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_CV_post.png" width="80" height="48" style="pointer: cursor; width: 67px;" border="0" /></div></a>
+				<a href="po_posting_print.php?cvrefno=<?=$id;?>" target="_blank"><div style="width:100px; height:50px; text-align: center;"><img src="images/print_CV_post.png" width="80" height="48" style="pointer: cursor; width: 67px;" border="0" /></div></a>
 			</td>
 		</tr>
 	</table>
-	<? } ?>
 	<form method="post" name="parts_po" class="form">
 	<fieldset form="form_po" name="form_po">
 	<legend>
@@ -139,25 +146,13 @@
 	<table>
 		<tr>
 			<td class ="label"><label name="po_no">CV Reference No:</label>
-			<td class ="input"><input type="text" readonly name="po_no" value="<?=$cvrefno;?>" style="width:272px"></td>
+			<td class ="input"><input type="text" readonly name="po_no" value="<?=$id;?>" style="width:272px"></td>
 			<td class ="label"><label name="po_no">CV Date:</label>
-			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($paymentdate,"M d, Y");?>" style="width:272px"></td>
-		</tr>
-		<tr>
-			<td class ="label"><label name="po_no">Post Reference No:</label>
-			<td class ="input"><input type="text" readonly name="po_no" value="<?=$postrefno;?>" style="width:272px"></td>
-			<td class ="label"><label name="po_no">Post Date:</label>
-			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($postdate,"M d, Y");?>" style="width:272px"></td>
-		</tr>
-		<tr>
-			<td class ="label"><label name="po_no">RR Reference No:</label>
-			<td class ="input"><input type="text" readonly name="rr_no" value="<?=$rrrefno;?>" style="width:272px"></td>
-			<td class ="label"><label name="po_no">RR Date:</label>
-			<td class ="input"><input type="text" readonly name="rr_date" value="<?=dateFormat($rrdate,"M d, Y");?>" style="width:272px"></td>
+			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($cvdate,"M d, Y");?>" style="width:272px"></td>
 		</tr>
 		<tr>
 			<td class ="label"><label name="po_no">PO Reference No:</label>
-			<td class ="input"><input type="text" readonly name="po_no" value="<?=$id;?>" style="width:272px"></td>
+			<td class ="input"><input type="text" readonly name="po_no" value="<?=$porefno;?>" style="width:272px"></td>
 			<td class ="label"><label name="po_no">PO Date:</label>
 			<td class ="input"><input type="text" readonly name="po_date" value="<?=dateFormat($podate,"M d, Y");?>" style="width:272px"></td>
 		</tr>
@@ -179,16 +174,6 @@
 				<textarea name="special" id="special" disabled cols="36" rows="5"><?=$special;?></textarea>
 			</td>
 		</tr>
-		<!-- <tr>
-			<td class ="label"><label name="po_quantity">PO Quantity:</label>
-			<td class ="input"><input readonly type="text" name="po_quantity" id="po_quantity" value="<?=$poquantity;?>" style="width:272px"></td>
-			<td class ="label"><label name="rr_quantity">RR Qty:</label>
-			<td class ="input"><input onKeyup="return getDifference();" type="text" readonly name="rr_quantity" id="rr_quantity" value="<?=$rrquantity;?>" style="width:272px"></td>
-		</tr>
-		<tr>
-			<td class ="label"><label name="difference">Difference:</label>
-			<td class ="input"><input readonly type="text" name="difference" id="difference" value="<?=$difference;?>" style="width:272px"></td>
-		</tr> -->
 		<tr>
 			<td class ="label"><label name="status">Status:</label>
 			<td class ="input"><input readonly type="text" name="status" id="status" value="<?=$statusdesc;?>" style="width:272px"></td>
@@ -207,8 +192,6 @@
 			<th width="100">UOM</th>
 			<th width="100">PRICE</th>
 			<th width="100">QUANTITY</th>
-			<th width="100">RECEIVED</th>
-			<th width="100">VARIANCE</th>
 			<th width="100">TOTAL</th>
 		</tr>
 		<? 
@@ -218,12 +201,10 @@
 			for($i=0;$i<count($nArrItem);$i++){ 
 				$val = explode(":",$nArrItem[$i]);
 
-				$total = ($val[4] * $val[6]);
+				$total =$val[6];
 				$subtotal += $total;
 				$totalqty += $val[5];
-				$totalrrqty += $val[6];
-				$var = ($val[5] - $val[6]);
-				$totalvar += $var;
+				$ttlrr += $val[7];
 		?>
 		<tr>
 			<td><?=$val[0];?></td>
@@ -231,8 +212,6 @@
 			<td align="center"><?=$val[3];?></td>
 			<td align="right"><?=number_format($val[4],2);?></td>
 			<td align="center"><?=$val[5];?></td>
-			<td align="center"><?=$val[6];?></td>
-			<td align="center"><?=$var;?></td>
 			<td align="right"><?=number_format($total,2);?></td>
 		</tr>
 		<? } ?>
@@ -242,8 +221,6 @@
 		<tr>
 			<td colspan="4" align="right"><b>TOTAL >>>>>>>>>></b></td>
 			<td align="center"><b><?=$totalqty;?></b></td>
-			<td align="center"><b><?=$totalrrqty;?></b></td>
-			<td align="center"><b><?=$totalvar;?></b></td>
 			<td align="right"><b><?=number_format($subtotal,2);?></b></td>
 			<td>&nbsp;</td>
 		</tr>
@@ -260,36 +237,27 @@
 			</tr>    
 			<tr>
 				<td class ="label"><label name="discount">Discount:</label>
-				<td class ="input"><input readonly type="text" name="discount" id="discount" value="<?=number_format($discount,2);?>" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
+				<td class ="input"><input readonly type="text" name="discount" id="discount" value="<?=number_format($ttldiscount,2);?>" onKeyPress="return IsNumeric(discount);" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="subtotal">Sub-Total:</label>
-				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($sub_total,2);?>" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="subtotal" id="subtotal" value="<?=number_format($ttlsubtotal,2);?>" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="vat">Vat:</label>
-				<td class ="input"><input type="text" readonly name="vat" id="vat" value="<?=number_format($vat,2);?>" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="vat" id="vat" value="<?=number_format($ttlvat,2);?>" style="width:170px"></td>
 			</tr>
 			<tr>
 				<td class ="label"><label name="total_amount">Total Amount:</label>
-				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($totalamount,2);?>" style="width:170px"></td>
+				<td class ="input"><input type="text" readonly name="total_amount" id="total_amount" value="<?=number_format($ttltotal,2);?>" style="width:170px"></td>
 			</tr>
-			<? if($status == 0){ ?>
-			<tr>
-				<td class ="label"><label name="status">Status:</label>
-				<td class ="input"><select name="status" id="status">
-					<option value="0">Pending/Update</option>
-					<option value="1">Approve</option>
-					<option value="2">Cancel/Disapprove</option>
-				</select></td>
-			</tr>
-			<? } ?>
 		</table>
 	</fieldset>
 	</span>
-	<? if($status == 10){ ?>
+	<? if(empty($billpostedDt)){ ?>
 	<p class="button">
 		<input type="submit" value="" name="update" />
+		<input type="hidden" name="txtPost" id="txtPost" value="1" />
 		<a href="rr_list.php"><input type="button" value="" name="reset" style="cursor: pointer;" /></a>
 		<br /><br />
 	</p>

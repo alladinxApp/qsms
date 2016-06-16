@@ -5,23 +5,57 @@
 	require_once("functions.php");
 	
 	$image = 'images/logo1.png';
-	$id = $_SESSION['rrrefno'];
+	$id = $_SESSION['porefno'];
 
-	$sqlrr_mst = "SELECT * FROM v_rr_mst WHERE rr_reference_no = '$id'";
+	$sqlpo_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$id'";
+	$qrypo_mst = mysql_query($sqlpo_mst);
+	$numpo_mst = mysql_num_rows($qrypo_mst);
+
+	$sqlrr_mst = "SELECT * FROM v_rr_mst WHERE po_reference_no = '$id'";
 	$qryrr_mst = mysql_query($sqlrr_mst);
-	$numrr_mst = mysql_num_rows($qryrr_mst);
 
-	$sqlrr_dtl = "SELECT * FROM v_rr_dtl WHERE rr_reference_no = '$id'";
+	$ttldiscount = 0;
+	$ttlsubtotal = 0;
+	$ttlvat = 0;
+	$ttltotal = 0;
+	$rr_ref_date = null;
+	$cntrr = 0;
+	while($row = mysql_fetch_array($qryrr_mst)){
+		$ttldiscount += $row['discount'];
+		$ttlsubtotal += $row['sub_total'];
+		$ttlvat += $row['vat'];
+		$ttltotal += $row['total_amount'];
+		
+		$rrrefdate .= $row['rr_reference_no'] . "(" . dateFormat($row['rr_date'],"M d, Y") . "),";
+
+		if($cntrr % 2){
+			$rrrefdate = rtrim($rrrefdate,",");
+			$rr_ref_date[] = $rrrefdate;
+			$rrrefdate = null;
+		}
+
+		$cntrr++;
+	}
+	
+	if(!empty($rrrefdate)){
+		$rrrefdate = rtrim($rrrefdate,",");
+		$rr_ref_date[] = $rrrefdate;
+	}
+
+	$sqlrr_dtl = "SELECT * FROM v_rr_dtl WHERE po_reference_no = '$id'";
 	$qryrr_dtl = mysql_query($sqlrr_dtl);
 
-	while($row = mysql_fetch_array($qryrr_mst)){
+	while($row = mysql_fetch_array($qrypo_mst)){
 		// $po_refno = $row['po_reference_no'];
-		$rrmst = array("cv_reference_no" => $row['cv_reference_no']
+		$rrmst = array("po_reference_no" => $row['po_reference_no']
+					,"po_date" => dateFormat($row['po_date'],"M d, Y")
+					,"cv_reference_no" => $row['cv_reference_no']
 					,"payment_date" => dateFormat($row['payment_date'],"M d, Y")
-					,"sub_total" => $row['sub_total']
-					,"vat" => $row['vat']
-					,"discount" => $row['discount']
-					,"total_amount" => $row['total_amount']
+					,"sub_total" => $ttlsubtotal
+					,"vat" => $ttlvat
+					,"discount" => $ttldiscount
+					,"total_amount" => $ttltotal
+					,"rr_ref_date" => $rr_ref_date
 					,"supplier_name" => $row['supplier_name']
 					,"supplier_addr" => $row['supplier_address']
 					,"supplier_phone" => $row['supplier_phone']
@@ -38,27 +72,9 @@
 					,"total" => $row['rr_total']);
 	}
 	
-	// $sqlpo_mst = "SELECT * FROM v_po_mst WHERE po_reference_no = '$po_refno'";
-	// $qrypo_mst = mysql_query($sqlpo_mst);
-	// $numpo_mst = mysql_num_rows($qrypo_mst);
-
-	// $sqlpo_dtl = "SELECT * FROM v_po_dtl WHERE po_reference_no = '$po_refno' ORDER BY seqno";
-	// $qrypo_dtl = mysql_query($sqlpo_dtl);
-	
-	if($numrr_mst == 0){
+	if($numpo_mst == 0){
 		echo '<script>window.location="po_menu.php"</script>';
 	}
-
-	// while($row = mysql_fetch_array($qrypo_dtl)){
-	// 	$var = ($row['quantity'] - $row['rr_quantity']);
-	// 	$podtl[] = array("item_code" => $row['item_code']
-	// 				,"item_desc" => $row['item_description']
-	// 				,"qty" => $row['quantity']
-	// 				,"rr_qty" => $row['rr_quantity']
-	// 				,"variance" => $var
-	// 				,"price" => $row['price']
-	// 				,"total" => $row['rr_total']);
-	// }
 	
 	$company = array("companyname" => "FAST QUICK SERVICE"
 					,"companyaddr" => "#100 President Ave. BF Home Paranaque, City"

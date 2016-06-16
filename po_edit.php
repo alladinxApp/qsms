@@ -35,7 +35,13 @@
 		$totalamount = $row['total_amount'];
 		$special = $row['special_instruction'];
 		$status = $row['status'];
-		$statusdesc = $row['status_desc'];
+		switch($status){
+			case 1:
+				$statdesc = "APPROVED"; break;
+			case 2:
+				$statdesc = "DISAPPROVED"; break;
+			default: $statdesc = "PENDING"; break;
+		}
 	}
 
 	$readonly = null;
@@ -334,7 +340,7 @@
 		</tr>
 		<tr>
 			<td class ="label"><label name="status_desc">Status:</label>
-			<td class ="input"><input readonly type="text" name="status_desc" id="status_desc" value="<?=$statusdesc;?>" style="width:272px"></td>
+			<td class ="input"><input readonly type="text" name="status_desc" id="status_desc" value="<?=$statdesc;?>" style="width:272px"></td>
 		</tr>
 	</table>
 	</fieldset>

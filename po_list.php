@@ -97,10 +97,13 @@
 			foreach($respomst as $rowpomst){
 				switch($rowpomst['status']){
 					case 1:
+						$statdesc = "APPROVED";
 						$color = "color: #00ff00;"; break;
 					case 2:
+						$statdesc = "DISAPPROVED";
 						$color = "color: #ff0000;"; break;
 					default:
+						$statdesc = "PENDING";
 						$color = "color: #000;"; break;
 				}
 				if($cnt%2){
@@ -115,7 +118,7 @@
 			<td style="<?=$bg . $color;?>"><?=$rowpomst['po_reference_no'];?></td>
 			<td align="center" style="<?=$bg . $color;?>"><?=dateFormat($rowpomst['po_date'],"F d, Y");?></td>
 			<td align="right" style="<?=$bg . $color;?>"><?=number_format($rowpomst['total_amount'],2);?></td>
-			<td align="center" style="<?=$bg . $color;?>"><?=$rowpomst['status_desc'];?></td>
+			<td align="center" style="<?=$bg . $color;?>"><?=$statdesc;?></td>
 			<td style="<?=$bg . $color;?>"><?=$rowpomst['supplier_name'];?></td>
 			<td style="<?=$bg . $color;?>"><?=$rowpomst['deliver_to'];?></td>
 			<td style="<?=$bg . $color;?>"><?=$rowpomst['delivery_address'];?></td>

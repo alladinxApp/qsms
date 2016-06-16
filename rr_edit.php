@@ -36,7 +36,10 @@
 		$totalamount = $row['total_amount'];
 		$special = $row['special_instruction'];
 		$status = $row['status'];
-		$statusdesc = $row['status_desc'];
+		switch($status){
+			case 10: $statdesc = "CLOSED"; break;
+			default: $statdesc = "APPROVED"; break;
+		}
 		$poquantity = $row['po_quantity'];
 		$rrquantity = $row['rr_quantity'];
 		$difference = $row['difference'];
@@ -123,44 +126,6 @@
 					echo '<script>alert("'.$scmsge.'");</script>';
 					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 				break;
-			// case 1: // UPDATE
-			// 		if($rrexist > 0){
-			// 			$rr_mst = "INSERT INTO tbl_rr_mst(rr_reference_no,rr_date,po_reference_no,received_by,received_date)
-			// 						VALUES('$rrrefno','$today','$id','$_SESSION[username]','$today')";
-
-			// 			$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'RECEIVING_REPORT' ";
-			// 		}else{
-			// 			$rr_mst = "UPDATE tbl_rr_mst SET rr_date = '$today', received_date = '$today' WHERE rr_reference_no = '$rrrefno'";
-			// 		}
-					
-			// 		$res = mysql_query($rr_mst) or die("UPDATE RR ".mysql_error());
-					
-			// 		if(!$res){
-			// 			echo '<script>alert("There has been an error on receiving your PO! Please double check all the data and save.");</script>';
-			// 		}else{
-			// 			for($i=0;$i<count($item);$i++){
-			// 				$itemcode = $item[$i];
-			// 				$qty = $_POST['txt'.$itemcode];
-			// 				$sql_dtl_upd = "UPDATE tbl_rr_dtl SET rr_quantity = '$qty' WHERE rr_reference_no = '$rrrefno' AND item_code = '$itemcode'";
-			// 				mysql_query($sql_dtl_upd);
-
-			// 				// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
-			// 				$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";
-			// 				mysql_query($sql_acc_upd);
-
-			// 				// UPDATE ITEM ON HAND FOR MATERIALS
-			// 				$sql_mat_upd = "UPDATE tbl_material SET material_onhand = (material_onhand + $qty) WHERE item_code = '$itemcode'";
-			// 				mysql_query($sql_mat_upd);
-
-			// 				// UPDATE ITEM ON HAND FOR PARTS
-			// 				$sql_par_upd = "UPDATE tbl_parts SET part_onhand = (part_onhand + $qty) WHERE item_code = '$itemcode'";
-			// 				mysql_query($sql_par_upd);
-			// 			}
-			// 			mysql_query($update_controlno);
-			// 			echo '<script>alert("Partial items successfully received.");</script>';
-			// 		}
-			// 		echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
-			// 	break;
 			case 2: 
 					$po_mst = "UPDATE tbl_po_mst set status = '10', closed_by = '$_SESSION[username]' WHERE po_reference_no = 'id'";
 					$res = mysql_query($po_mst) or die("UPDATE RR ".mysql_error());
@@ -169,33 +134,6 @@
 					echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 				break;
 			default:
-					// if($rrexist == 0){
-					// 	$rrrefno = getNewNum('RECEIVING_REPORT');
-
-					// 	$rr_mst = "INSERT INTO tbl_rr_mst(rr_reference_no,rr_date,po_reference_no,received_by,received_date)
-					// 				VALUES('$rrrefno','$today','$id','$_SESSION[username]','$today')";
-					// 	mysql_query($rr_mst);
-					// }
-
-					// for($i=0;$i<count($item);$i++){
-					// 	$itemcode = $item[$i];
-					// 	$qty = $_POST['txt'.$itemcode];
-
-					// 	$sqlchkrr = "SELECT * FROM v_rr_dtl WHERE rr_reference_no = '$rrrefno' AND item_code = '$itemcode'";
-					// 	$qrychkrr = mysql_query($sqlchkrr);
-					// 	$numchkrr = mysql_num_rows($qrychkrr);
-
-					// 	if($numchkrr > 0){
-					// 		$sql_rr_dtl = "UPDATE tbl_rr_dtl SET rr_quantity = '$qty' WHERE rr_reference_no = '$rrrefno' AND item_code = '$itemcode'";
-					// 	}else{
-					// 		$sql_rr_dtl = "INSERT INTO tbl_rr_dtl(rr_reference_no,po_reference_no,item_code,quantity)
-					// 						VALUES('$rrrefno','$id','$itemcode','$qty')";
-					// 	}
-
-					// 	mysql_query($sql_rr_dtl);
-					// }
-					// echo '<script>alert("RR successfully updated.");</script>';
-					// echo '<script>window.location="rr_edit.php?id='.$id.'";</script>';
 				break;
 		}
 	}
@@ -294,7 +232,6 @@
 	}
 </script>
 <body>
-	<? if(!empty($rrdate)){ ?>
 	<table>
 		<tr>
 			<td valign="middle">
@@ -302,19 +239,12 @@
 			</td>
 		</tr>
 	</table>
-	<? } ?>
 
 	<form method="post" name="parts_po" class="form" onSubmit="return ValidateMe();">
 	<fieldset form="form_po" name="form_po">
 	<legend>
 	<p id="title">RECEIVING</p></legend>
 	<table>
-		<!-- <tr>
-			<td class ="label"><label name="po_no">RR Reference No:</label>
-			<td class ="input"><input type="text" readonly name="rr_no" value="<?=$rrrefno;?>" style="width:272px"></td>
-			<td class ="label"><label name="po_no">RR Date:</label>
-			<td class ="input"><input type="text" readonly name="rr_date" value="<?=dateFormat($rrdate,"M d, Y");?>" style="width:272px"></td>
-		</tr> -->
 		<tr>
 			<td class ="label"><label name="po_no">PO Reference No:</label>
 			<td class ="input"><input type="text" readonly name="po_no" value="<?=$id;?>" style="width:272px"></td>
@@ -341,13 +271,9 @@
 				<textarea name="special" id="special" disabled cols="36" rows="5"><?=$special;?></textarea>
 			</td>
 		</tr>
-		<!-- <tr>
-			<td class ="label"><label name="po_quantity">PO Quantity:</label>
-			<td class ="input"><input readonly type="text" name="po_quantity" id="po_quantity" value="<?=$poquantity;?>" style="width:272px"></td>
-		</tr> -->
 		<tr>
 			<td class ="label"><label name="status">Status:</label>
-			<td class ="input"><input readonly type="text" name="status" id="status" value="<?=$statusdesc;?>" style="width:272px"></td>
+			<td class ="input"><input readonly type="text" name="status" id="status" value="<?=$statdesc;?>" style="width:272px"></td>
 		</tr>
 	</table>
 	</fieldset>
@@ -495,15 +421,14 @@
 	<script type="text/javascript">
 		
 		function ValidateMe(){
-			var rrqty = document.getElementById("rr_quantity");
 			var paymentterms = document.getElementById("payment_terms");
+			var totalamnt = document.getElementById("total_amount");
 			
-			if(rrqty.value == ""){
-				alert("RR Qty is required! Please enter RR quantity.");
-				rrqty.focus();
-				return false;
-			}else if(paymentterms.value == ""){
+			if(paymentterms.value == ""){
 				alert("Payment terms is required! Please select payment terms");
+				return false;
+			}else if(totalamnt.value <= 0 || totalamnt.value == "" || totalamnt.value == null){
+				alert("Please enter quantity received per item!");
 				return false;
 			}else{
 				return true;

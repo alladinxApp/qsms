@@ -17,11 +17,6 @@
 			$cnt++;
 		}
 
-		if(!empty($rrrefno)){
-			$where .= " AND rr_reference_no = '$rrrefno'";
-			$cnt++;
-		}
-
 		if(!empty($_POST['txtdatefrom']) || !empty($_POST['txtdateto']) || $cnt == 0){
 			$datefrom = Date("Y-m-d 00:00");
 			$dateto = Date("Y-m-d 23:59");
@@ -95,8 +90,10 @@
 			foreach($respomst as $rowpomst){
 				switch($rowpomst['status']){
 					case 10:
+						$statdesc = "CLOSED";
 						$color = "color: #00ff00;"; break;
 					default:
+						$statdesc = "APPROVED";
 						$color = "color: #000;"; break;
 				}
 				if($cnt%2){
@@ -118,7 +115,7 @@
 			<td align="center" style="<?=$style;?>"><?=dateFormat($rowpomst['approved_date'],"M d, Y");?></td>
 			<td align="center" style="<?=$style;?>"><?=$rowpomst['po_quantity'];?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($rowpomst['total_amount'],2);?></td>
-			<td align="center" style="<?=$style;?>"><?=$rowpomst['status_desc'];?></td>
+			<td align="center" style="<?=$style;?>"><?=$statdesc;?></td>
 			<td style="<?=$style;?>"><?=$rowpomst['supplier_name'];?></td>
 		</tr>
 		<? $cnt++; } ?>
@@ -141,11 +138,6 @@
 			<td >PO Ref No</td>
 			<td align="center">:</td>
 			<td colspan="3"><input type="text" id="txtporefno" name="txtporefno" style="width: 230"></td>
-		</tr>
-		<tr>
-			<td >RR Ref No</td>
-			<td align="center">:</td>
-			<td colspan="3"><input type="text" id="txtrrrefno" name="txtrrrefno" style="width: 230"></td>
 		</tr>
 		<tr>
 			<td >&nbsp;</td>
