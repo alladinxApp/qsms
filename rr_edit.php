@@ -96,10 +96,19 @@
 						$itemprice = $price[$i];
 						$qty = $_POST['txt'.$itemcode];
 						$ttlrrqty += $qty;
+
+						$sql_item = "SELECT * FROM tbl_items WHERE item_code = '$itemcode'";
+						$qry_item = mysql_query($sql_item);
+						while($row = mysql_fetch_array($qry_item)) {
+							$SAPcode = $row['SAP_item_code'];
+						}
 						
 						$sql_rr_dtl = "INSERT INTO tbl_rr_dtl(rr_reference_no,po_reference_no,item_code,price,quantity,seqno)
 								VALUES('$rrrefno','$id','$itemcode','$itemprice','$qty','$cnt')";
 						mysql_query($sql_rr_dtl);
+
+						$sql_poinv = "INSERT INTO tbl_po_inventory(item_code,beginning_balance,received,received_date,issued,issued_date,ending_balance,remarks)
+								VALUES('$itemcode')"
 
 						// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
 						$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";

@@ -88,6 +88,8 @@
 						while($row = mysql_fetch_array($result)){
 							$qty = $row['qty'];
 							$qry .= "UPDATE tbl_parts SET part_onhand = (part_onhand - $qty), parts_used = (parts_used + $qty) WHERE parts_id = '$row[id]'; ";
+							$qry .= "INSERT INTO tbl_po_inventory(item_code,beginning_balance,received,received_date,issued,issued_date,ending_balance,remarks)
+									VALUES('$row[id]',0,'','$qty','$today',); ";
 						}
 					}
 
