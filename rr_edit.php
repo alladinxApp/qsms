@@ -97,18 +97,44 @@
 						$qty = $_POST['txt'.$itemcode];
 						$ttlrrqty += $qty;
 
-						$sql_item = "SELECT * FROM tbl_items WHERE item_code = '$itemcode'";
+						// $sql_item = "SELECT * FROM tbl_items WHERE item_code = '$itemcode'";
+						$sql_item = "SELECT tbl_items.item_code,tbl_items.item_description,tbl_parts.part_onhand AS onhand,'parts' AS item_type
+										FROM tbl_items
+											JOIN tbl_parts ON tbl_parts.item_code = tbl_items.item_code
+										WHERE tbl_items.item_code = '$itemcode'
+
+										UNION
+
+										SELECT tbl_items.item_code,tbl_items.item_description,tbl_material.material_onhand AS onhand,'material' AS item_type
+										FROM tbl_items
+											JOIN tbl_material ON tbl_material.item_code = tbl_items.item_code
+										WHERE tbl_items.item_code = '$itemcode'
+
+										UNION
+
+										SELECT tbl_items.item_code,tbl_items.item_description,tbl_accessory.access_onhand AS onhand,'lubricants' AS item_type
+										FROM tbl_items
+											JOIN tbl_accessory ON tbl_accessory.item_code = tbl_items.item_code
+										WHERE tbl_items.item_code = '$itemcode'";
 						$qry_item = mysql_query($sql_item);
 						while($row = mysql_fetch_array($qry_item)) {
-							$SAPcode = $row['SAP_item_code'];
+							$starting = $row['onhand'];
+							$itemtype = $row['item_type'];
 						}
-						
-						$sql_rr_dtl = "INSERT INTO tbl_rr_dtl(rr_reference_no,po_reference_no,item_code,price,quantity,seqno)
-								VALUES('$rrrefno','$id','$itemcode','$itemprice','$qty','$cnt')";
-						mysql_query($sql_rr_dtl);
 
-						$sql_poinv = "INSERT INTO tbl_po_inventory(item_code,beginning_balance,received,received_date,issued,issued_date,ending_balance,remarks)
-								VALUES('$itemcode')"
+						$issued = $qty;
+						$ending = ($starting + $qty);
+						
+						if($qty > 0){
+							$sql_rr_dtl = "INSERT INTO tbl_rr_dtl(rr_reference_no,po_reference_no,item_code,price,quantity,seqno)
+									VALUES('$rrrefno','$id','$itemcode','$itemprice','$qty','$cnt')";
+							mysql_query($sql_rr_dtl);
+
+							// PO INVENTORY
+							$sql_poinv = "INSERT INTO tbl_po_inventory(item_code,beginning_balance,received,received_date,ending_balance,remarks,reference_no,item_type,created_date,created_by)
+									VALUES('$itemcode','$starting','$qty','$today','$ending','$rrrefno','$rrrefno','$itemtype','$today','$_SESSION[username]')";
+							mysql_query($sql_poinv);
+						}
 
 						// UPDATE ITEM ON HAND FOR ACCESSORY/LUBRICANTS
 						$sql_acc_upd = "UPDATE tbl_accessory SET access_onhand = (access_onhand + $qty) WHERE item_code = '$itemcode'";

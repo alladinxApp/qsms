@@ -87,9 +87,11 @@
 					if($numrow > 0){
 						while($row = mysql_fetch_array($result)){
 							$qty = $row['qty'];
+							$starting = $row['part_onhand'];
+							$ending = ($row['part_onhand'] - $qty);
 							$qry .= "UPDATE tbl_parts SET part_onhand = (part_onhand - $qty), parts_used = (parts_used + $qty) WHERE parts_id = '$row[id]'; ";
-							$qry .= "INSERT INTO tbl_po_inventory(item_code,beginning_balance,received,received_date,issued,issued_date,ending_balance,remarks)
-									VALUES('$row[id]',0,'','$qty','$today',); ";
+							$qry .= "INSERT INTO tbl_po_inventory(item_code,beginning_balance,issued,issued_date,ending_balance,remarks,reference_no,item_type,created_date,created_by)
+									VALUES('$row[item_code]','$starting','$qty','$today','$ending','$new_refno','$new_refno','parts','$today','$_SESSION[username]'); ";
 						}
 					}
 
@@ -97,7 +99,11 @@
 					if($numrow1 > 0){
 						while($row = mysql_fetch_array($result1)){
 							$qty = $row['qty'];
-							$qry .= "UPDATE tbl_accessory SET access_onhand = (access_onhand - $qty), access_used = (access_used + $qty) WHERE accessory_id = '$row[id]'";
+							$starting = $row['accessory_onhand'];
+							$ending = ($row['accessory_onhand'] - $qty);
+							$qry .= "UPDATE tbl_accessory SET access_onhand = (access_onhand - $qty), access_used = (access_used + $qty) WHERE accessory_id = '$row[id]'; ";
+							$qry .= "INSERT INTO tbl_po_inventory(item_code,beginning_balance,issued,issued_date,ending_balance,remarks,reference_no,item_type,created_date,created_by)
+									VALUES('$row[item_code]','$starting','$qty','$today','$ending','$new_refno','$new_refno','lubricants','$today','$_SESSION[username]'); ";
 						}
 					}
 
@@ -105,7 +111,11 @@
 					if($numrow2 > 0){
 						while($row = mysql_fetch_array($result2)){
 							$qty = $row['qty'];
-							$qry .= "UPDATE tbl_material SET material_onhand = (material_onhand - $qty), material_used = (material_used + $qty) WHERE material_id = '$row[id]'";
+							$starting = $row['material_onhand'];
+							$ending = ($row['material_onhand'] - $qty);
+							$qry .= "UPDATE tbl_material SET material_onhand = (material_onhand - $qty), material_used = (material_used + $qty) WHERE material_id = '$row[id]'; ";
+							$qry .= "INSERT INTO tbl_po_inventory(item_code,beginning_balance,issued,issued_date,ending_balance,remarks,reference_no,item_type,created_date,created_by)
+									VALUES('$row[item_code]','$starting','$qty','$today','$ending','$new_refno','$new_refno','materials','$today','$_SESSION[username]'); ";
 						}
 					}
 
