@@ -712,7 +712,7 @@ CREATE TABLE `tbl_po_inventory` (
 
 /*Data for the table `tbl_po_inventory` */
 
-insert  into `tbl_po_inventory`(`id`,`item_code`,`beginning_balance`,`received`,`received_date`,`issued`,`issued_date`,`ending_balance`,`remarks`,`reference_no`,`item_type`,`created_date`,`created_by`) values (1,'ITM00000004','62.00','50.00','2016-06-23 10:07:49','0.00',NULL,'112.00','RR00000028','RR00000028','parts',NULL,NULL),(2,'ITM00000003','1392.00','50.00','2016-06-23 10:07:49','0.00',NULL,'1442.00','RR00000028','RR00000028','lubricants',NULL,NULL),(3,'ITM00000002','1380.00','50.00','2016-06-23 10:07:49','0.00',NULL,'1430.00','RR00000028','RR00000028','accessory',NULL,NULL),(4,'ITM00000003','1442.00','50.00','2016-06-23 10:08:03','0.00',NULL,'1492.00','RR00000029','RR00000029','lubricants',NULL,NULL),(5,'ITM00000002','1430.00','50.00','2016-06-23 10:08:03','0.00',NULL,'1480.00','RR00000029','RR00000029','accessory',NULL,NULL),(9,'ITM00000004','112.00','0.00',NULL,'3.00','2016-06-23 11:09:09','109.00','WO00000169','WO00000169','parts','2016-06-23 11:09:09','alladinx'),(10,'ITM00000002','1480.00','0.00',NULL,'5.00','2016-06-23 11:09:09','1475.00','WO00000169','WO00000169','lubricants','2016-06-23 11:09:09','alladinx'),(11,'ITM00000003','1492.00','0.00',NULL,'2.00','2016-06-23 11:09:09','1490.00','WO00000169','WO00000169','materials','2016-06-23 11:09:09','alladinx');
+insert  into `tbl_po_inventory`(`id`,`item_code`,`beginning_balance`,`received`,`received_date`,`issued`,`issued_date`,`ending_balance`,`remarks`,`reference_no`,`item_type`,`created_date`,`created_by`) values (1,'ITM00000004','62.00','50.00','2016-06-23 10:07:49','0.00',NULL,'112.00','RR00000028','RR00000028','parts','2016-06-23 11:09:09',NULL),(2,'ITM00000003','1392.00','50.00','2016-06-23 10:07:49','0.00',NULL,'1442.00','RR00000028','RR00000028','lubricants','2016-06-23 11:09:09',NULL),(3,'ITM00000002','1380.00','50.00','2016-06-23 10:07:49','0.00',NULL,'1430.00','RR00000028','RR00000028','accessory','2016-06-23 11:09:09',NULL),(4,'ITM00000003','1442.00','50.00','2016-06-23 10:08:03','0.00',NULL,'1492.00','RR00000029','RR00000029','lubricants','2016-06-23 11:09:09',NULL),(5,'ITM00000002','1430.00','50.00','2016-06-23 10:08:03','0.00',NULL,'1480.00','RR00000029','RR00000029','accessory','2016-06-23 11:09:09',NULL),(9,'ITM00000004','112.00','0.00',NULL,'3.00','2016-06-23 11:09:09','109.00','WO00000169','WO00000169','parts','2016-06-23 11:09:09','alladinx'),(10,'ITM00000002','1480.00','0.00',NULL,'5.00','2016-06-23 11:09:09','1475.00','WO00000169','WO00000169','lubricants','2016-06-23 11:09:09','alladinx'),(11,'ITM00000003','1492.00','0.00',NULL,'2.00','2016-06-23 11:09:09','1490.00','WO00000169','WO00000169','materials','2016-06-23 11:09:09','alladinx');
 
 /*Table structure for table `tbl_po_master` */
 
@@ -1844,6 +1844,31 @@ DROP TABLE IF EXISTS `v_po_dtl`;
  `seqno` int(11) ,
  `rr_quantity` decimal(10,0) ,
  `rr_total` decimal(20,2) 
+)*/;
+
+/*Table structure for table `v_po_inventory` */
+
+DROP TABLE IF EXISTS `v_po_inventory`;
+
+/*!50001 DROP VIEW IF EXISTS `v_po_inventory` */;
+/*!50001 DROP TABLE IF EXISTS `v_po_inventory` */;
+
+/*!50001 CREATE TABLE  `v_po_inventory`(
+ `id` int(11) ,
+ `item_code` varchar(20) ,
+ `SAP_item_code` varchar(20) ,
+ `item_description` varchar(100) ,
+ `beginning_balance` decimal(10,2) ,
+ `received` decimal(10,2) ,
+ `received_date` datetime ,
+ `issued` decimal(10,2) ,
+ `issued_date` datetime ,
+ `ending_balance` decimal(10,2) ,
+ `remarks` text ,
+ `reference_no` varchar(20) ,
+ `item_type` varchar(20) ,
+ `created_date` datetime ,
+ `created_by` varchar(20) 
 )*/;
 
 /*Table structure for table `v_po_master` */
@@ -3031,6 +3056,13 @@ DROP TABLE IF EXISTS `v_year`;
 /*!50001 DROP VIEW IF EXISTS `v_po_dtl` */;
 
 /*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_dtl` AS (select `tbl_po_dtl`.`id` AS `id`,`tbl_po_dtl`.`po_reference_no` AS `po_reference_no`,`tbl_po_dtl`.`item_code` AS `item_code`,`tbl_items`.`SAP_item_code` AS `SAP_item_code`,`tbl_items`.`item_description` AS `item_description`,`tbl_items`.`item_type` AS `item_type`,`tbl_items`.`UOM` AS `UOM`,`tbl_uom`.`description` AS `UOM_desc`,`tbl_po_dtl`.`price` AS `price`,`tbl_po_dtl`.`quantity` AS `quantity`,(`tbl_po_dtl`.`price` * `tbl_po_dtl`.`quantity`) AS `total`,`tbl_po_dtl`.`seqno` AS `seqno`,`tbl_po_dtl`.`rr_quantity` AS `rr_quantity`,(`tbl_po_dtl`.`price` * `tbl_po_dtl`.`rr_quantity`) AS `rr_total` from ((`tbl_po_dtl` join `tbl_items` on((`tbl_items`.`item_code` = `tbl_po_dtl`.`item_code`))) join `tbl_uom` on((`tbl_uom`.`uom_code` = `tbl_items`.`UOM`)))) */;
+
+/*View structure for view v_po_inventory */
+
+/*!50001 DROP TABLE IF EXISTS `v_po_inventory` */;
+/*!50001 DROP VIEW IF EXISTS `v_po_inventory` */;
+
+/*!50001 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `v_po_inventory` AS (select `tbl_po_inventory`.`id` AS `id`,`tbl_po_inventory`.`item_code` AS `item_code`,`tbl_items`.`SAP_item_code` AS `SAP_item_code`,`tbl_items`.`item_description` AS `item_description`,`tbl_po_inventory`.`beginning_balance` AS `beginning_balance`,`tbl_po_inventory`.`received` AS `received`,`tbl_po_inventory`.`received_date` AS `received_date`,`tbl_po_inventory`.`issued` AS `issued`,`tbl_po_inventory`.`issued_date` AS `issued_date`,`tbl_po_inventory`.`ending_balance` AS `ending_balance`,`tbl_po_inventory`.`remarks` AS `remarks`,`tbl_po_inventory`.`reference_no` AS `reference_no`,`tbl_po_inventory`.`item_type` AS `item_type`,`tbl_po_inventory`.`created_date` AS `created_date`,`tbl_po_inventory`.`created_by` AS `created_by` from (`tbl_po_inventory` join `tbl_items` on((`tbl_items`.`item_code` = `tbl_po_inventory`.`item_code`)))) */;
 
 /*View structure for view v_po_master */
 
