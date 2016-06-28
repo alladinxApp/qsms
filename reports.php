@@ -44,7 +44,7 @@
         <td width="15">&nbsp;</td>
         <td width="92"><a href="invoice_report.php"><img src="images/invoice_rep.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="inventory.php">INVENTORY</a></td>
+        <td width="92"><a href="inventory.php"><img src="images/inventory_menu.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
       	<td width="92">&nbsp;</td>
         <td width="15">&nbsp;</td>
