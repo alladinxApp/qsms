@@ -47,7 +47,7 @@
 	div.divEstimateList table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
 </style>
 <body>
-	<p id="title">PO Inventory Report Result</p>
+	<p id="title">Inventory Report Result</p>
 	<? if(isset($_POST['export']) && !empty($_POST['export']) && $_POST['export'] == 1){ ?>
 	<form method="Post" action="export.php" target="_blank">
 	<input type="hidden" id="txtdate" name="txtdate" value="<?=$date;?>">

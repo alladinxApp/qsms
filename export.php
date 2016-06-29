@@ -766,7 +766,7 @@
 							ORDER BY v_po_inventory.created_date";
 					$qry_inv = mysql_query($sql_inv);
 
-					$ln .= "PO INVENTORY REPORT\r\n\r\n";
+					$ln .= "INVENTORY REPORT\r\n\r\n";
 					$ln .= "Date: ," . dateFormat($date,"m/d/Y") . "\r\n";
 					$ln .= "SAP Code: ," . $item . "\r\n";
 					$ln .= "SAP Code: ," . $itemdesc . "\r\n\r\n";
@@ -791,6 +791,55 @@
 
 					$data = trim($ln);
 					$filename = "po_inventory_report" . $dt . ".csv";
+				break;
+			case "stockbalancereport":
+					$date = dateFormat($_POST['txtdate'],"Y-m-d");
+		
+					$item = "ALL ITEMS";
+					if(!empty($_POST['txtitem'])){
+						$item = $_POST['txtitem'];
+					}
+
+					$dtfrom = $date . " 00:00";
+					$dtto = $date . " 23:59";
+					$dt = date("Ymdhis");
+
+					$itemdesc = "ALL ITEMS";
+					$itemcode = null;
+					if(!empty($_POST['txtitem'])){
+						$itemcode = "SAP_item_code = '$item' AND ";
+
+						$sql_item = "SELECT * FROM tbl_items WHERE SAP_item_code = '$item'";
+						$qry_item = mysql_query($sql_item);
+						while($row = mysql_fetch_array($qry_item)){
+							$itemdesc = $row['item_description'];
+						}
+					}
+
+					$sql_inv = "SELECT * FROM v_po_inventory
+							WHERE $itemcode v_po_inventory.created_date between '$dtfrom' AND '$dtto'
+							ORDER BY v_po_inventory.created_date";
+					$qry_inv = mysql_query($sql_inv);
+
+					$ln .= "STOCK BALANCE REPORT\r\n\r\n";
+					$ln .= "Date: ," . dateFormat($date,"m/d/Y") . "\r\n";
+					$ln .= "SAP Code: ," . $item . "\r\n";
+					$ln .= "SAP Code: ," . $itemdesc . "\r\n\r\n";
+					$ln .= "#,Item Code,SAP Code,Description,Ending Balance\r\n";
+
+					$cnt = 1;
+					while($row = mysql_fetch_array($qry_inv)){
+						$ln .= $cnt
+								. "," . $row['item_code']
+								. "," . $row['SAP_item_code'] 
+								. "," . $row['item_description']
+								. "," . $row['ending_balance']
+								. "\r\n";
+						$cnt++;
+					}
+
+					$data = trim($ln);
+					$filename = "stock_balance_report" . $dt . ".csv";
 				break;
 			default: echo 'INVALID URL!'; break;
 		}
