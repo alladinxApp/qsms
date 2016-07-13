@@ -46,7 +46,7 @@
         <td width="15">&nbsp;</td>
         <td width="92"><a href="inventory.php"><img src="images/inventory_menu.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
-      	<td width="92"><a href="stock_balance.php">STOCK BALANCE</a></td>
+      	<td width="92"><a href="stock_balance.php"><img src="images/stock_inventory_menu.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
       	<td width="92">&nbsp;</td>
         <td width="15">&nbsp;</td>
