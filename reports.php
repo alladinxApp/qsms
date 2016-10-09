@@ -48,7 +48,7 @@
         <td width="15">&nbsp;</td>
       	<td width="92"><a href="stock_balance.php"><img src="images/stock_inventory_menu.png" width="78" height="100"></a></td>
         <td width="15">&nbsp;</td>
-      	<td width="92">&nbsp;</td>
+      	<td width="92"><a href="sap_reports.php">SAP REPORTS</a></td>
         <td width="15">&nbsp;</td>
       	<td width="92">&nbsp;</td>
       </tr>

@@ -841,6 +841,374 @@
 					$data = trim($ln);
 					$filename = "stock_balance_report" . $dt . ".csv";
 				break;
+			case "oinvreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "OINV REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "DocNum,DocEntry,DocType,HandWritten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AttachmentEntry,DocCurrency,DocRate,Reference1,Reference2,Comments,JournalMemo,PaymentGroupCode,DocTime,SalesPersonCode,TransportationCode,Confirmed,ImportFileNum,SummeryType,ContactPersonCode,ShowSCN,Series,TaxDate,PartialSupply,DocObjectCode,ShipToCode,Indicator,FederalTaxID,DiscountPercent,PaymentReference,DocTotalFc,Form1099,Box1099,RevisionPo,RequriedDate,CancelDate,BlockDunning,Pick,PaymentMethod,PaymentBlock,PaymentBlockEntry,CentralBankIndicator,MaximumCashDiscount,Project,ExemptionValidityDateFrom,ExemptionValidityDateTo,WareHouseUpdateType,Rounding,ExternalCorrectedDocNum,InternalCorrectedDocNum,DeferredTax,TaxExemptionLetterNum,AgentCode,NumberOfInstallments,ApplyTaxOnFirstInstallment,VatDate,DocumentsOwner,FolioPrefixString,FolioNumber,DocumentSubType,BPChannelCode,BPChannelContact,Address2,PayToCode,ManualNumber,UseShpdGoodsAct,IsPayToBank,PayToBankCountry,PayToBankCode,PayToBankAccountNo,PayToBankBranch,BPL_IDAssignedToInvoice,DownPayment,ReserveInvoice,LanguageCode,TrackingNumber,PickRemark,ClosingDate,SequenceCode,SequenceSerial,SeriesString,SubSeriesString,SequenceModel,UseCorrectionVATGroup,DownPaymentAmount,DownPaymentPercentage,DownPaymentType,DownPaymentAmountSC,DownPaymentAmountFC,VatPercent,ServiceGrossProfitPercent,OpeningRemarks,ClosingRemarks,RoundingDiffAmount,ControlAccount,InsuranceOperation347,ArchiveNonremovableSalesQuotation,GTSChecker,GTSPayee,ExtraMonth,ExtraDays,CashDiscountDateOffset,StartFrom,NTSApproved,ETaxWebSite,ETaxNumber,NTSApprovedNumber,EDocGenerationType,EDocSeries,EDocExportFormat,EDocStatus,EDocErrorCode,EDocErrorMessage,DownPaymentStatus,GroupSeries,GroupNumber,GroupHandWritten,ReopenOriginalDocument,ReopenManuallyClosedOrCanceledDocument,CreateOnlineQuotation,POSEquipmentNumber,POSManufacturerSerialNumber,POSCashierNumber,ApplyCurrentVATRatesForDownPaymentsToDraw,ClosingOption,SpecifiedClosingDate,OpenForLandedCosts,RelevantToGTS,AnnualInvoiceDeclarationReference,Supplier,Releaser,Receiver,BlanketAgreementNumber,IsAlteration,AssetValueDate,DocumentDelivery,AuthorizationCode,StartDeliveryDate,StartDeliveryTime,EndDeliveryDate,EndDeliveryTime,VehiclePlate,ATDocumentType,ElecCommStatus,ReuseDocumentNum,ReuseNotaFiscalNum,PrintSEPADirect,FiscalDocNum\r\n";
+					$ln .= "DocNum,DocEntry,DocType,Handwrtten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AtcEntry,DocCur,DocRate,Ref1,Ref2,Comments,JrnlMemo,GroupNum,DocTime,SlpCode,TrnspCode,Confirmed,ImportEnt,SummryType,CntctCode,ShowSCN,Series,TaxDate,PartSupply,ObjType,ShipToCode,Indicator,LicTradNum,DiscPrcnt,PaymentRef,DocTotalFC,Form1099,Box1099,RevisionPo,ReqDate,CancelDate,BlockDunn,Pick,PeyMethod,PayBlock,PayBlckRef,CntrlBnk,MaxDscn,Project,FromDate,ToDate,UpdInvnt,Rounding,CorrExt,CorrInv,DeferrTax,LetterNum,AgentCode,Installmnt,VATFirst,VatDate,OwnerCode,FolioPref,FolioNum,DocSubType,BPChCode,BPChCntc,Address2,PayToCode,ManualNum,UseShpdGd,IsPaytoBnk,BnkCntry,BankCode,BnkAccount,BnkBranch,BPLId,DpmPrcnt,isIns,LangCode,TrackNo,PickRmrk,ClsDate,SeqCode,Serial,SeriesStr,SubStr,Model,UseCorrVat,DpmAmnt,DpmPrcnt,Posted,DpmAmntSC,DpmAmntFC,VatPercent,SrvGpPrcnt,Header,Footer,RoundDif,CtlAccount,InsurOp347,IgnRelDoc,Checker,Payee,ExtraMonth,ExtraDays,CdcOffset,PayDuMonth,NTSApprov,NTSWebSite,NTSeTaxNo,NTSApprNo,EDocGenTyp,ESeries,EDocExpFrm,EDocStatus,EDocErrCod,EDocErrMsg,DpmStatus,PQTGrpSer,PQTGrpNum,PQTGrpHW,ReopOriDoc,ReopManCls,OnlineQuo,POSEqNum,POSManufSN,POSCashN,DpmAsDscnt,ClosingOpt,SpecDate,OpenForLaC,GTSRlvnt,AnnInvDecR,Supplier,Releaser,Receiver,AgrNo,IsAlt,AssetDate,DocDlvry,AuthCode,StDlvDate,StDlvTime,EndDlvDate,EndDlvTime,VclPlate,AtDocType,ElCoStatus,ElCoMsg,IsReuseNum,IsReuseNFN,PrintSEPA\r\n";
+
+					$cnt = 1;
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,,,,"
+								. dateFormat($row['billed_date'],"m/d/Y") . ","
+								. dateFormat($row['billed_date'],"m/d/Y") . ","
+								. $row['customer_id'] . ",,,"
+								. $row['billing_refno'] . ","
+								. $row['billing_amount'] . ",,,,,,,"
+								. str_replace(",", "", $row['remarks']) . ",,,"
+								. $row['technician'] . ",,,,,,,,"
+								. dateFormat($row['billed_date'],"m/d/Y") . ",,,,,,,,,,,,,,,,,,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+								. "\r\n";
+						$cnt++;
+					}
+
+					$data = trim($ln);
+					$filename = "oinv_report" . $dt . ".csv";
+				break;
+			case "opdnreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "OPDN REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "DocNum,DocEntry,DocType,HandWritten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AttachmentEntry,DocCurrency,DocRate,Reference1,Reference2,Comments,JournalMemo,PaymentGroupCode,DocTime,SalesPersonCode,TransportationCode,Confirmed,ImportFileNum,SummeryType,ContactPersonCode,ShowSCN,Series,TaxDate,PartialSupply,DocObjectCode,ShipToCode,Indicator,FederalTaxID,DiscountPercent,PaymentReference,DocTotalFc,Form1099,Box1099,RevisionPo,RequriedDate,CancelDate,BlockDunning,Pick,PaymentMethod,PaymentBlock,PaymentBlockEntry,CentralBankIndicator,MaximumCashDiscount,Project,ExemptionValidityDateFrom,ExemptionValidityDateTo,WareHouseUpdateType,Rounding,ExternalCorrectedDocNum,InternalCorrectedDocNum,DeferredTax,TaxExemptionLetterNum,AgentCode,NumberOfInstallments,ApplyTaxOnFirstInstallment,VatDate,DocumentsOwner,FolioPrefixString,FolioNumber,DocumentSubType,BPChannelCode,BPChannelContact,Address2,PayToCode,ManualNumber,UseShpdGoodsAct,IsPayToBank,PayToBankCountry,PayToBankCode,PayToBankAccountNo,PayToBankBranch,BPL_IDAssignedToInvoice,DownPayment,ReserveInvoice,LanguageCode,TrackingNumber,PickRemark,ClosingDate,SequenceCode,SequenceSerial,SeriesString,SubSeriesString,SequenceModel,UseCorrectionVATGroup,DownPaymentAmount,DownPaymentPercentage,DownPaymentType,DownPaymentAmountSC,DownPaymentAmountFC,VatPercent,ServiceGrossProfitPercent,OpeningRemarks,ClosingRemarks,RoundingDiffAmount,ControlAccount,InsuranceOperation347,ArchiveNonremovableSalesQuotation,GTSChecker,GTSPayee,ExtraMonth,ExtraDays,CashDiscountDateOffset,StartFrom,NTSApproved,ETaxWebSite,ETaxNumber,NTSApprovedNumber,EDocGenerationType,EDocSeries,EDocExportFormat,EDocStatus,EDocErrorCode,EDocErrorMessage,DownPaymentStatus,GroupSeries,GroupNumber,GroupHandWritten,ReopenOriginalDocument,ReopenManuallyClosedOrCanceledDocument,CreateOnlineQuotation,POSEquipmentNumber,POSManufacturerSerialNumber,POSCashierNumber,ApplyCurrentVATRatesForDownPaymentsToDraw,ClosingOption,SpecifiedClosingDate,OpenForLandedCosts,RelevantToGTS,AnnualInvoiceDeclarationReference,Supplier,Releaser,Receiver,BlanketAgreementNumber,IsAlteration,AssetValueDate,DocumentDelivery,AuthorizationCode,StartDeliveryDate,StartDeliveryTime,EndDeliveryDate,EndDeliveryTime,VehiclePlate,ATDocumentType,ElecCommStatus,ReuseDocumentNum,ReuseNotaFiscalNum,PrintSEPADirect,FiscalDocNum\r\n";
+					$ln .= "DocNum,DocEntry,DocType,Handwrtten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AtcEntry,DocCur,DocRate,Ref1,Ref2,Comments,JrnlMemo,GroupNum,DocTime,SlpCode,TrnspCode,Confirmed,ImportEnt,SummryType,CntctCode,ShowSCN,Series,TaxDate,PartSupply,ObjType,ShipToCode,Indicator,LicTradNum,DiscPrcnt,PaymentRef,DocTotalFC,Form1099,Box1099,RevisionPo,ReqDate,CancelDate,BlockDunn,Pick,PeyMethod,PayBlock,PayBlckRef,CntrlBnk,MaxDscn,Project,FromDate,ToDate,UpdInvnt,Rounding,CorrExt,CorrInv,DeferrTax,LetterNum,AgentCode,Installmnt,VATFirst,VatDate,OwnerCode,FolioPref,FolioNum,DocSubType,BPChCode,BPChCntc,Address2,PayToCode,ManualNum,UseShpdGd,IsPaytoBnk,BnkCntry,BankCode,BnkAccount,BnkBranch,BPLId,DpmPrcnt,isIns,LangCode,TrackNo,PickRmrk,ClsDate,SeqCode,Serial,SeriesStr,SubStr,Model,UseCorrVat,DpmAmnt,DpmPrcnt,Posted,DpmAmntSC,DpmAmntFC,VatPercent,SrvGpPrcnt,Header,Footer,RoundDif,CtlAccount,InsurOp347,IgnRelDoc,Checker,Payee,ExtraMonth,ExtraDays,CdcOffset,PayDuMonth,NTSApprov,NTSWebSite,NTSeTaxNo,NTSApprNo,EDocGenTyp,ESeries,EDocExpFrm,EDocStatus,EDocErrCod,EDocErrMsg,DpmStatus,PQTGrpSer,PQTGrpNum,PQTGrpHW,ReopOriDoc,ReopManCls,OnlineQuo,POSEqNum,POSManufSN,POSCashN,DpmAsDscnt,ClosingOpt,SpecDate,OpenForLaC,GTSRlvnt,AnnInvDecR,Supplier,Releaser,Receiver,AgrNo,IsAlt,AssetDate,DocDlvry,AuthCode,StDlvDate,StDlvTime,EndDlvDate,EndDlvTime,VclPlate,AtDocType,ElCoStatus,ElCoMsg,IsReuseNum,IsReuseNFN,PrintSEPA\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",,dDocument_Items,,,20160321,20160321,VE-S0002,,,2016-00049,5716.920009,,,,,,,,,,,,,,,,,,20160321,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "opdn_report" . $dt . ".csv";
+				break;
+			case "pdnreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "PDN REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "ParentKey,LineNum,ItemCode,ItemDescription,Quantity,ShipDate,Price,PriceAfterVAT,Currency,Rate,DiscountPercent,VendorNum,SerialNum,WarehouseCode,SalesPersonCode,CommisionPercent,TreeType,AccountCode,UseBaseUnits,SupplierCatNum,CostingCode,ProjectCode,BarCode,VatGroup,Height1,Hight1Unit,Height2,Height2Unit,Lengh1,Lengh1Unit,Lengh2,Lengh2Unit,Weight1,Weight1Unit,Weight2,Weight2Unit,Factor1,Factor2,Factor3,Factor4,BaseType,BaseEntry,BaseLine,Volume,VolumeUnit,Width1,Width1Unit,Width2,Width2Unit,Address,TaxCode,TaxType,TaxLiable,BackOrder,FreeText,ShippingMethod,CorrectionInvoiceItem,CorrInvAmountToStock,CorrInvAmountToDiffAcct,WTLiable,DeferredTax,MeasureUnit,UnitsOfMeasurment,LineTotal,TaxPercentagePerRow,TaxTotal,ConsumerSalesForecast,ExciseAmount,CountryOrg,SWW,TransactionType,DistributeExpense,ShipToCode,RowTotalFC,CFOPCode,CSTCode,Usage,TaxOnly,UnitPrice,LineStatus,LineType,COGSCostingCode,COGSAccountCode,ChangeAssemlyBoMWarehouse,GrossBuyPrice,GrossBase,GrossProfitTotalBasePrice,CostingCode2,CostingCode3,CostingCode4,CostingCode5,ItemDetails,LocationCode,ActualDeliveryDate,ExLineNo,RequiredDate,RequiredQuantity,COGSCostingCode2,COGSCostingCode3,COGSCostingCode4,COGSCostingCode5,CSTforIPI,CSTforPIS,CSTforCOFINS,CreditOriginCode,WithoutInventoryMovement,AgreementNo,AgreementRowNumber,ShipToDescription,ActualBaseEntry,ActualBaseLine,DocEntry,Surpluses,DefectAndBreakup,Shortages,ConsiderQuantity,PartialRetirement,RetirementQuantity,RetirementAPC,UoMEntry,InventoryQuantity,Incoterms,TransportMode,U_Supplier,U_TIN,U_PmtType,U_Maker,U_Variant\r\n";
+					$ln .= "DocNum,LineNum,ItemCode,Dscription,Quantity,ShipDate,Price,PriceAfVAT,Currency,Rate,DiscPrcnt,VendorNum,SerialNum,WhsCode,SlpCode,Commission,TreeType,AcctCode,UseBaseUn,SubCatNum,OcrCode,Project,CodeBars,VatGroup,Height1,Hght1Unit,Height2,Hght2Unit,Length1,Len1Unit,length2,Len2Unit,Weight1,Wght1Unit,Weight2,Wght2Unit,Factor1,Factor2,Factor3,Factor4,BaseType,BaseEntry,BaseLine,Volume,VolUnit,Width1,Wdth1Unit,Width2,Wdth2Unit,Address,TaxCode,TaxType,TaxStatus,BackOrdr,FreeTxt,TrnsCode,CEECFlag,ToStock,ToDiff,WtLiable,DeferrTax,unitMsr,NumPerMsr,LineTotal,VatPrcnt,VatSum,ConsumeFCT,ExciseAmt,CountryOrg,SWW,TranType,DistribExp,ShipToCode,TotalFrgn,CFOPCode,CSTCode,Usage,TaxOnly,PriceBefDi,LineStatus,LineType,CogsOcrCod,CogsAcct,ChgAsmBoMW,GrossBuyPr,GrossBase,GPTtlBasPr,OcrCode2,OcrCode3,OcrCode4,OcrCode5,Text,LocCode,ActDelDate,ExLineNo,PQTReqDate,PQTReqQty,CogsOcrCo2,CogsOcrCo3,CogsOcrCo4,CogsOcrCo5,CSTfIPI,CSTfPIS,CSTfCOFINS,CredOrigin,NoInvtryMv,AgrNo,AgrLnNum,ShipToDesc,ActBaseEnt,ActBaseLn,DocEntry,Surpluses,DefBreak,Shortages,NeedQty,PartRetire,RetireQty,RetireAPC,UomEntry,InvQty,Incoterms,TransMod,U_Supplier,U_TIN,U_PmtType,U_Maker,U_Variant\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",0,PS00247,Oil Filter 0986 Af1 041,20,,92.807143,,,,,,,P2,,,,,,,,SUC,,V4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "pdn_report" . $dt . ".csv";
+				break;
+			case "oignreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "OIGN REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "DocNum,DocEntry,DocType,HandWritten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AttachmentEntry,DocCurrency,DocRate,Reference1,Reference2,Comments,JournalMemo,PaymentGroupCode,DocTime,SalesPersonCode,TransportationCode,Confirmed,ImportFileNum,SummeryType,ContactPersonCode,ShowSCN,Series,TaxDate,PartialSupply,DocObjectCode,ShipToCode,Indicator,FederalTaxID,DiscountPercent,PaymentReference,DocTotalFc,Form1099,Box1099,RevisionPo,RequriedDate,CancelDate,BlockDunning,Pick,PaymentMethod,PaymentBlock,PaymentBlockEntry,CentralBankIndicator,MaximumCashDiscount,Project,ExemptionValidityDateFrom,ExemptionValidityDateTo,WareHouseUpdateType,Rounding,ExternalCorrectedDocNum,InternalCorrectedDocNum,DeferredTax,TaxExemptionLetterNum,AgentCode,NumberOfInstallments,ApplyTaxOnFirstInstallment,VatDate,DocumentsOwner,FolioPrefixString,FolioNumber,DocumentSubType,BPChannelCode,BPChannelContact,Address2,PayToCode,ManualNumber,UseShpdGoodsAct,IsPayToBank,PayToBankCountry,PayToBankCode,PayToBankAccountNo,PayToBankBranch,BPL_IDAssignedToInvoice,DownPayment,ReserveInvoice,LanguageCode,TrackingNumber,PickRemark,ClosingDate,SequenceCode,SequenceSerial,SeriesString,SubSeriesString,SequenceModel,UseCorrectionVATGroup,DownPaymentAmount,DownPaymentPercentage,DownPaymentType,DownPaymentAmountSC,DownPaymentAmountFC,VatPercent,ServiceGrossProfitPercent,OpeningRemarks,ClosingRemarks,RoundingDiffAmount,ControlAccount,InsuranceOperation347,ArchiveNonremovableSalesQuotation,GTSChecker,GTSPayee,ExtraMonth,ExtraDays,CashDiscountDateOffset,StartFrom,NTSApproved,ETaxWebSite,ETaxNumber,NTSApprovedNumber,EDocGenerationType,EDocSeries,EDocExportFormat,EDocStatus,EDocErrorCode,EDocErrorMessage,DownPaymentStatus,GroupSeries,GroupNumber,GroupHandWritten,ReopenOriginalDocument,ReopenManuallyClosedOrCanceledDocument,CreateOnlineQuotation,POSEquipmentNumber,POSManufacturerSerialNumber,POSCashierNumber,ApplyCurrentVATRatesForDownPaymentsToDraw,ClosingOption,SpecifiedClosingDate,OpenForLandedCosts,RelevantToGTS,AnnualInvoiceDeclarationReference,Supplier,Releaser,Receiver,BlanketAgreementNumber,IsAlteration,AssetValueDate,DocumentDelivery,AuthorizationCode,StartDeliveryDate,StartDeliveryTime,EndDeliveryDate,EndDeliveryTime,VehiclePlate,ATDocumentType,ElecCommStatus,ReuseDocumentNum,ReuseNotaFiscalNum,PrintSEPADirect,FiscalDocNum\r\n";
+					$ln .= "DocNum,DocEntry,DocType,Handwrtten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AtcEntry,DocCur,DocRate,Ref1,Ref2,Comments,JrnlMemo,GroupNum,DocTime,SlpCode,TrnspCode,Confirmed,ImportEnt,SummryType,CntctCode,ShowSCN,Series,TaxDate,PartSupply,ObjType,ShipToCode,Indicator,LicTradNum,DiscPrcnt,PaymentRef,DocTotalFC,Form1099,Box1099,RevisionPo,ReqDate,CancelDate,BlockDunn,Pick,PeyMethod,PayBlock,PayBlckRef,CntrlBnk,MaxDscn,Project,FromDate,ToDate,UpdInvnt,Rounding,CorrExt,CorrInv,DeferrTax,LetterNum,AgentCode,Installmnt,VATFirst,VatDate,OwnerCode,FolioPref,FolioNum,DocSubType,BPChCode,BPChCntc,Address2,PayToCode,ManualNum,UseShpdGd,IsPaytoBnk,BnkCntry,BankCode,BnkAccount,BnkBranch,BPLId,DpmPrcnt,isIns,LangCode,TrackNo,PickRmrk,ClsDate,SeqCode,Serial,SeriesStr,SubStr,Model,UseCorrVat,DpmAmnt,DpmPrcnt,Posted,DpmAmntSC,DpmAmntFC,VatPercent,SrvGpPrcnt,Header,Footer,RoundDif,CtlAccount,InsurOp347,IgnRelDoc,Checker,Payee,ExtraMonth,ExtraDays,CdcOffset,PayDuMonth,NTSApprov,NTSWebSite,NTSeTaxNo,NTSApprNo,EDocGenTyp,ESeries,EDocExpFrm,EDocStatus,EDocErrCod,EDocErrMsg,DpmStatus,PQTGrpSer,PQTGrpNum,PQTGrpHW,ReopOriDoc,ReopManCls,OnlineQuo,POSEqNum,POSManufSN,POSCashN,DpmAsDscnt,ClosingOpt,SpecDate,OpenForLaC,GTSRlvnt,AnnInvDecR,Supplier,Releaser,Receiver,AgrNo,IsAlt,AssetDate,DocDlvry,AuthCode,StDlvDate,StDlvTime,EndDlvDate,EndDlvTime,VclPlate,AtDocType,ElCoStatus,ElCoMsg,IsReuseNum,IsReuseNFN,PrintSEPA\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",,dDocument_Items,,,20160321,20160321,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "oign_report" . $dt . ".csv";
+				break;
+			case "ignreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "IGN REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "ParentKey,LineNum,ItemCode,ItemDescription,Quantity,ShipDate,Price,PriceAfterVAT,Currency,Rate,DiscountPercent,VendorNum,SerialNum,WarehouseCode,SalesPersonCode,CommisionPercent,TreeType,AccountCode,UseBaseUnits,SupplierCatNum,CostingCode,ProjectCode,BarCode,VatGroup,Height1,Hight1Unit,Height2,Height2Unit,Lengh1,Lengh1Unit,Lengh2,Lengh2Unit,Weight1,Weight1Unit,Weight2,Weight2Unit,Factor1,Factor2,Factor3,Factor4,BaseType,BaseEntry,BaseLine,Volume,VolumeUnit,Width1,Width1Unit,Width2,Width2Unit,Address,TaxCode,TaxType,TaxLiable,BackOrder,FreeText,ShippingMethod,CorrectionInvoiceItem,CorrInvAmountToStock,CorrInvAmountToDiffAcct,WTLiable,DeferredTax,MeasureUnit,UnitsOfMeasurment,LineTotal,TaxPercentagePerRow,TaxTotal,ConsumerSalesForecast,ExciseAmount,CountryOrg,SWW,TransactionType,DistributeExpense,ShipToCode,RowTotalFC,CFOPCode,CSTCode,Usage,TaxOnly,UnitPrice,LineStatus,LineType,COGSCostingCode,COGSAccountCode,ChangeAssemlyBoMWarehouse,GrossBuyPrice,GrossBase,GrossProfitTotalBasePrice,CostingCode2,CostingCode3,CostingCode4,CostingCode5,ItemDetails,LocationCode,ActualDeliveryDate,ExLineNo,RequiredDate,RequiredQuantity,COGSCostingCode2,COGSCostingCode3,COGSCostingCode4,COGSCostingCode5,CSTforIPI,CSTforPIS,CSTforCOFINS,CreditOriginCode,WithoutInventoryMovement,AgreementNo,AgreementRowNumber,ShipToDescription,ActualBaseEntry,ActualBaseLine,DocEntry,Surpluses,DefectAndBreakup,Shortages,ConsiderQuantity,PartialRetirement,RetirementQuantity,RetirementAPC,UoMEntry,InventoryQuantity,Incoterms,TransportMode,U_Supplier,U_TIN,U_PmtType,U_Maker,U_Variant\r\n";
+					$ln .= "DocNum,LineNum,ItemCode,Dscription,Quantity,ShipDate,Price,PriceAfVAT,Currency,Rate,DiscPrcnt,VendorNum,SerialNum,WhsCode,SlpCode,Commission,TreeType,AcctCode,UseBaseUn,SubCatNum,OcrCode,Project,CodeBars,VatGroup,Height1,Hght1Unit,Height2,Hght2Unit,Length1,Len1Unit,length2,Len2Unit,Weight1,Wght1Unit,Weight2,Wght2Unit,Factor1,Factor2,Factor3,Factor4,BaseType,BaseEntry,BaseLine,Volume,VolUnit,Width1,Wdth1Unit,Width2,Wdth2Unit,Address,TaxCode,TaxType,TaxStatus,BackOrdr,FreeTxt,TrnsCode,CEECFlag,ToStock,ToDiff,WtLiable,DeferrTax,unitMsr,NumPerMsr,LineTotal,VatPrcnt,VatSum,ConsumeFCT,ExciseAmt,CountryOrg,SWW,TranType,DistribExp,ShipToCode,TotalFrgn,CFOPCode,CSTCode,Usage,TaxOnly,PriceBefDi,LineStatus,LineType,CogsOcrCod,CogsAcct,ChgAsmBoMW,GrossBuyPr,GrossBase,GPTtlBasPr,OcrCode2,OcrCode3,OcrCode4,OcrCode5,Text,LocCode,ActDelDate,ExLineNo,PQTReqDate,PQTReqQty,CogsOcrCo2,CogsOcrCo3,CogsOcrCo4,CogsOcrCo5,CSTfIPI,CSTfPIS,CSTfCOFINS,CredOrigin,NoInvtryMv,AgrNo,AgrLnNum,ShipToDesc,ActBaseEnt,ActBaseLn,DocEntry,Surpluses,DefBreak,Shortages,NeedQty,PartRetire,RetireQty,RetireAPC,UomEntry,InvQty,Incoterms,TransMod,U_Supplier,U_TIN,U_PmtType,U_Maker,U_Variant\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",0,PS00135,Oil Filter BOSCH-AF1-035,2,,242.85,,,,,,,P2,,,,_SYS00000000095,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,485.7,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "ign_report" . $dt . ".csv";
+				break;
+			case "orctreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "ORCT REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "DocNum,DocType,HandWritten,Printed,DocDate,CardCode,CardName,Address,CashAccount,DocCurrency,CashSum,CheckAccount,TransferAccount,TransferSum,TransferDate,TransferReference,LocalCurrency,DocRate,Reference1,Reference2,CounterReference,Remarks,JournalRemarks,SplitTransaction,ContactPersonCode,ApplyVAT,TaxDate,Series,BankCode,BankAccount,DiscountPercent,ProjectCode,CurrencyIsLocal,DeductionPercent,DeductionSum,BoeAccount,BillOfExchangeAmount,BillofExchangeStatus,BillOfExchangeAgent,WTCode,WTAmount,Proforma,PayToBankCode,PayToBankBranch,PayToBankAccountNo,PayToCode,PayToBankCountry,IsPayToBank,PaymentPriority,TaxGroup,BankChargeAmount,BankChargeAmountInSC,WtBaseSum,VatDate,TransactionCode,PaymentType,TransferRealAmount,DocObjectCode,DocTypte,DueDate,LocationCode,ControlAccount,BPLID\r\n";
+					$ln .= "DocNum,DocType,Handwrtten,Printed,DocDate,CardCode,CardName,Address,CashAcct,DocCurr,CashSum,CheckAcct,TrsfrAcct,TrsfrSum,TrsfrDate,TrsfrRef,DiffCurr,DocRate,Ref1,Ref2,CounterRef,Comments,JrnlMemo,SpiltTrans,CntctCode,ApplyVAT,TaxDate,Series,BankCode,BankAcct,Dcount,PrjCode,DiffCurr,DdctPrcnt,DdctSum,BoeAcc,BoeSum,BoeStatus,BoeAgent,WtCode,WtSum,Proforma,PBnkCode,PBnkBranch,PBnkAccnt,PayToCode,PBnkCnt,IsPaytoBnk,PaPriority,VatGroup,BcgSum,BcgSumSy,WtBaseSum,VatDate,TransCode,PaymType,TfrRealAmt,ObjType,DocType,DocDueDate,LocCode,BpAct,WddStatus\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",,,,20160321,CU-F0001,Fastcargo Logistics Corporation,,,,,,,,20160321,,,,,,,,,,,,20160321,,,,,SUC,,,,,,,,,,,,,,,,,,,,,,20160321,,,,,,20160321,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "orct_report" . $dt . ".csv";
+				break;
+			case "checksreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "CHECKS REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "ParentKey,LineNum,DueDate,CheckNumber,BankCode,Branch,AccounttNum,Details,Trnsfrable,CheckSum,Currency,CountryCode,CheckAccount,ManualCheck\r\n";
+					$ln .= "DocNum,LineNum,DueDate,CheckNum,BankCode,Branch,AcctNum,Details,Trnsfrable,CheckSum,Currency,CountryCod,CheckAct,ManualChk\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",0,20160321,978786,,,,,,2301.34,,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "checks_report" . $dt . ".csv";
+				break;
+			case "creditcardreport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "CREDIT CARD REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "ParentKey,LineNum,CreditCard,CreditAcct,CreditCardNumber,CardValidUntil,VoucherNum,OwnerIdNum,OwnerPhone,PaymentMethodCode,NumOfPayments,FirstPaymentDue,FirstPaymentSum,AdditionalPaymentSum,CreditSum,CreditCur,CreditRate,ConfirmationNum,NumOfCreditPayments,CreditType,SplitPayments\r\n";
+					$ln .= "DocNum,LineNum,CreditCard,CreditAcct,CrCardNum,CardValid,VoucherNum,OwnerIdNum,OwnerPhone,CrTypeCode,NumOfPmnts,FirstDue,FirstSum,AddPmntSum,CreditSum,CreditCur,CreditRate,ConfNum,CredPmnts,CreditType,SpiltCred\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",0,1,_SYS00000000033,2222,20201231,878676,,,,1,,,,1878.59,,,,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "credit_card_report" . $dt . ".csv";
+				break;
+			case "pmtinvoicereport":
+					$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
+					$to = dateFormat($_POST['txtdateto'],"Y-m-d");
+					$dtfrom = $from . " 00:00:00";
+					$dtto = $to . " 23:59:59";
+					$dt = date("Ymdhis");
+
+					if(empty($dtfrom) && empty($dtto)){
+						$dtfrom = date("Y-m-d 00:00");
+						$dtto = date("Y-m-d 23:59");
+					}
+
+					$sql = "SELECT tbl_service_master.*
+								,tbl_billing.billing_date
+								,tbl_billing.billing_refno
+								,tbl_billing.total_amount as billing_amount 
+							FROM tbl_service_master
+								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_billing.billing_date";
+					$qry = mysql_query($sql);
+
+					$ln .= "PMT INVOICE REPORT\r\n\r\n";
+					
+					$ln .= "From: ," . $dtfrom . "\r\n";
+					$ln .= "To: ," . $dtto . "\r\n";
+					$ln .= "ParentKey,LineNum,DocEntry,SumApplied,AppliedFC,AppliedSys,DocRate,DocLine,InvoiceType,DiscountPercent,PaidSum,InstallmentId,DistributionRule,DistributionRule2,DistributionRule3,DistributionRule4,DistributionRule5,TotalDiscount,TotalDiscountFC\r\n";
+					$ln .= "DocNum,LineNum,DocEntry,SumApplied,AppliedFC,AppliedSys,DocRate,DocLine,InvType,Dcount,PaidSum,InstId,OcrCode,OcrCode2,OcrCode3,OcrCode4,OcrCode5,DcntSum,DcntSumFC\r\n";
+
+					$cnt = 1;
+					// while($row = mysql_fetch_array($qry)){
+					// 	$ln .= $cnt
+					// 			. "," . ",0,88,,,,,,,,1878.59,,,,,,,,"
+					// 			. "\r\n";
+					// 	$cnt++;
+					// }
+
+					$data = trim($ln);
+					$filename = "pmt_invoice_report" . $dt . ".csv";
+				break;
 			default: echo 'INVALID URL!'; break;
 		}
 
