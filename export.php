@@ -1061,14 +1061,9 @@
 						$dtto = date("Y-m-d 23:59");
 					}
 
-					$sql = "SELECT tbl_service_master.*
-								,tbl_billing.billing_date
-								,tbl_billing.billing_refno
-								,tbl_billing.total_amount as billing_amount 
-							FROM tbl_service_master
-								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
-							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
-			 				ORDER BY tbl_billing.billing_date";
+					$sql = "SELECT * FROM v_customer
+				 			WHERE 1 AND v_customer.cust_created between '$dtfrom' AND '$dtto' $where
+				 			ORDER BY v_customer.cust_created";
 					$qry = mysql_query($sql);
 
 					$ln .= "ORCT REPORT\r\n\r\n";
@@ -1079,12 +1074,19 @@
 					$ln .= "DocNum,DocType,Handwrtten,Printed,DocDate,CardCode,CardName,Address,CashAcct,DocCurr,CashSum,CheckAcct,TrsfrAcct,TrsfrSum,TrsfrDate,TrsfrRef,DiffCurr,DocRate,Ref1,Ref2,CounterRef,Comments,JrnlMemo,SpiltTrans,CntctCode,ApplyVAT,TaxDate,Series,BankCode,BankAcct,Dcount,PrjCode,DiffCurr,DdctPrcnt,DdctSum,BoeAcc,BoeSum,BoeStatus,BoeAgent,WtCode,WtSum,Proforma,PBnkCode,PBnkBranch,PBnkAccnt,PayToCode,PBnkCnt,IsPaytoBnk,PaPriority,VatGroup,BcgSum,BcgSumSy,WtBaseSum,VatDate,TransCode,PaymType,TfrRealAmt,ObjType,DocType,DocDueDate,LocCode,BpAct,WddStatus\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",,,,20160321,CU-F0001,Fastcargo Logistics Corporation,,,,,,,,20160321,,,,,,,,,,,,20160321,,,,,SUC,,,,,,,,,,,,,,,,,,,,,,20160321,,,,,,20160321,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,,,"
+								. dateFormat($row['cust_created'],"m/d/Y") . ","
+								. $row['customer_id'] . ","
+								. $row['custname'] . ",,,,,,,,"
+								. dateFormat($row['cust_created'],"m/d/Y") . ",,,,,,,,,,,,"
+								. dateFormat($row['cust_created'],"m/d/Y") . ",,,,,SUC,,,,,,,,,,,,,,,,,,,,,,"
+								. dateFormat($row['cust_created'],"m/d/Y") . ",,,,,,"
+								. dateFormat($row['cust_created'],"m/d/Y") . ",,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "orct_report" . $dt . ".csv";

@@ -16,11 +16,10 @@
 			$dtto = date("Y-m-d 23:59");
 		}
 
-		// $sql_lbs_master = "SELECT * FROM v_sales
- 	// 		WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
- 	// 		ORDER BY v_sales.transaction_date";
-		// $qry_lbs_master = mysql_query($sql_lbs_master);
-		// $qry_mst = mysql_query($sql_lbs_master);
+		$sql_lbs_master = "SELECT * FROM v_customer
+ 			WHERE 1 AND v_customer.cust_created between '$dtfrom' AND '$dtto' $where
+ 			ORDER BY v_customer.cust_created";
+		$qry = mysql_query($sql_lbs_master);
 
 		$ln .= "ORCT REPORT\r\n\r\n";
 		
@@ -62,16 +61,26 @@
 	<table width="1350">
 		<tr>
 			<th width="10">#</th>
-			<th width="150">DocDate</th>
 			<th width="150">CardCode</th>
 			<th width="150">CardName</th>
 			<th width="150">TransferDate</th>
-			<th width="150">TransferReference</th>
-			<th width="150">TaxDate</th>
-			<th width="150">ProjectCode</th>
-			<th width="150">VatDate</th>
-			<th width="150">DueDate</th>
-		</tr>		
+		</tr>
+		<? 
+			$cnt = 1; 
+			while($row = mysql_fetch_array($qry)){ 
+				$bg = null;
+				if($cnt%2){
+					$bg = 'background: #eee;';
+				}
+				$style = $bg;
+		?>
+		<tr>
+			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
+			<td style="<?=$style;?>"><?=$row['cust_id'];?></td>
+			<td style="<?=$style;?>"><?=$row['custname'];?></td>
+			<td align="center" style="<?=$style;?>"><?=dateFormat($row['cust_created'],"m/d/Y");?></td>
+		</tr>
+		<? $cnt++; } ?>
 	</table>
 	</div>
 	<input type="submit" name="save" value="" style="cursor: pointer;">
