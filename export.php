@@ -984,14 +984,11 @@
 						$dtto = date("Y-m-d 23:59");
 					}
 
-					$sql = "SELECT tbl_service_master.*
-								,tbl_billing.billing_date
-								,tbl_billing.billing_refno
-								,tbl_billing.total_amount as billing_amount 
-							FROM tbl_service_master
-								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
-							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
-			 				ORDER BY tbl_billing.billing_date";
+					$sql = "SELECT tbl_rr_mst.*,tbl_suppliers.supplier_code FROM tbl_rr_mst
+								JOIN tbl_po_mst ON tbl_po_mst.po_reference_no = tbl_rr_mst.po_reference_no
+								JOIN tbl_suppliers ON tbl_suppliers.supplier_code = tbl_po_mst.supplier_code
+							WHERE tbl_rr_mst.rr_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_rr_mst.rr_date";
 					$qry = mysql_query($sql);
 
 					$ln .= "OIGN REPORT\r\n\r\n";
@@ -1002,12 +999,14 @@
 					$ln .= "DocNum,DocEntry,DocType,Handwrtten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AtcEntry,DocCur,DocRate,Ref1,Ref2,Comments,JrnlMemo,GroupNum,DocTime,SlpCode,TrnspCode,Confirmed,ImportEnt,SummryType,CntctCode,ShowSCN,Series,TaxDate,PartSupply,ObjType,ShipToCode,Indicator,LicTradNum,DiscPrcnt,PaymentRef,DocTotalFC,Form1099,Box1099,RevisionPo,ReqDate,CancelDate,BlockDunn,Pick,PeyMethod,PayBlock,PayBlckRef,CntrlBnk,MaxDscn,Project,FromDate,ToDate,UpdInvnt,Rounding,CorrExt,CorrInv,DeferrTax,LetterNum,AgentCode,Installmnt,VATFirst,VatDate,OwnerCode,FolioPref,FolioNum,DocSubType,BPChCode,BPChCntc,Address2,PayToCode,ManualNum,UseShpdGd,IsPaytoBnk,BnkCntry,BankCode,BnkAccount,BnkBranch,BPLId,DpmPrcnt,isIns,LangCode,TrackNo,PickRmrk,ClsDate,SeqCode,Serial,SeriesStr,SubStr,Model,UseCorrVat,DpmAmnt,DpmPrcnt,Posted,DpmAmntSC,DpmAmntFC,VatPercent,SrvGpPrcnt,Header,Footer,RoundDif,CtlAccount,InsurOp347,IgnRelDoc,Checker,Payee,ExtraMonth,ExtraDays,CdcOffset,PayDuMonth,NTSApprov,NTSWebSite,NTSeTaxNo,NTSApprNo,EDocGenTyp,ESeries,EDocExpFrm,EDocStatus,EDocErrCod,EDocErrMsg,DpmStatus,PQTGrpSer,PQTGrpNum,PQTGrpHW,ReopOriDoc,ReopManCls,OnlineQuo,POSEqNum,POSManufSN,POSCashN,DpmAsDscnt,ClosingOpt,SpecDate,OpenForLaC,GTSRlvnt,AnnInvDecR,Supplier,Releaser,Receiver,AgrNo,IsAlt,AssetDate,DocDlvry,AuthCode,StDlvDate,StDlvTime,EndDlvDate,EndDlvTime,VclPlate,AtDocType,ElCoStatus,ElCoMsg,IsReuseNum,IsReuseNFN,PrintSEPA\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",,dDocument_Items,,,20160321,20160321,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,,,,"
+								. dateFormat($row['rr_date'],"m/d/Y") . ","
+								. dateFormat($row['rr_date'],"m/d/Y") . ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "oign_report" . $dt . ".csv";

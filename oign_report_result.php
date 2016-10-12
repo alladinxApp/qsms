@@ -16,16 +16,12 @@
 			$dtto = date("Y-m-d 23:59");
 		}
 
-		// $sql_lbs_master = "SELECT * FROM v_sales
- 	// 		WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
- 	// 		ORDER BY v_sales.transaction_date";
-		// $qry_lbs_master = mysql_query($sql_lbs_master);
-		// $qry_mst = mysql_query($sql_lbs_master);
-
-		$ln .= "OIGN REPORT\r\n\r\n";
-		
-		$ln .= "From: ," . $dtfrom . "\r\n";
-		$ln .= "To: ," . $dtto . "\r\n";
+		$sql = "SELECT tbl_rr_mst.*,tbl_suppliers.supplier_code FROM tbl_rr_mst
+					JOIN tbl_po_mst ON tbl_po_mst.po_reference_no = tbl_rr_mst.po_reference_no
+					JOIN tbl_suppliers ON tbl_suppliers.supplier_code = tbl_po_mst.supplier_code
+				WHERE tbl_rr_mst.rr_date BETWEEN '$dtfrom' AND '$dtto'
+ 				ORDER BY tbl_rr_mst.rr_date";
+		$qry = mysql_query($sql);
 	}
 ?>
 <html>
@@ -65,7 +61,35 @@
 			<th width="150">DocType</th>
 			<th width="150">DocDate</th>
 			<th width="150">DocDueDate</th>
-		</tr>		
+			<th width="150">CardCode</th>
+			<th width="150">NumAtCard</th>
+			<th width="150">DocTotal</th>
+			<th width="150">JournalMemo</th>
+			<th width="150">SalesPersonCode</th>
+			<th width="150">TaxDate</th>
+		</tr>
+		<? 
+			$cnt = 1; 
+			while($row = mysql_fetch_array($qry)){ 
+				$bg = null;
+				if($cnt%2){
+					$bg = 'background: #eee;';
+				}
+				$style = $bg;
+		?>
+		<tr>
+			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
+			<td style="<?=$style;?>"></td>
+			<td align="center" style="<?=$style;?>"><?=dateFormat($row['billing_date'],"m/d/Y");?></td>
+			<td align="center" style="<?=$style;?>"><?=dateFormat($row['billing_date'],"m/d/Y");?></td>
+			<td style="<?=$style;?>"><?=$row['supplier_code'];?></td>
+			<td style="<?=$style;?>"></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+		</tr>
+		<? $cnt++; } ?>	
 	</table>
 	</div>
 	<input type="submit" name="save" value="" style="cursor: pointer;">
