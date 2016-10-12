@@ -16,11 +16,16 @@
 			$dtto = date("Y-m-d 23:59");
 		}
 
-		// $sql_lbs_master = "SELECT * FROM v_sales
- 	// 		WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
- 	// 		ORDER BY v_sales.transaction_date";
-		// $qry_lbs_master = mysql_query($sql_lbs_master);
-		// $qry_mst = mysql_query($sql_lbs_master);
+		$sql = "SELECT tbl_billing.* FROM tbl_billing
+					JOIN tbl_service_master ON tbl_service_master.wo_refno = tbl_billing.wo_refno
+						AND tbl_service_master.payment_id = 'PAY00000003'
+						AND (tbl_service_master.trans_status = '7' 
+							OR tbl_service_master.trans_status = '8'
+							OR tbl_service_master.trans_status = '9'
+							OR tbl_service_master.trans_status = '10')
+	 			WHERE 1 AND tbl_billing.billing_date between '$dtfrom' AND '$dtto' $where
+	 			ORDER BY tbl_billing.billing_date";
+		$qry = mysql_query($sql);
 
 		$ln .= "CHECKS REPORT\r\n\r\n";
 		
@@ -62,11 +67,44 @@
 	<table width="1350">
 		<tr>
 			<th width="10">#</th>
-			<th width="150">LineNum</th>
 			<th width="150">DueDate</th>
 			<th width="150">CheckNumber</th>
+			<th width="150">BankCode</th>
+			<th width="150">Branch</th>
+			<th width="150">AccountNum</th>
+			<th width="150">Details</th>
+			<th width="150">Trnsfrable</th>
 			<th width="150">CheckSum</th>
-		</tr>		
+			<th width="150">Currency</th>
+			<th width="150">CountryCode</th>
+			<th width="150">CheckAccount</th>
+			<th width="150">ManualCheck</th>
+		</tr>
+		<? 
+			$cnt = 1; 
+			while($row = mysql_fetch_array($qry)){ 
+				$bg = null;
+				if($cnt%2){
+					$bg = 'background: #eee;';
+				}
+				$style = $bg;
+		?>
+		<tr>
+			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
+			<td style="<?=$style;?>"><?=dateFormat($row['billing_date'],"m/d/Y");?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+		</tr>
+		<? $cnt++; } ?>
 	</table>
 	</div>
 	<input type="submit" name="save" value="" style="cursor: pointer;">

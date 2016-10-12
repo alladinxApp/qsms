@@ -16,11 +16,12 @@
 			$dtto = date("Y-m-d 23:59");
 		}
 
-		// $sql_lbs_master = "SELECT * FROM v_sales
- 	// 		WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
- 	// 		ORDER BY v_sales.transaction_date";
-		// $qry_lbs_master = mysql_query($sql_lbs_master);
-		// $qry_mst = mysql_query($sql_lbs_master);
+		$sql = "SELECT tbl_rr_dtl.*,tbl_items.SAP_item_code,tbl_items.item_description FROM tbl_rr_dtl
+					JOIN tbl_rr_mst ON tbl_rr_mst.rr_reference_no = tbl_rr_dtl.rr_reference_no
+					JOIN tbl_items ON tbl_items.item_code = tbl_rr_dtl.item_code
+	 			WHERE 1 AND tbl_rr_dtl.rr_date between '$dtfrom' AND '$dtto' $where
+	 			ORDER BY tbl_rr_dtl.rr_date";
+		$qry = mysql_query($sql);
 
 		$ln .= "PDN REPORT\r\n\r\n";
 		
@@ -74,7 +75,31 @@
 			<th width="150">COGSCostingCode3</th>
 			<th width="150">COGSCostingCode4</th>
 			<th width="150">COGSCostingCode5</th>
-		</tr>		
+		</tr>
+		<? 
+			$cnt = 1; 
+			while($row = mysql_fetch_array($qry)){ 
+				$bg = null;
+				if($cnt%2){
+					$bg = 'background: #eee;';
+				}
+				$style = $bg;
+		?>
+		<tr>
+			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
+			<td style="<?=$style;?>"></td>
+			<td align="center" style="<?=$style;?>"><?=$row['SAP_item_code'];?></td>
+			<td align="center" style="<?=$style;?>"><?=$row['item_description'];?></td>
+			<td align="center" style="<?=$style;?>"><?=$row['quantity'];?></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($row['price'],2);?></td>
+			<td align="center" style="<?=$style;?>">P2</td>
+			<td align="center" style="<?=$style;?>">SUC</td>
+			<td align="center" style="<?=$style;?>">V4</td>
+			<td align="center" style="<?=$style;?>">PO1</td>
+			<td align="center" style="<?=$style;?>">SUC</td>
+			<td align="center" style="<?=$style;?>">Z10</td>
+		</tr>
+		<? $cnt++; } ?>		
 	</table>
 	</div>
 	<input type="submit" name="save" value="" style="cursor: pointer;">

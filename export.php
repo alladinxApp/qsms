@@ -901,14 +901,11 @@
 						$dtto = date("Y-m-d 23:59");
 					}
 
-					$sql = "SELECT tbl_service_master.*
-								,tbl_billing.billing_date
-								,tbl_billing.billing_refno
-								,tbl_billing.total_amount as billing_amount 
-							FROM tbl_service_master
-								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
-							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
-			 				ORDER BY tbl_billing.billing_date";
+					$sql = "SELECT tbl_rr_mst.*,tbl_suppliers.supplier_code FROM tbl_rr_mst
+								JOIN tbl_po_mst ON tbl_po_mst.po_reference_no = tbl_rr_mst.po_reference_no
+								JOIN tbl_suppliers ON tbl_suppliers.supplier_code = tbl_po_mst.supplier_code
+							WHERE tbl_rr_mst.rr_date BETWEEN '$dtfrom' AND '$dtto'
+			 				ORDER BY tbl_rr_mst.rr_date";
 					$qry = mysql_query($sql);
 
 					$ln .= "OPDN REPORT\r\n\r\n";
@@ -919,12 +916,17 @@
 					$ln .= "DocNum,DocEntry,DocType,Handwrtten,Printed,DocDate,DocDueDate,CardCode,CardName,Address,NumAtCard,DocTotal,AtcEntry,DocCur,DocRate,Ref1,Ref2,Comments,JrnlMemo,GroupNum,DocTime,SlpCode,TrnspCode,Confirmed,ImportEnt,SummryType,CntctCode,ShowSCN,Series,TaxDate,PartSupply,ObjType,ShipToCode,Indicator,LicTradNum,DiscPrcnt,PaymentRef,DocTotalFC,Form1099,Box1099,RevisionPo,ReqDate,CancelDate,BlockDunn,Pick,PeyMethod,PayBlock,PayBlckRef,CntrlBnk,MaxDscn,Project,FromDate,ToDate,UpdInvnt,Rounding,CorrExt,CorrInv,DeferrTax,LetterNum,AgentCode,Installmnt,VATFirst,VatDate,OwnerCode,FolioPref,FolioNum,DocSubType,BPChCode,BPChCntc,Address2,PayToCode,ManualNum,UseShpdGd,IsPaytoBnk,BnkCntry,BankCode,BnkAccount,BnkBranch,BPLId,DpmPrcnt,isIns,LangCode,TrackNo,PickRmrk,ClsDate,SeqCode,Serial,SeriesStr,SubStr,Model,UseCorrVat,DpmAmnt,DpmPrcnt,Posted,DpmAmntSC,DpmAmntFC,VatPercent,SrvGpPrcnt,Header,Footer,RoundDif,CtlAccount,InsurOp347,IgnRelDoc,Checker,Payee,ExtraMonth,ExtraDays,CdcOffset,PayDuMonth,NTSApprov,NTSWebSite,NTSeTaxNo,NTSApprNo,EDocGenTyp,ESeries,EDocExpFrm,EDocStatus,EDocErrCod,EDocErrMsg,DpmStatus,PQTGrpSer,PQTGrpNum,PQTGrpHW,ReopOriDoc,ReopManCls,OnlineQuo,POSEqNum,POSManufSN,POSCashN,DpmAsDscnt,ClosingOpt,SpecDate,OpenForLaC,GTSRlvnt,AnnInvDecR,Supplier,Releaser,Receiver,AgrNo,IsAlt,AssetDate,DocDlvry,AuthCode,StDlvDate,StDlvTime,EndDlvDate,EndDlvTime,VclPlate,AtDocType,ElCoStatus,ElCoMsg,IsReuseNum,IsReuseNFN,PrintSEPA\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",,dDocument_Items,,,20160321,20160321,VE-S0002,,,2016-00049,5716.920009,,,,,,,,,,,,,,,,,,20160321,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,,,,"
+								. dateFormat($row['rr_date'],"m/d/Y") . ","
+								. dateFormat($row['rr_date'],"m/d/Y") . ","
+								. $row['supplier_code'] . ",,,,"
+								. $row['total_amount'] . ",,,,,,,,,,,,,,,,,,"
+								. dateFormat($row['rr_date'],"m/d/Y") . ",,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "opdn_report" . $dt . ".csv";
@@ -941,14 +943,11 @@
 						$dtto = date("Y-m-d 23:59");
 					}
 
-					$sql = "SELECT tbl_service_master.*
-								,tbl_billing.billing_date
-								,tbl_billing.billing_refno
-								,tbl_billing.total_amount as billing_amount 
-							FROM tbl_service_master
-								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
-							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
-			 				ORDER BY tbl_billing.billing_date";
+					$sql = "SELECT tbl_rr_dtl.*,tbl_items.SAP_item_code,tbl_items.item_description FROM tbl_rr_dtl
+								JOIN tbl_rr_mst ON tbl_rr_mst.rr_reference_no = tbl_rr_dtl.rr_reference_no
+								JOIN tbl_items ON tbl_items.item_code = tbl_rr_dtl.item_code
+				 			WHERE 1 AND tbl_rr_dtl.rr_date between '$dtfrom' AND '$dtto' $where
+				 			ORDER BY tbl_rr_dtl.rr_date";
 					$qry = mysql_query($sql);
 
 					$ln .= "PDN REPORT\r\n\r\n";
@@ -959,12 +958,16 @@
 					$ln .= "DocNum,LineNum,ItemCode,Dscription,Quantity,ShipDate,Price,PriceAfVAT,Currency,Rate,DiscPrcnt,VendorNum,SerialNum,WhsCode,SlpCode,Commission,TreeType,AcctCode,UseBaseUn,SubCatNum,OcrCode,Project,CodeBars,VatGroup,Height1,Hght1Unit,Height2,Hght2Unit,Length1,Len1Unit,length2,Len2Unit,Weight1,Wght1Unit,Weight2,Wght2Unit,Factor1,Factor2,Factor3,Factor4,BaseType,BaseEntry,BaseLine,Volume,VolUnit,Width1,Wdth1Unit,Width2,Wdth2Unit,Address,TaxCode,TaxType,TaxStatus,BackOrdr,FreeTxt,TrnsCode,CEECFlag,ToStock,ToDiff,WtLiable,DeferrTax,unitMsr,NumPerMsr,LineTotal,VatPrcnt,VatSum,ConsumeFCT,ExciseAmt,CountryOrg,SWW,TranType,DistribExp,ShipToCode,TotalFrgn,CFOPCode,CSTCode,Usage,TaxOnly,PriceBefDi,LineStatus,LineType,CogsOcrCod,CogsAcct,ChgAsmBoMW,GrossBuyPr,GrossBase,GPTtlBasPr,OcrCode2,OcrCode3,OcrCode4,OcrCode5,Text,LocCode,ActDelDate,ExLineNo,PQTReqDate,PQTReqQty,CogsOcrCo2,CogsOcrCo3,CogsOcrCo4,CogsOcrCo5,CSTfIPI,CSTfPIS,CSTfCOFINS,CredOrigin,NoInvtryMv,AgrNo,AgrLnNum,ShipToDesc,ActBaseEnt,ActBaseLn,DocEntry,Surpluses,DefBreak,Shortages,NeedQty,PartRetire,RetireQty,RetireAPC,UomEntry,InvQty,Incoterms,TransMod,U_Supplier,U_TIN,U_PmtType,U_Maker,U_Variant\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",0,PS00247,Oil Filter 0986 Af1 041,20,,92.807143,,,,,,,P2,,,,,,,,SUC,,V4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,"
+								. $row['SAP_item_code'] . ","
+								. $row['item_description'] . ","
+								. $row['quantity'] . ",,"
+								. $row['price'] . ",,,,,,,P2,,,,,,,,SUC,,V4,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "pdn_report" . $dt . ".csv";
@@ -1021,14 +1024,11 @@
 						$dtto = date("Y-m-d 23:59");
 					}
 
-					$sql = "SELECT tbl_service_master.*
-								,tbl_billing.billing_date
-								,tbl_billing.billing_refno
-								,tbl_billing.total_amount as billing_amount 
-							FROM tbl_service_master
-								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
-							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
-			 				ORDER BY tbl_billing.billing_date";
+					$sql = "SELECT tbl_rr_dtl.*,tbl_items.SAP_item_code,tbl_items.item_description FROM tbl_rr_dtl
+								JOIN tbl_rr_mst ON tbl_rr_mst.rr_reference_no = tbl_rr_dtl.rr_reference_no
+								JOIN tbl_items ON tbl_items.item_code = tbl_rr_dtl.item_code
+				 			WHERE 1 AND tbl_rr_dtl.rr_date between '$dtfrom' AND '$dtto' $where
+				 			ORDER BY tbl_rr_dtl.rr_date";
 					$qry = mysql_query($sql);
 
 					$ln .= "IGN REPORT\r\n\r\n";
@@ -1039,12 +1039,13 @@
 					$ln .= "DocNum,LineNum,ItemCode,Dscription,Quantity,ShipDate,Price,PriceAfVAT,Currency,Rate,DiscPrcnt,VendorNum,SerialNum,WhsCode,SlpCode,Commission,TreeType,AcctCode,UseBaseUn,SubCatNum,OcrCode,Project,CodeBars,VatGroup,Height1,Hght1Unit,Height2,Hght2Unit,Length1,Len1Unit,length2,Len2Unit,Weight1,Wght1Unit,Weight2,Wght2Unit,Factor1,Factor2,Factor3,Factor4,BaseType,BaseEntry,BaseLine,Volume,VolUnit,Width1,Wdth1Unit,Width2,Wdth2Unit,Address,TaxCode,TaxType,TaxStatus,BackOrdr,FreeTxt,TrnsCode,CEECFlag,ToStock,ToDiff,WtLiable,DeferrTax,unitMsr,NumPerMsr,LineTotal,VatPrcnt,VatSum,ConsumeFCT,ExciseAmt,CountryOrg,SWW,TranType,DistribExp,ShipToCode,TotalFrgn,CFOPCode,CSTCode,Usage,TaxOnly,PriceBefDi,LineStatus,LineType,CogsOcrCod,CogsAcct,ChgAsmBoMW,GrossBuyPr,GrossBase,GPTtlBasPr,OcrCode2,OcrCode3,OcrCode4,OcrCode5,Text,LocCode,ActDelDate,ExLineNo,PQTReqDate,PQTReqQty,CogsOcrCo2,CogsOcrCo3,CogsOcrCo4,CogsOcrCo5,CSTfIPI,CSTfPIS,CSTfCOFINS,CredOrigin,NoInvtryMv,AgrNo,AgrLnNum,ShipToDesc,ActBaseEnt,ActBaseLn,DocEntry,Surpluses,DefBreak,Shortages,NeedQty,PartRetire,RetireQty,RetireAPC,UomEntry,InvQty,Incoterms,TransMod,U_Supplier,U_TIN,U_PmtType,U_Maker,U_Variant\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",0,PS00135,Oil Filter BOSCH-AF1-035,2,,242.85,,,,,,,P2,,,,_SYS00000000095,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,485.7,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,"
+								. $row['SAP_item_code'] . ",Oil Filter BOSCH-AF1-035,2,,242.85,,,,,,,P2,,,,_SYS00000000095,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,485.7,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "ign_report" . $dt . ".csv";
@@ -1103,12 +1104,13 @@
 						$dtto = date("Y-m-d 23:59");
 					}
 
-					$sql = "SELECT tbl_service_master.*
-								,tbl_billing.billing_date
-								,tbl_billing.billing_refno
-								,tbl_billing.total_amount as billing_amount 
-							FROM tbl_service_master
-								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+					$sql = "SELECT tbl_billing.* FROM tbl_billing
+							JOIN tbl_service_master ON tbl_service_master.wo_refno = tbl_billing.wo_refno
+								AND tbl_service_master.payment_id = 'PAY00000003'
+								AND (tbl_service_master.trans_status = '7' 
+									OR tbl_service_master.trans_status = '8'
+									OR tbl_service_master.trans_status = '9'
+									OR tbl_service_master.trans_status = '10')
 							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
 			 				ORDER BY tbl_billing.billing_date";
 					$qry = mysql_query($sql);
@@ -1121,12 +1123,14 @@
 					$ln .= "DocNum,LineNum,DueDate,CheckNum,BankCode,Branch,AcctNum,Details,Trnsfrable,CheckSum,Currency,CountryCod,CheckAct,ManualChk\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",0,20160321,978786,,,,,,2301.34,,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,"
+								. dateFormat($row['billing_date'],2) . ",,,,,,,"
+								. $row['total_amount'] . ",,,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "checks_report" . $dt . ".csv";
@@ -1143,12 +1147,13 @@
 						$dtto = date("Y-m-d 23:59");
 					}
 
-					$sql = "SELECT tbl_service_master.*
-								,tbl_billing.billing_date
-								,tbl_billing.billing_refno
-								,tbl_billing.total_amount as billing_amount 
-							FROM tbl_service_master
-								JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+					$sql = "SELECT tbl_billing.* FROM tbl_billing
+							JOIN tbl_service_master ON tbl_service_master.wo_refno = tbl_billing.wo_refno
+								AND tbl_service_master.payment_id = 'PAY00000003'
+								AND (tbl_service_master.trans_status = '7' 
+									OR tbl_service_master.trans_status = '8'
+									OR tbl_service_master.trans_status = '9'
+									OR tbl_service_master.trans_status = '10')
 							WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
 			 				ORDER BY tbl_billing.billing_date";
 					$qry = mysql_query($sql);
@@ -1161,12 +1166,13 @@
 					$ln .= "DocNum,LineNum,CreditCard,CreditAcct,CrCardNum,CardValid,VoucherNum,OwnerIdNum,OwnerPhone,CrTypeCode,NumOfPmnts,FirstDue,FirstSum,AddPmntSum,CreditSum,CreditCur,CreditRate,ConfNum,CredPmnts,CreditType,SpiltCred\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",0,1,_SYS00000000033,2222,20201231,878676,,,,1,,,,1878.59,,,,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,,,,,,,,,1,,,,"
+								. $row['total_amount'] . ",,,,,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "credit_card_report" . $dt . ".csv";
@@ -1201,12 +1207,13 @@
 					$ln .= "DocNum,LineNum,DocEntry,SumApplied,AppliedFC,AppliedSys,DocRate,DocLine,InvType,Dcount,PaidSum,InstId,OcrCode,OcrCode2,OcrCode3,OcrCode4,OcrCode5,DcntSum,DcntSumFC\r\n";
 
 					$cnt = 1;
-					// while($row = mysql_fetch_array($qry)){
-					// 	$ln .= $cnt
-					// 			. "," . ",0,88,,,,,,,,1878.59,,,,,,,,"
-					// 			. "\r\n";
-					// 	$cnt++;
-					// }
+					while($row = mysql_fetch_array($qry)){
+						$ln .= $cnt
+								. "," . ",,,,,,,,,,"
+								. $row['total_amount'] . ",,,,,,,,"
+								. "\r\n";
+						$cnt++;
+					}
 
 					$data = trim($ln);
 					$filename = "pmt_invoice_report" . $dt . ".csv";

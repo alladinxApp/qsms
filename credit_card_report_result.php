@@ -16,11 +16,16 @@
 			$dtto = date("Y-m-d 23:59");
 		}
 
-		// $sql_lbs_master = "SELECT * FROM v_sales
- 	// 		WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
- 	// 		ORDER BY v_sales.transaction_date";
-		// $qry_lbs_master = mysql_query($sql_lbs_master);
-		// $qry_mst = mysql_query($sql_lbs_master);
+		$sql = "SELECT tbl_billing.* FROM tbl_billing
+					JOIN tbl_service_master ON tbl_service_master.wo_refno = tbl_billing.wo_refno
+						AND tbl_service_master.payment_id = 'PAY00000004'
+						AND (tbl_service_master.trans_status = '7' 
+							OR tbl_service_master.trans_status = '8'
+							OR tbl_service_master.trans_status = '9'
+							OR tbl_service_master.trans_status = '10')
+	 			WHERE 1 AND tbl_billing.billing_date between '$dtfrom' AND '$dtto' $where
+	 			ORDER BY tbl_billing.billing_date";
+		$qry = mysql_query($sql);
 
 		$ln .= "CREDIT CARD REPORT\r\n\r\n";
 		
@@ -70,7 +75,28 @@
 			<th width="150">VoucherNum</th>
 			<th width="150">NumOfPayments</th>
 			<th width="150">CreditSum</th>
-		</tr>		
+		</tr>
+		<? 
+			$cnt = 1; 
+			while($row = mysql_fetch_array($qry)){ 
+				$bg = null;
+				if($cnt%2){
+					$bg = 'background: #eee;';
+				}
+				$style = $bg;
+		?>
+		<tr>
+			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>">1</td>
+			<td style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+		</tr>
+		<? $cnt++; } ?>	
 	</table>
 	</div>
 	<input type="submit" name="save" value="" style="cursor: pointer;">

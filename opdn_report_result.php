@@ -16,14 +16,11 @@
 			$dtto = date("Y-m-d 23:59");
 		}
 
-		$sql = "SELECT tbl_service_master.*
-					,tbl_billing.billing_date
-					,tbl_billing.billing_refno
-					,tbl_billing.total_amount as billing_amount 
-				FROM tbl_service_master
-					JOIN tbl_billing ON tbl_billing.wo_refno = tbl_service_master.wo_refno
-				WHERE tbl_billing.billing_date BETWEEN '$dtfrom' AND '$dtto'
- 				ORDER BY tbl_billing.billing_date";
+		$sql = "SELECT tbl_rr_mst.*,tbl_suppliers.supplier_code FROM tbl_rr_mst
+					JOIN tbl_po_mst ON tbl_po_mst.po_reference_no = tbl_rr_mst.po_reference_no
+					JOIN tbl_suppliers ON tbl_suppliers.supplier_code = tbl_po_mst.supplier_code
+				WHERE tbl_rr_mst.rr_date BETWEEN '$dtfrom' AND '$dtto'
+ 				ORDER BY tbl_rr_mst.rr_date";
 		$qry = mysql_query($sql);
 	}
 ?>
@@ -85,12 +82,12 @@
 			<td style="<?=$style;?>"></td>
 			<td align="center" style="<?=$style;?>"><?=dateFormat($row['billing_date'],"m/d/Y");?></td>
 			<td align="center" style="<?=$style;?>"><?=dateFormat($row['billing_date'],"m/d/Y");?></td>
-			<td style="<?=$style;?>"><?=$row['customer_id'];?></td>
-			<td style="<?=$style;?>"><?=$row['billing_refno'];?></td>
+			<td style="<?=$style;?>"><?=$row['supplier_code'];?></td>
+			<td style="<?=$style;?>"></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
-			<td style="<?=$style;?>"><?=$row['remarks'];?></td>
-			<td style="<?=$style;?>"><?=$row['technician'];?></td>
-			<td align="center" style="<?=$style;?>"><?=dateFormat($row['billing_date'],"m/d/Y");?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
 		</tr>
 		<? $cnt++; } ?>
 	</table>
