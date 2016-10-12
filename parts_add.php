@@ -163,7 +163,7 @@
 			<td class ="input"><select name="item_code" id="item_code">
 				<option value="">-- Select Item --</option>
 				<? foreach($result_items as $row){ ?>
-					<option value="<?=$row['item_code'];?>"><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+					<option value="<?=$row['item_code'];?>"><?=$row['SAP_item_code'];?> - <?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
 				<? } ?>
 			</select></td>
 		</tr>

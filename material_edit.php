@@ -210,7 +210,7 @@
 							$selected = 'selected';
 						}
 				?>
-					<option value="<?=$row['item_code'];?>" <?=$selected;?>><?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
+					<option value="<?=$row['item_code'];?>" <?=$selected;?>><?=$row['SAP_item_code'];?> - <?=$row['item_description'];?> ( <?=$row['UOM_desc'];?> )</option>
 				<? } ?>
 			</select></td>
 		</tr>
