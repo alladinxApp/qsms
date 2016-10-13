@@ -41,7 +41,7 @@
 <? require_once('inc/datepicker.php'); ?>
 </head>
 <style>
-	div.divEstimateList{ height: 400px; width: 800px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
+	div.divEstimateList{ height: 400px; width: 1250px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; overflow: scroll; }
 	div.divEstimateList table{ border: 1px solid #ccc; font-size: 12px; }
 	div.divEstimateList table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
 </style>
@@ -64,15 +64,30 @@
 		</tr>
 	</table>
 	<div class="divEstimateList">
-	<table width="1350">
+	<table width="2000">
 		<tr>
-			<th width="10">#</th>
-			<th width="150">LineNum</th>
-			<th width="150">DocEntry</th>
-			<th width="150">PaidSum</th>
+			<th width="10">ParentKey</th>
+			<th width="10">LineNum</th>
+			<th width="100">DocEntry</th>
+			<th width="100">SumApplied</th>
+			<th width="100">AppliedFC</th>
+			<th width="100">AppliedSys</th>
+			<th width="100">DocRate</th>
+			<th width="100">DocLine</th>
+			<th width="100">InvoiceType</th>
+			<th width="100">DiscountPercent</th>
+			<th width="100">PaidSum</th>
+			<th width="100">InstallmentId</th>
+			<th width="100">DistributionRule</th>
+			<th width="100">DistributionRule2</th>
+			<th width="100">DistributionRule3</th>
+			<th width="100">DistributionRule4</th>
+			<th width="100">DistributionRule5</th>
+			<th width="100">TotalDiscount</th>
+			<th width="100">TotalDiscountFC</th>
 		</tr>
 		<? 
-			$cnt = 1; 
+			$cnt = 0; 
 			while($row = mysql_fetch_array($qry)){ 
 				$bg = null;
 				if($cnt%2){
@@ -81,10 +96,25 @@
 				$style = $bg;
 		?>
 		<tr>
+			<td align="center" style="<?=$style;?>">1</td>
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
-			<td style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
 		</tr>
 		<? $cnt++; } ?>	
 	</table>

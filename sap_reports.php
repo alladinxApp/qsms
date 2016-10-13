@@ -20,11 +20,11 @@
         <td width="15">&nbsp;</td>
         <td width="92"><a href="opdn_report.php"><img src="images/OPDN.png" width="78" height="100" alt="OPDN"></a></td>
         <td width="15">&nbsp;</td>
-        <td width="92"><a href="pdn1_report.php"><img src="images/PDN1.png" width="78" height="100" alt="PDN1"></a></td>
+        <td width="92"><a href="pdn_report.php"><img src="images/PDN1.png" width="78" height="100" alt="PDN"></a></td>
         <td width="15">&nbsp;</td>
 		    <td width="92"><a href="oign_report.php"><img src="images/OIGN.png" width="78" height="100" alt="OIGN"></a></td>
         <td width="15">&nbsp;</td>
-		    <td width="92"><a href="ign1_report.php"><img src="images/IGN1.png" width="78" height="100" alt="IGN1"></a></td>
+		    <td width="92"><a href="ign_report.php"><img src="images/IGN1.png" width="78" height="100" alt="IGN"></a></td>
         <td width="15">&nbsp;</td>
 		    <td width="92"><a href="orct_report.php"><img src="images/ORCT.png" width="78" height="100" alt="ORCT"></a></td>
         <td width="15">&nbsp;</td>

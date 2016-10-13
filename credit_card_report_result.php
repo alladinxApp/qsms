@@ -26,11 +26,6 @@
 	 			WHERE 1 AND tbl_billing.billing_date between '$dtfrom' AND '$dtto' $where
 	 			ORDER BY tbl_billing.billing_date";
 		$qry = mysql_query($sql);
-
-		$ln .= "CREDIT CARD REPORT\r\n\r\n";
-		
-		$ln .= "From: ," . $dtfrom . "\r\n";
-		$ln .= "To: ," . $dtto . "\r\n";
 	}
 ?>
 <html>
@@ -41,7 +36,7 @@
 <? require_once('inc/datepicker.php'); ?>
 </head>
 <style>
-	div.divEstimateList{ height: 400px; width: 800px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
+	div.divEstimateList{ height: 400px; width: 1250px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; overflow: scroll; }
 	div.divEstimateList table{ border: 1px solid #ccc; font-size: 12px; }
 	div.divEstimateList table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
 </style>
@@ -64,20 +59,32 @@
 		</tr>
 	</table>
 	<div class="divEstimateList">
-	<table width="1350">
+	<table width="2100">
 		<tr>
-			<th width="10">#</th>
-			<th width="150">LineNum</th>
-			<th width="150">CreditCard</th>
-			<th width="150">CreditAcct</th>
-			<th width="150">CreditCardNumber</th>
-			<th width="150">CardValidUntil</th>
-			<th width="150">VoucherNum</th>
-			<th width="150">NumOfPayments</th>
-			<th width="150">CreditSum</th>
+			<th width="10">ParentKey</th>
+			<th width="10">LineNum</th>
+			<th width="100">CreditCard</th>
+			<th width="100">CreditAcct</th>
+			<th width="100">CreditCardNumber</th>
+			<th width="100">CardValidUntil</th>
+			<th width="100">VoucherNum</th>
+			<th width="100">OwnerIdNum</th>
+			<th width="100">OwnerPhone</th>
+			<th width="100">PaymentMethodCode</th>
+			<th width="100">NumOfPayments</th>
+			<th width="100">FirstPaymentDue</th>
+			<th width="100">FirstPaymentSum</th>
+			<th width="100">AdditionalPaymentSum</th>
+			<th width="100">CreditSum</th>
+			<th width="100">CreditCur</th>
+			<th width="100">CreditRate</th>
+			<th width="100">ConfirmationNum</th>
+			<th width="100">NumOfCreditPayments</th>
+			<th width="100">CreditType</th>
+			<th width="100">SplitPayments</th>
 		</tr>
 		<? 
-			$cnt = 1; 
+			$cnt = 0; 
 			while($row = mysql_fetch_array($qry)){ 
 				$bg = null;
 				if($cnt%2){
@@ -86,6 +93,7 @@
 				$style = $bg;
 		?>
 		<tr>
+			<td align="center" style="<?=$style;?>">1</td>
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
@@ -93,8 +101,19 @@
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
-			<td style="<?=$style;?>">1</td>
-			<td style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td align="center" style="<?=$style;?>">1</td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($row['total_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"></td>
 		</tr>
 		<? $cnt++; } ?>	
 	</table>

@@ -17,13 +17,13 @@
 		$cust = $_POST['txtcust'];
 		$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
 		$to = dateFormat($_POST['txtdateto'],"Y-m-d");
-		$dtfrom = $from . " 00:00:000";
-		$dtto = $to . " 23:59:000";
+		$dtfrom = $from . " 00:00:00";
+		$dtto = $to . " 23:59:59";
 		$dt = date("Ymdhis");
 
 		if(empty($dtfrom) && empty($dtto)){
-			$dtfrom = date("Y-m-d 00:00");
-			$dtto = date("Y-m-d 23:59");
+			$dtfrom = date("Y-m-d 00:00:00");
+			$dtto = date("Y-m-d 23:59:59");
 		}
 
 		if(!empty($cust)){
@@ -34,7 +34,7 @@
 				$custname = $rowcustomer['custname'];
 			}
 
-			$where .= "AND customer_id = '$cust'";
+			$where .= "AND v_sales1.customer_id = '$cust'";
 		}
 
 		if(!empty($ptype)){
@@ -45,28 +45,52 @@
 				$paymentmode = $rowpayment['payment'];
 			}
 
-			$where .= "AND payment_id = '$ptype'";
+			$where .= "AND v_sales1.payment_id = '$ptype'";
 		}
 
-		$sql_lbs_master = "SELECT * FROM v_sales
- 			WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
- 			ORDER BY v_sales.transaction_date";
+		//$sql_lbs_master = "SELECT * FROM v_sales1
+ 		//	WHERE 1 AND (v_sales1.transaction_date between '$dtfrom' AND '$dtto') $where
+ 		//	ORDER BY v_sales1.transaction_date";
+		$sql_lbs_master = "SELECT
+					`tbl_service_master`.`estimate_refno`   AS `estimate_refno`,
+					`tbl_service_master`.transaction_date AS `transaction_date`,
+					`tbl_service_master`.`customer_id`      AS `customer_id`,
+					CONCAT(`tbl_customer`.`firstname`,' ',`tbl_customer`.`middlename`,' ',`tbl_customer`.`lastname`) AS `customername`,
+					`tbl_service_master`.`payment_id`       AS `payment_id`,
+					`tbl_payment`.`payment`                 AS `payment_mode`,
+					tbl_service_master.total_amount AS total_amount,
+					tbl_service_master.discount AS discount,
+					(SELECT
+					SUM(`tbl_service_detail`.`amount`)      AS `sum(tbl_service_detail.amount)`
+					FROM `tbl_service_detail`
+					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
+					  AND (`tbl_service_detail`.`type` = 'job'))) AS `labor`,
+					(SELECT
+					SUM(`tbl_service_detail`.`amount`)      AS `SUM(tbl_service_detail.amount)`
+					FROM `tbl_service_detail`
+					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
+					  AND (`tbl_service_detail`.`type` = 'accessory'))) AS `lubricants`,
+					(SELECT
+					SUM(`tbl_service_detail`.`amount`)      AS `SUM(tbl_service_detail.amount)`
+					FROM `tbl_service_detail`
+					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
+					  AND (`tbl_service_detail`.`type` = 'material'))) AS `sublet`,
+					(SELECT
+					SUM(`tbl_service_detail`.`amount`)      AS `SUM(tbl_service_detail.amount)`
+					FROM `tbl_service_detail`
+					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
+					  AND (`tbl_service_detail`.`type` = 'parts'))) AS `parts`
+				FROM ((`tbl_service_master`
+					JOIN `tbl_customer`
+						ON ((CONVERT(`tbl_customer`.`cust_id` USING latin1) = `tbl_service_master`.`customer_id`)))
+					JOIN `tbl_payment`
+						ON ((CONVERT(`tbl_payment`.`payment_id` USING latin1) = `tbl_service_master`.`payment_id`)))
+				WHERE `tbl_service_master`.`trans_status` = '7' AND (tbl_service_master.transaction_date BETWEEN '$dtfrom' AND '$dtto')
+				ORDER BY tbl_service_master.transaction_date";
+		
 		$qry_lbs_master = mysql_query($sql_lbs_master);
 		$qry_mst = mysql_query($sql_lbs_master);
-
-		// $estrefno = null;
-		// while($row_mst = mysql_fetch_array($qry_mst)){
-		// 	$estrefno .= "'$row_mst[estimate_refno]',";
-		// }
-		// $estrefno = rtrim($estrefno,",");
 		
-		// $sql_lbs_detail = "SELECT * FROM v_service_detail_job WHERE estimate_refno IN($estrefno) limit 0,1";
-		// $qry_lbs_detail = mysql_query($sql_lbs_detail);
-		// while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
-		// 	$job .= $row_lbs_detail['job_name'] . ",";
-		// }
-		// $job = rtrim($job,",");
-		// echo $sql_lbs_detail;
 		$ln .= "SALES SUMMARY REPORT\r\n\r\n";
 		
 		$ln .= "From: ," . $dtfrom . "\r\n";

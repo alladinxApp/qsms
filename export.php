@@ -873,15 +873,15 @@
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
 						$ln .= $cnt
-								. "," . ",,,,,"
-								. dateFormat($row['billed_date'],"m/d/Y") . ","
-								. dateFormat($row['billed_date'],"m/d/Y") . ","
+								. "," . ",,,,"
+								. dateFormat($row['billing_date'],"m/d/Y") . ","
+								. dateFormat($row['billing_date'],"m/d/Y") . ","
 								. $row['customer_id'] . ",,,"
 								. $row['billing_refno'] . ","
 								. $row['billing_amount'] . ",,,,,,,"
 								. str_replace(",", "", $row['remarks']) . ",,,"
 								. $row['technician'] . ",,,,,,,,"
-								. dateFormat($row['billed_date'],"m/d/Y") . ",,,,,,,,,,,,,,,,,,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+								. dateFormat($row['billing_date'],"m/d/Y") . ",,,,,,,,,,,,,,,,,,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
 								. "\r\n";
 						$cnt++;
 					}
@@ -918,7 +918,7 @@
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
 						$ln .= $cnt
-								. "," . ",,,,,"
+								. "," . ",,,,"
 								. dateFormat($row['rr_date'],"m/d/Y") . ","
 								. dateFormat($row['rr_date'],"m/d/Y") . ","
 								. $row['supplier_code'] . ",,,,"
@@ -1123,9 +1123,10 @@
 
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
-						$ln .= $cnt
-								. "," . ",,"
-								. dateFormat($row['billing_date'],2) . ",,,,,,,"
+						$ln .= "1,"
+								. $cnt
+								. ","
+								. dateFormat($row['billing_date'],"m/d/Y") . ",,,,,,,"
 								. $row['total_amount'] . ",,,,"
 								. "\r\n";
 						$cnt++;
@@ -1166,8 +1167,8 @@
 
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
-						$ln .= $cnt
-								. "," . ",,,,,,,,,,1,,,,"
+						$ln .= "1,"
+								. $cnt . ",,,,,,,,,1,,,,"
 								. $row['total_amount'] . ",,,,,,"
 								. "\r\n";
 						$cnt++;
@@ -1207,8 +1208,8 @@
 
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
-						$ln .= $cnt
-								. "," . ",,,,,,,,,,"
+						$ln .= "1,"
+								. $cnt . ",,,,,,,,,"
 								. $row['total_amount'] . ",,,,,,,,"
 								. "\r\n";
 						$cnt++;

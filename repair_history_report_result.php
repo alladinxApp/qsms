@@ -4,6 +4,9 @@
 	require_once("conf/db_connection.php");
 	require_once("functions.php");
 
+	$sql_customer = "SELECT * FROM tbl_customer";
+	$qry_customer = mysql_query($sql_customer);
+
 	if(isset($_POST['export']) && !empty($_POST['export']) && $_POST['export'] == 1){
 		$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
 		$to = dateFormat($_POST['txtdateto'],"Y-m-d");
@@ -18,43 +21,57 @@
 		$cnt = 0;
 		$ave_sales = 0;
 
-		if(!empty($cust)){
-			$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
-			$rescustomer = $dbo->query($qrycustomer);
+		// if(!empty($cust)){
+		// 	$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
+		// 	$rescustomer = $dbo->query($qrycustomer);
 
-			foreach($rescustomer as $rowcustomer){
-				$custname = $rowcustomer['custname'];
-			}
+		// 	foreach($rescustomer as $rowcustomer){
+		// 		$custname = $rowcustomer['custname'];
+		// 	}
 
-			$customers = " AND customer_id = '$cust' ";
-		}
+		// 	$customers = " AND customer_id = '$cust' ";
+		// }
 		
-		if(!empty($unit)){
-			$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$unit'";
-			$resvehicle = $dbo->query($qryvehicle);
+		// if(!empty($unit)){
+		// 	$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$unit'";
+		// 	$resvehicle = $dbo->query($qryvehicle);
 
-			foreach($resvehicle as $rowvehicle){
-				$plateno = $rowvehicle['plate_no'];
-			}
+		// 	foreach($resvehicle as $rowvehicle){
+		// 		$plateno = $rowvehicle['plate_no'];
+		// 	}
 
-			$units = " AND vehicle_id = '$unit' ";
-		}
+		// 	$units = " AND vehicle_id = '$unit' ";
+		// }
 
-		if(!empty($job)){
-			$qryjob = "SELECT * FROM v_job WHERE job_id = '$job'";
-			$resjob = $dbo->query($qryjob);
+		$sql_sh_master = "SELECT
+					tbl_service_master.estimate_refno   AS estimate_refno,
+					tbl_service_master.wo_refno         AS wo_refno,
+					tbl_service_master.transaction_date AS transaction_date,
+					tbl_service_master.customer_id      AS customer_id,
+					CONCAT(tbl_customer.firstname,' ',tbl_customer.middlename,' ',tbl_customer.lastname) AS customername,
+					tbl_vehicleinfo.plate_no            AS plate_no,
+					tbl_year.year                       AS year,
+					tbl_make.make                       AS make,
+					tbl_model.model                     AS model,
+					tbl_service_master.odometer         AS odometer,
+					tbl_service_master.total_amount     AS total_amount
+				FROM tbl_service_master
+					JOIN tbl_vehicleinfo
+						ON tbl_vehicleinfo.vehicle_id = tbl_service_master.vehicle_id
+					JOIN tbl_year
+						ON tbl_year.year_id = tbl_vehicleinfo.year
+					JOIN tbl_make
+						ON tbl_make.make_id = tbl_vehicleinfo.make
+					JOIN tbl_model
+						ON tbl_model.model_id = tbl_vehicleinfo.model
+					JOIN tbl_customer
+						ON tbl_customer.cust_id = tbl_service_master.customer_id
+					JOIN tbl_billing
+						ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+				WHERE tbl_service_master.transaction_date between '$dtfrom' AND '$dtto'
+				$units $customers
+				ORDER BY tbl_service_master.transaction_date DESC";
 
-			foreach($resvehicle as $rowvehicle){
-				$jobname = $rowvehicle['job'];
-			}
-
-			$jobs = " AND id = '$job' ";
-		}
-
-		$sql_sh_master = "SELECT * FROM v_sales
-				WHERE v_sales.transaction_date between '$dtfrom' AND '$dtto'
-				$units $customers $jobs
-				ORDER BY v_sales.transaction_date";
 		$qry_sh_master = mysql_query($sql_sh_master);
 	}
 ?>
@@ -66,9 +83,7 @@
 <? require_once('inc/datepicker.php'); ?>
 </head>
 <style>
-	div.divEstimateList{ height: 400px; width: 610px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
-	div.divEstimateList table{ border: 1px solid #ccc; font-size: 12px; }
-	div.divEstimateList table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
+	div.divEstimateList{ width: 710px; }
 </style>
 <body>
 	<p id="title">Repair History Report Result</p>
@@ -83,58 +98,43 @@
 		<tr>
 			<td width="120">Date From </td>
 			<td width="10">:</td>
-			<td width="300"><?=dateFormat($from,"F d, Y");?></td>
+			<td width="300"><? //=dateFormat($from,"F d, Y");?></td>
 		</tr>
 		<tr>
 			<td >Date To </td>
 			<td>:</td>
-			<td ><?=dateFormat($to,"F d, Y");?></td>
+			<td ><? //=dateFormat($to,"F d, Y");?></td>
 		</tr>
 		<tr>
 			<td >Customer </td>
 			<td>:</td>
-			<td ><? if(!empty($cust)){ echo $custname; }else{ echo 'ALL'; } ?></td>
+			<td ><? //if(!empty($cust)){ echo $custname; }else{ echo 'ALL'; } ?></td>
 		</tr>
 		<tr>
 			<td >Plate No </td>
 			<td>:</td>
-			<td ><? if(!empty($unit)){ echo $plateno; }else{ echo 'ALL'; } ?></td>
+			<td ><? //if(!empty($unit)){ echo $plateno; }else{ echo 'ALL'; } ?></td>
 		</tr>
 		<tr>
 			<td >Service Type: </td>
 			<td>:</td>
-			<td ><? if(!empty($job)){ echo $jobname; }else{ echo 'ALL'; } ?></td>
+			<td ><? //if(!empty($job)){ echo $jobname; }else{ echo 'ALL'; } ?></td>
 		</tr>
 	</table>
+	<input type="submit" name="save" value="" style="cursor: pointer;">
 	<div class="divEstimateList">
+	<?
+		while($row_customer = mysql_fetch_array($qry_customer)){
+			$custid = $row_customer['customer_id'];
+			$custname = $row_customer['firstname'] . ' ' . $row_customer['middlename'] . ' ' . $row_customer['lastname'];
+			while($row_history = mysql_fetch_array($qry_sh_master)){
+				if($row_history['customer_id'] == $row_customer['cust_id']){
+	?>
+	<div style="width: 710px; font-size: 20px; font-weight: bold;" align="right"><?=$custname;?></div>
 	<table width="710px">
-		<tr>
-			<th width="10">#</th>
-			<th width="100">Plate No</th>
-			<th width="200">Service Remarks</th>
-			<th width="100">Date</th>
-			<th width="300">Customer</th>
-		</tr>
-		<?
-			$cnt = 1; 
-			while($row = mysql_fetch_array($qry_sh_master)){
-				if($cnt%2){
-					$bg = "background: none;";
-				}else{
-					$bg = "background: #eee;";
-				}
-
-				$style = $bg;
-		?>
-		<tr>
-			<td><?=$cnt;?></td>
-			<td style="<?=$style;?>"><?=$row['plate_no'];?></td>
-			<td style="<?=$style;?>"><?=$row['remarks'];?></td>
-			<td style="<?=$style;?>" align="center"><?=dateFormat($row['transaction_date'],"m/d/Y");?></td>
-			<td style="<?=$style;?>"><?=$row['customername'];?></td>
-		</tr>
-		<? $cnt++; } ?>
+		
 	</table>
+	<? 	} 	} 	} ?>
 	</div>
 	<input type="submit" name="save" value="" style="cursor: pointer;">
 	<input type="hidden" id="export" name="export" value="1" />

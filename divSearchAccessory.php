@@ -21,6 +21,7 @@ echo "<th><a href='$page_name?column_name=access_disc'>Discounted Price</th>";
 echo "<th><a href='$page_name?column_name=access_srp'>Retail Price</th>";
 echo "<th><a href='$page_name?column_name=access_low'>Low Stock Qty.</th>";
 echo "<th><a href='$page_name?column_name=access_onhand'>Stock On Hand</th>";
+echo "<th><a href='$page_name?column_name=SAP_item_code'>SAP Item Code</th>";
 echo "<th><a href='$page_name?column_name=access_status'>Status</th>";
 echo "<th>&nbsp;</th></tr>";
 
@@ -37,6 +38,7 @@ echo "<td><center>$row[access_disc]</center></td>";
 echo "<td><center>$row[access_srp]</td>";
 echo "<td><center>$row[access_low]</td>";
 echo "<td><center>$row[access_onhand]</td>";
+echo "<td><center>$row[SAP_item_code]</td>";
 echo "<td><center>$row[access_status]</td>"; 
 echo "<td width='110px'><center>
 			<a href='accessory_edit.php?accessoryid=$row[accessory_id]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 

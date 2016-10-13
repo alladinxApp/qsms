@@ -41,7 +41,7 @@
 <? require_once('inc/datepicker.php'); ?>
 </head>
 <style>
-	div.divEstimateList{ height: 400px; width: 800px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
+	div.divEstimateList{ height: 400px; width: 1250; border-left: 1px solid #ddd; border-top: 1px solid #ddd; overflow: scroll; }
 	div.divEstimateList table{ border: 1px solid #ccc; font-size: 12px; }
 	div.divEstimateList table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
 </style>
@@ -64,21 +64,22 @@
 		</tr>
 	</table>
 	<div class="divEstimateList">
-	<table width="1350">
+	<table width="1400">
 		<tr>
-			<th width="10">#</th>
-			<th width="150">DueDate</th>
-			<th width="150">CheckNumber</th>
-			<th width="150">BankCode</th>
-			<th width="150">Branch</th>
-			<th width="150">AccountNum</th>
-			<th width="150">Details</th>
-			<th width="150">Trnsfrable</th>
-			<th width="150">CheckSum</th>
-			<th width="150">Currency</th>
-			<th width="150">CountryCode</th>
-			<th width="150">CheckAccount</th>
-			<th width="150">ManualCheck</th>
+			<th width="10">ParentKey</th>
+			<th width="10">LineNum</th>
+			<th width="100">DueDate</th>
+			<th width="100">CheckNumber</th>
+			<th width="100">BankCode</th>
+			<th width="100">Branch</th>
+			<th width="100">AccounttNum</th>
+			<th width="100">Details</th>
+			<th width="100">Trnsfrable</th>
+			<th width="100">CheckSum</th>
+			<th width="100">Currency</th>
+			<th width="100">CountryCode</th>
+			<th width="100">CheckAccount</th>
+			<th width="100">ManualCheck</th>
 		</tr>
 		<? 
 			$cnt = 1; 
@@ -90,15 +91,17 @@
 				$style = $bg;
 		?>
 		<tr>
+			<td align="center" style="<?=$style;?>">1</td>
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
-			<td style="<?=$style;?>"><?=dateFormat($row['billing_date'],"m/d/Y");?></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
-			<td style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($row['total_amount'],2);?></td>
+			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>

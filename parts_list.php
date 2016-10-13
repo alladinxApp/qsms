@@ -98,6 +98,7 @@ echo "<th><a href='$page_name?column_name=parts_discount'>Discounted Price</a></
 echo "<th><a href='$page_name?column_name=part_srp'>Retail Price</a></th>";
 echo "<th><a href='$page_name?column_name=parts_low'>Low Stock Qty.</a></th>";
 echo "<th><a href='$page_name?column_name=part_onhand'>On Hand Qty.</a></th>";
+echo "<th><a href='$page_name?column_name=SAP_item_code'>SAP item code</a></th>";
 echo "<th><a href='$page_name?column_name=partstatus'>Status</a></th>";
 echo "<th>&nbsp;</th></tr>";
 
@@ -118,7 +119,8 @@ echo "<td><center>" . number_format($row['parts_discount'],2) . "</center></td>"
 echo "<td><center>" . number_format($row['part_srp'],2) . "</center></td>";
 echo "<td><center>$row[parts_lowstock]</center></td>";
 echo "<td><center>$row[part_onhand]</center></td>";
-echo "<td><center>$row[partstatus]</center></td>";    
+echo "<td><center>$row[SAP_item_code]</center></td>";
+echo "<td><center>$row[partstatus]</center></td>";
 echo "<td width='110px'><center>
 			<a href='parts_edit.php?partsid=$row[parts_id]'><img src='images/edit.png' /></a> &nbsp;&nbsp; 
 			<a href='parts_delete.php?partsid=$row[parts_id]'><img src='images/delete.png' /></a>
