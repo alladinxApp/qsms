@@ -57,7 +57,7 @@
 	<div class="divEstimateList">
 	<table width="1350">
 		<tr>
-			<th width="100">DocNum</th>
+			<th width="10">DocNum</th>
 			<th width="100">DocEntry</th>
 			<th width="100">DocType</th>
 			<th width="100">HandWritten</th>

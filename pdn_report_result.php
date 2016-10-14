@@ -62,8 +62,8 @@
 	<div class="divEstimateList">
 	<table width="1350">
 		<tr>
-			<th width="100">ParentKey</th>
-			<th width="100">LineNum</th>
+			<th width="10">ParentKey</th>
+			<th width="10">LineNum</th>
 			<th width="100">ItemCode</th>
 			<th width="100">ItemDescription</th>
 			<th width="100">Quantity</th>

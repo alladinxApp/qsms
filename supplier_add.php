@@ -18,7 +18,7 @@
 		$isvat = $_POST['isVat'];
 		$newnum = getNewNum('SUPPLIER');
 		
-		$supplier_insert = "INSERT INTO tbl_suppliers (supplier_code,SAP_supplier_code,supplier_name,address,contact_person,phone,fax,email,TIN,isVat,created_date) VALUES 
+		$supplier_insert = "INSERT INTO tbl_suppliers (supplier_code,SAP_supplier_code,supplier_name,address,contact_person,phone,fax,email,TIN,isVat,created_date,status) VALUES 
 	 	('".$newnum."',
 	 	'".$sapsuppliercode."',
 	 	'".$suppliername."',
@@ -29,7 +29,7 @@
 	 	'".$email."',
 	 	'".$TIN."',
 	 	'".$isvat."',
-	 	'".$today."')";
+	 	'".$today."','1')";
 		
 		$update_controlno = "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'SUPPLIER' ";
 		

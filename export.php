@@ -917,8 +917,7 @@
 
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
-						$ln .= $cnt
-								. "," . ",,,,"
+						$ln .= "1," . ",,,,"
 								. dateFormat($row['rr_date'],"m/d/Y") . ","
 								. dateFormat($row['rr_date'],"m/d/Y") . ","
 								. $row['supplier_code'] . ",,,,"
@@ -959,8 +958,7 @@
 
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
-						$ln .= $cnt
-								. "," . ",,"
+						$ln .= "1," . $cnt . ","
 								. $row['SAP_item_code'] . ","
 								. $row['item_description'] . ","
 								. $row['quantity'] . ",,"
@@ -1039,9 +1037,14 @@
 
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
-						$ln .= $cnt
-								. "," . ",,"
-								. $row['SAP_item_code'] . ",Oil Filter BOSCH-AF1-035,2,,242.85,,,,,,,P2,,,,_SYS00000000095,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,485.7,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+						$total = 0;
+						$total = $row['quantity'] * $row['price'];
+						$ln .= '1,' . $cnt . ","
+								. $row['SAP_item_code'] . "sp,"
+								. $row['item_description'] . "id,"
+								. $row['quantity'] . "qty,,"
+								. $row['price'] . "pr,,,,,,,P2,,,,_SYS00000000095,,,,SUC,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
+								. $total . "ttl,,,,,,,,,,,,,,,,,,,,,,,,P01,SUC,,Z10,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,"
 								. "\r\n";
 						$cnt++;
 					}
@@ -1076,11 +1079,10 @@
 					$cnt = 1;
 					while($row = mysql_fetch_array($qry)){
 						$ln .= $cnt
-								. "," . ",,,,"
+								. ",,,,"
 								. dateFormat($row['cust_created'],"m/d/Y") . ","
 								. $row['customer_id'] . ","
-								. $row['custname'] . ",,,,,,,,"
-								. dateFormat($row['cust_created'],"m/d/Y") . ",,,,,,,,,,,,"
+								. $row['custname'] . ",,,,,,,,,,,,,,,,,,,,"
 								. dateFormat($row['cust_created'],"m/d/Y") . ",,,,,SUC,,,,,,,,,,,,,,,,,,,,,,"
 								. dateFormat($row['cust_created'],"m/d/Y") . ",,,,,,"
 								. dateFormat($row['cust_created'],"m/d/Y") . ",,,"
@@ -1149,7 +1151,7 @@
 
 					$sql = "SELECT tbl_billing.* FROM tbl_billing
 							JOIN tbl_service_master ON tbl_service_master.wo_refno = tbl_billing.wo_refno
-								AND tbl_service_master.payment_id = 'PAY00000003'
+								AND tbl_service_master.payment_id = 'PAY00000004'
 								AND (tbl_service_master.trans_status = '7' 
 									OR tbl_service_master.trans_status = '8'
 									OR tbl_service_master.trans_status = '9'
