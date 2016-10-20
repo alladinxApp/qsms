@@ -19,7 +19,7 @@
 		if(!empty($datefrom) && !empty($dateto)){
 			$datefrom = dateFormat($datefrom,"Y-m-d");
 			$dateto = dateFormat($dateto,"Y-m-d");
-			$where .= " AND (transaction_date between '$datefrom 00:00:000' AND '$dateto 23:59')";
+			$where .= " AND (transaction_date between '$datefrom 00:00:00' AND '$dateto 23:59:59')";
 			// $where .= " AND (transaction_date between '$datefrom 00:00' AND '$dateto 23:59')";
 		}else if(empty($datefrom) && !empty($dateto)){
 			$dateto = dateFormat($dateto,"Y-m-d");
@@ -34,14 +34,40 @@
 		}
 
 		if(!empty($custname)){
-			$where .= " AND customername LIKE '$custname%'";
+			$where .= " AND custname LIKE '$custname%'";
 		}
 
 		if(!empty($estimateno)){
 			$where .= " AND estimate_refno LIKE '$estimateno%'";
 		}
 		
-		$qryservices = "SELECT * FROM v_service_master " . $where;
+		$qryservices = "SELECT tbl_service_master.*,v_customer.custname AS custname
+							,tbl_vehicleinfo.plate_no
+							,tbl_vehicleinfo.variant
+							,tbl_vehicleinfo.description
+							,tbl_vehicleinfo.engine_no
+							,tbl_vehicleinfo.chassis_no
+							,tbl_vehicleinfo.serial_no
+							,(SELECT tbl_make.make FROM tbl_make WHERE tbl_make.make_id = tbl_vehicleinfo.make) AS make_desc
+							,(SELECT tbl_model.model FROM tbl_model WHERE tbl_model.model_id = tbl_vehicleinfo.model) AS model_desc
+							,(SELECT tbl_color.color FROM tbl_color WHERE tbl_color.color_id = tbl_vehicleinfo.color) AS color_desc
+							,(SELECT tbl_year.year FROM tbl_year WHERE tbl_year.year_id = tbl_vehicleinfo.year) AS year_desc
+							,(SELECT tbl_payment.payment FROM tbl_payment WHERE tbl_payment.payment_id = tbl_service_master.payment_id) AS payment_mode
+							,(CASE WHEN tbl_service_master.trans_status = '0' THEN 'PENDING' 
+								WHEN tbl_service_master.trans_status = '1' THEN 'APPROVED' 
+								WHEN tbl_service_master.trans_status = '2' THEN 'DISAPPROVED' 
+								WHEN tbl_service_master.trans_status = '3' THEN 'CANCELLED' 
+								WHEN tbl_service_master.trans_status = '4' THEN 'FOR REPAIR' 
+								WHEN tbl_service_master.trans_status = '5' THEN 'FINISHED' 
+								WHEN tbl_service_master.trans_status = '6' THEN 'FOR BILLING' 
+								WHEN tbl_service_master.trans_status = '7' THEN 'BILLED' 
+								WHEN tbl_service_master.trans_status = '8' THEN 'ON-GOING' 
+								WHEN tbl_service_master.trans_status = '9' THEN 'FOR APPROVAL' 
+								WHEN tbl_service_master.trans_status = '10' THEN 'CLOSED' END) AS `status_desc`
+						FROM tbl_service_master
+						JOIN v_customer ON v_customer.cust_id = tbl_service_master.customer_id
+						JOIN tbl_vehicleinfo ON tbl_vehicleinfo.vehicle_id = tbl_service_master.vehicle_id
+						" . $where;
 		$resservices = $dbo->query($qryservices);
 	}
 ?>
@@ -130,7 +156,7 @@
 				<? if(!$rowservices['wo_refno'] == 0){ echo $rowservices['wo_refno']; } ?>
 			</a></td>
 			<td align="center" style="<?=$bg . $color;?>"><?=$rowservices['transaction_date'];?></td>
-			<td style="<?=$bg . $color;?>"><?=$rowservices['customername'];?></td>
+			<td style="<?=$bg . $color;?>"><?=$rowservices['custname'];?></td>
 			<td style="<?=$bg . $color;?>"><?=$rowservices['plate_no'];?></td>
 			<td align="center" style="<?=$bg . $color;?>"><?=$rowservices['make_desc'];?></td>
 			<td align="center" style="<?=$bg . $color;?>"><?=$rowservices['year_desc'];?></td>

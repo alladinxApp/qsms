@@ -31,8 +31,8 @@
 		$part_onhand = mysql_real_escape_string($_POST['part_onhand']);
 		$parts_lowstock = $_POST['parts_lowstock'];
 		$partstatus = $_POST['partstatus'];
-		$item_code = $row['item_code'];
-		$parts_used = $row['parts_used'];
+		$item_code = $_POST['item_code'];
+		$parts_used = $_POST['parts_used'];
 	  
 		$parts_update = "UPDATE tbl_parts SET 
 			parts='$parts',  

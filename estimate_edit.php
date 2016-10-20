@@ -26,10 +26,6 @@
 
 	$qrypackage = "SELECT * FROM v_package_master ORDER BY package_name";
 	$respackage = $dbo->query($qrypackage);
-
-	// TEMPORARY ESTIMATE
-	// $qrytempmake = "SELECT * FROM v_service_detail_make WHERE estimate_refno = '$estimaterefno'";
-	// $restempmake = $dbo->query($qrytempmake);
 	
 	$qrytempjob = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
 	$restempjob = $dbo->query($qrytempjob);

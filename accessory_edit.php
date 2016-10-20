@@ -33,24 +33,6 @@
 		$access_status = $_POST['access_status'];
 		$item_code = $_POST['item_code'];
 		$access_used = $_POST['access_used'];
-
-		// $sql_chkaccess = "SELECT accessory_id,accessory AS description,item_code FROM v_accessory WHERE item_code = '$item_code' 
-		// 				UNION
-		// 				SELECT material_id,material AS description,item_code FROM v_material WHERE item_code = '$item_code'
-		// 				UNION
-		// 				SELECT parts_id,parts AS description,item_code FROM v_parts WHERE item_code = '$item_code'";
-		// $qry_chkaccess = mysql_query($sql_chkaccess);
-		// $num_chkaccess = mysql_num_rows($qry_chkaccess);
-
-		// while($row = mysql_fetch_array($qry_chkaccess)){
-		// 	$access_desc = $row['accessory'];
-		// }
-
-		// if($num_chkaccess > 0){
-		// 	echo '<script>alert("Item is already in used/mapped to '.$access_desc.'! please select another Item.");</script>';
-		// 	echo '<script>window.location="accessory_edit.php?accessoryid='.$accessory_id.'";</script>';
-		// 	exit();
-		// }
 	  
 		$accessory_update = "UPDATE tbl_accessory SET 
 				accessory = '$accessory',  

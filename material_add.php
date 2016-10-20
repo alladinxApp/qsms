@@ -18,24 +18,6 @@
 		$material_status = $_POST['material_status'];
 		$item_code = $_POST['item_code'];
 		$newnum = getNewNum('MATERIAL');
-
-		// $sql_chkmaterial = "SELECT accessory_id,accessory AS description,item_code FROM v_accessory WHERE item_code = '$item_code'
-		// 				UNION
-		// 				SELECT material_id,material AS description,item_code FROM v_material WHERE item_code = '$item_code'
-		// 				UNION
-		// 				SELECT parts_id,parts AS description,item_code FROM v_parts WHERE item_code = '$item_code'";
-		// $qry_chkmaterial = mysql_query($sql_chkmaterial);
-		// $num_chkmaterial = mysql_num_rows($qry_chkmaterial);
-
-		// while($row = mysql_fetch_array($qry_chkmaterial)){
-		// 	$material_desc = $row['material'];
-		// }
-
-		// if($num_chkmaterial > 0){
-		// 	echo '<script>alert("Item is already in used/mapped to '.$material_desc.'! please select another Item.");</script>';
-		// 	echo '<script>window.location="material_add.php";</script>';
-		// 	exit();
-		// }
 					   
 		$material_insert = "INSERT INTO tbl_material (material_id, material, material_disc, material_srp, material_onhand, material_lowstock, material_status, material_created,item_code) VALUES
 		('".$newnum."',

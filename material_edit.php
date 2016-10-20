@@ -31,26 +31,8 @@
 		$material_onhand = mysql_real_escape_string($_POST['material_onhand']);
 		$material_lowstock = $_POST['material_lowstock'];
 		$material_status = $_POST['material_status'];
-		$item_code = $row['item_code'];
-		$material_used = $row['material_used'];
-	  	
-	 	// $sql_chkmaterial = "SELECT accessory_id,accessory AS description,item_code FROM v_accessory WHERE item_code = '$item_code'
-		// 				UNION
-		// 				SELECT material_id,material AS description,item_code FROM v_material WHERE item_code = '$item_code'
-		// 				UNION
-		// 				SELECT parts_id,parts AS description,item_code FROM v_parts WHERE item_code = '$item_code'";
-		// $qry_chkmaterial = mysql_query($sql_chkmaterial);
-		// $num_chkmaterial = mysql_num_rows($qry_chkmaterial);
-
-		// while($row = mysql_fetch_array($qry_chkmaterial)){
-		// 	$material_desc = $row['material'];
-		// }
-
-		// if($num_chkmaterial > 0){
-		// 	echo '<script>alert("Item is already in used/mapped to '.$material_desc.'! please select another Item.");</script>';
-		// 	echo '<script>window.location="material_edit.php?materialid='.$material_id.'";</script>';
-		// 	exit();
-		// }
+		$item_code = $_POST['item_code'];
+		$material_used = $_POST['material_used'];
 
 		$material_update = "UPDATE tbl_material SET 
 						material = '$material',  

@@ -197,6 +197,20 @@
 			$sql .= "INSERT INTO tbl_service_detail
 				(estimate_refno,type,id,amount,qty)
 				VALUES('$estimate_refno','$rowtempestimate[type]','$rowtempestimate[id]','$rowtempestimate[rate]','$rowtempestimate[qty]'); ";
+
+				switch($rowtempestimate['type']){
+					case "parts":
+							$sqldeduct = "UPDATE tbl_parts SET part_onhand = (part_onhand - $rowtempestimate[qty]), parts_used = (parts_used + $rowtempestimate[qty]) where parts_id = '$rowtempestimate[id]'";
+						break;
+					case "material":
+							$sqldeduct = "UPDATE tbl_material SET material_onhand = (material_onhand - $rowtempestimate[qty]), material_used = (material_used + $rowtempestimate[qty]) where material_id = '$rowtempestimate[id]'";
+						break;
+					case "accessory":
+							$sqldeduct = "UPDATE tbl_accessory SET access_onhand = (access_onhand - $rowtempestimate[qty]), access_used = (access_used + $rowtempestimate[qty]) where accessory_id = '$rowtempestimate[id]'";
+						break;
+					default: break;
+				}
+				mysql_query($sqldeduct);
 		}
 		
 		$sql .= "UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'ESTIMATEREFNO'; ";
