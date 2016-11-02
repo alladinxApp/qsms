@@ -12,18 +12,14 @@
 		$dt = date("Ymdhis");
 
 		if(empty($dtfrom) && empty($dtto)){
-			$dtfrom = date("Y-m-d 00:00");
-			$dtto = date("Y-m-d 23:59");
+			$dtfrom = date("Y-m-d 00:00:00");
+			$dtto = date("Y-m-d 23:59:59");
 		}
 
 		$sql = "SELECT tbl_billing.* FROM tbl_billing
 					JOIN tbl_service_master ON tbl_service_master.wo_refno = tbl_billing.wo_refno
-						AND tbl_service_master.payment_id = 'PAY00000004'
-						AND (tbl_service_master.trans_status = '7' 
-							OR tbl_service_master.trans_status = '8'
-							OR tbl_service_master.trans_status = '9'
-							OR tbl_service_master.trans_status = '10')
-	 			WHERE 1 AND tbl_billing.billing_date between '$dtfrom' AND '$dtto' $where
+	 			WHERE tbl_service_master.trans_status IN('7','8','9','10')
+						AND tbl_billing.billing_date between '$dtfrom' AND '$dtto' $where
 	 			ORDER BY tbl_billing.billing_date";
 		$qry = mysql_query($sql);
 
@@ -106,7 +102,7 @@
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
-			<td align="right" style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
+			<td align="right" style="<?=$style;?>"><?=number_format($row['total_amount'],2);?></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
