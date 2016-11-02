@@ -7,50 +7,8 @@
 	$qrycust = " SELECT * FROM v_customer order by lastname";
 	$rescust = $dbo->query($qrycust);
 
-	$qryunits = "SELECT * FROM v_vehicleinfo order by vehicle_id";
-	$resunits = $dbo->query($qryunits);
-
-	if(isset($_POST['export']) && !empty($_POST['export']) && $_POST['export'] == 1){
-		$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
-		$to = dateFormat($_POST['txtdateto'],"Y-m-d");
-		$cust = $_POST['txtcust'];
-		$unit = $_POST['txtunits'];
-		$dtfrom = $from . " 00:00:000";
-		$dtto = $to . " 23:59:000";
-		$dt = date("Ymdhis");
-
-		$totalsales = 0;
-		$cnt = 0;
-		$ave_sales = 0;
-
-		if(!empty($cust)){
-			$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
-			$rescustomer = $dbo->query($qrycustomer);
-
-			foreach($rescustomer as $rowcustomer){
-				$custname = $rowcustomer['custname'];
-			}
-
-			$customers = " AND customer_id = '$cust' ";
-		}
-		
-		if(!empty($unit)){
-			$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$unit'";
-			$resvehicle = $dbo->query($qryvehicle);
-
-			foreach($resvehicle as $rowvehicle){
-				$plateno = $rowvehicle['plate_no'];
-			}
-
-			$units = " AND vehicle_id = '$unit' ";
-		}
-
-		$sql_spu_master = "SELECT * FROM v_salesperunit 
-				WHERE v_salesperunit.transaction_date between '$dtfrom' AND '$dtto'
-				$units $customers
-				ORDER BY v_salesperunit.transaction_date";
-		$qry_spu_master = mysql_query($sql_spu_master);
-	}
+	$qryunits = new v_vehicleinfo;
+	$resunits = $dbo->query($qryunits->Query("order by vehicle_id"));
 ?>
 <html>
 <head>

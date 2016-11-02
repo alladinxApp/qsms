@@ -16,6 +16,7 @@
 		$totalsales = 0;
 		$cnt = 0;
 		$ave_sales = 0;
+		$where = "WHERE 1";
 
 		if(!empty($cust)){
 			$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
@@ -25,25 +26,22 @@
 				$custname = $rowcustomer['custname'];
 			}
 
-			$customers = " AND customer_id = '$cust' ";
+			$where .= " AND customer_id = '$cust' ";
 		}
 		
 		if(!empty($unit)){
-			$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$unit'";
-			$resvehicle = $dbo->query($qryvehicle);
+			$qryvehicle = new v_vehicleinfo;
+			$resvehicle = $dbo->query($qryvehicle->Query("WHERE vehicle_id = '$unit'"));
 
 			foreach($resvehicle as $rowvehicle){
 				$plateno = $rowvehicle['plate_no'];
 			}
 
-			$units = " AND vehicle_id = '$unit' ";
+			$where .= " AND vehicle_id = '$unit' ";
 		}
 
-		$sql_spu_master = "SELECT * FROM v_salesperunit 
-				WHERE v_salesperunit.transaction_date between '$dtfrom' AND '$dtto'
-				$units $customers
-				ORDER BY v_salesperunit.transaction_date";
-		$qry_spu_master = mysql_query($sql_spu_master);
+		$sql_spu_master = new v_salesperunit;
+		$qry_spu_master = mysql_query($sql_spu_master->Query($where));
 	}
 ?>
 <html>
@@ -54,7 +52,7 @@
 <? require_once('inc/datepicker.php'); ?>
 </head>
 <style>
-	div.divEstimateList{ height: 400px; width: 800px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
+	div.divEstimateList{ overflow: scroll; height: 400px; width: 800px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
 	div.divEstimateList table{ border: 1px solid #ccc; font-size: 12px; }
 	div.divEstimateList table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
 </style>
@@ -89,11 +87,11 @@
 		</tr>
 	</table>
 	<div class="divEstimateList">
-	<table width="310">
+	<table width="410">
 		<tr>
 			<th width="10">#</th>
 			<th width="100">Plate No</th>
-			<th width="150">Work Order Ref. No</th>
+			<th width="200">Work Order Ref. No</th>
 			<th width="100">Amount</th>
 		</tr>
 		<?

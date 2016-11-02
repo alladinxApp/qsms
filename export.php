@@ -4,10 +4,10 @@
 	
 	if(isset($_POST['export']) && !empty($_POST['export']) && $_POST['export'] == 1){
 		$report = $_POST['report'];
-		$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
-		$to = dateFormat($_POST['txtdateto'],"Y-m-d");
-		$dtfrom = $from . " 00:00:000";
-		$dtto = $to . " 23:59:000";
+		$from = dateFormat($_POST['txtdatefrom'],"Y-m-d") . " 00:00:00";
+		$to = dateFormat($_POST['txtdateto'],"Y-m-d") . " 23:59:59";
+		$dtfrom = date("Y-m-d") . " 00:00:00";
+		$dtto = date("Y-m-d") . " 23:59:59";
 		$dt = date("Ymdhis");
 		$ln = null;
 		switch($report){
@@ -20,14 +20,25 @@
 					$totalparts = 0;
 					$totaldiscount = 0;
 					$ln = null;
-					$where = null;
+					$where = "WHERE 1";
 					$ptype = $_POST['txtptype'];
 					$cust = $_POST['txtcust'];
 
-					if(empty($dtfrom) && empty($dtto)){
-						$dtfrom = date("Y-m-d 00:00");
-						$dtto = date("Y-m-d 23:59");
-					}
+					if(empty($_POST['txtdatefrom']) && empty($_POST['txtdateto'])){
+						$dtfrom = date("Y-m-d 00:00:00");
+						$dtto = date("Y-m-d 23:59:59");
+					}else if(!empty($_POST['txtdatefrom']) && empty($_POST['txtdateto'])){
+						$dtfrom = $from;
+						$dtto = $from;
+					}else if(empty($_POST['txtdatefrom']) && !empty($_POST['txtdateto'])){
+						$dtfrom = $to;
+						$dtto = $to;
+					}else if(!empty($_POST['txtdatefrom']) && !empty($_POST['txtdateto'])){
+						$dtfrom = $from;
+						$dtto = $to;
+					}else{ }
+					
+					$where .= " AND billing_date BETWEEN '$dtfrom' AND '$dtto'";
 
 					if(!empty($cust)){
 						$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
@@ -37,7 +48,7 @@
 							$custname = $rowcustomer['custname'];
 						}
 
-						$where .= "AND customer_id = '$cust'";
+						$where .= " AND customer_id = '$cust'";
 					}
 
 					if(!empty($ptype)){
@@ -48,14 +59,11 @@
 							$paymentmode = $rowpayment['payment'];
 						}
 
-						$where .= "AND payment_id = '$ptype'";
+						$where .= " AND payment_id = '$ptype'";
 					}
-
-					$sql_lbs_master = "SELECT *
-						FROM v_sales
-						WHERE 1 AND v_sales.transaction_date between '$dtfrom' AND '$dtto' $where
-			 			ORDER BY v_sales.transaction_date";
-					$qry_lbs_master = mysql_query($sql_lbs_master);
+					
+					$sql_lbs_master = new v_sales;
+					$qry_lbs_master = mysql_query($sql_lbs_master->Query($where));
 					$qry_mst = mysql_query($sql_lbs_master);
 
 					$ln .= "SALES SUMMARY REPORT\r\n\r\n";
@@ -89,18 +97,21 @@
 						// $discounted = ($grandtotal - $row['discount']);
 						$totalamnt = ($discounted + $vat);
 						
-						$job = null;
-						$sql_lbs_detail = "SELECT job_name FROM v_service_detail_job WHERE estimate_refno = '$row[estimate_refno]'";
-						$qry_lbs_detail = mysql_query($sql_lbs_detail);
+						$jobs = null;
+						$sql_lbs_detail = new v_service_detail_job;
+						$qry_lbs_detail = mysql_query($sql_lbs_detail->Query("WHERE estimate_refno = '$row[estimate_refno]'"));
 						while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
 							$job[] = $row_lbs_detail['job_name'];
 						}
 
-						$ln .= $row['customername'] . "," . $job[0] . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . number_format($vat,2,".","") . "," . $row['discount'] . "," . number_format($totalamnt,2,".","") . "\r\n";
-
-						for($i=1;$i<count($job);$i++){
-							$ln .= "," . $job[$i] . "\r\n";
+						for($i=0;$i<count($job);$i++){
+							if($i > 0){
+								$jobs .= ",";
+							}
+							$jobs .= $job[$i];
 						}
+
+						$ln .= $row['customername'] . "," . $jobs . "," . $row['payment_mode'] . "," . $row['labor'] . "," . $row['lubricants'] . "," . $row['sublet'] . "," . $row['parts'] . "," . number_format($vat,2,".","") . "," . $row['discount'] . "," . number_format($totalamnt,2,".","") . "\r\n";
 
 						$totallabor += $row['labor'];
 						$totallubricants += $row['lubricants'];
@@ -130,6 +141,7 @@
 					$ave_sales = 0;
 					$unit = $_POST['txtplateno'];
 					$cust = $_POST['txtcust'];
+					$where = "WHERE 1";
 
 					if(!empty($cust)){
 						$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
@@ -139,24 +151,22 @@
 							$custname = $rowcustomer['custname'];
 						}
 
-						$customers = " AND customer_id = '$cust' ";
+						$where .= " AND customer_id = '$cust' ";
 					}
 					
 					if(!empty($unit)){
-						$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$unit'";
-						$resvehicle = $dbo->query($qryvehicle);
+						$qryvehicle = new v_vehicleinfo;
+						$resvehicle = $dbo->query($qryvehicle->Query("WHERE vehicle_id = '$unit'"));
 
 						foreach($resvehicle as $rowvehicle){
 							$plateno = $rowvehicle['plate_no'];
 						}
 
-						$units = " AND vehicle_id = '$unit' ";
+						$where .= " AND vehicle_id = '$unit' ";
 					}
 
-					$sql_spu_master = "SELECT * FROM v_salesperunit 
-			 			WHERE v_salesperunit.transaction_date between '$dtfrom' AND '$dtto'
-			 			ORDER BY v_salesperunit.transaction_date";
-					$qry_spu_master = mysql_query($sql_spu_master);
+					$sql_spu_master = new v_salesperunit;
+					$qry_spu_master = mysql_query($sql_spu_master->Query($where));
 
 					$ln .= "SALES PER UNIT\r\n\r\n";
 					$ln .= "From: ," . $dtfrom . "\r\n";
@@ -490,6 +500,7 @@
 					$totalsales = 0;
 					$cnt = 0;
 					$ave_sales = 0;
+					$where = "WHERE 1";
 
 					if(!empty($cust)){
 						$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
@@ -499,7 +510,7 @@
 							$custname = $rowcustomer['custname'];
 						}
 
-						$customers = " AND customer_id = '$cust' ";
+						$where .= " AND customer_id = '$cust' ";
 					}
 					
 					if(!empty($unit)){
@@ -510,7 +521,7 @@
 							$plateno = $rowvehicle['plate_no'];
 						}
 
-						$units = " AND vehicle_id = '$unit' ";
+						$where .= " AND vehicle_id = '$unit' ";
 					}
 
 					if(!empty($job)){
@@ -521,13 +532,37 @@
 							$jobname = $rowvehicle['job'];
 						}
 
-						$jobs = " AND id = '$job' ";
+						$where .= " AND id = '$job' ";
 					}
 
-					$sql_sh_master = "SELECT * FROM v_sales
-							WHERE v_sales.transaction_date between '$dtfrom' AND '$dtto'
-							$units $customers $jobs
-							ORDER BY v_sales.transaction_date";
+					$sql_sh_master = "SELECT
+									tbl_service_master.estimate_refno   AS estimate_refno,
+									tbl_service_master.wo_refno         AS wo_refno,
+									tbl_service_master.transaction_date AS transaction_date,
+									tbl_service_master.customer_id      AS customer_id,
+									CONCAT(tbl_customer.firstname,' ',tbl_customer.middlename,' ',tbl_customer.lastname) AS customername,
+									tbl_vehicleinfo.plate_no            AS plate_no,
+									tbl_year.year                       AS year,
+									tbl_make.make                       AS make,
+									tbl_model.model                     AS model,
+									tbl_service_master.odometer         AS odometer,
+									tbl_service_master.total_amount     AS total_amount
+								FROM tbl_service_master
+									JOIN tbl_vehicleinfo
+										ON tbl_vehicleinfo.vehicle_id = tbl_service_master.vehicle_id
+									JOIN tbl_year
+										ON tbl_year.year_id = tbl_vehicleinfo.year
+									JOIN tbl_make
+										ON tbl_make.make_id = tbl_vehicleinfo.make
+									JOIN tbl_model
+										ON tbl_model.model_id = tbl_vehicleinfo.model
+									JOIN tbl_customer
+										ON tbl_customer.cust_id = tbl_service_master.customer_id
+									JOIN tbl_billing
+										ON tbl_billing.wo_refno = tbl_service_master.wo_refno
+								WHERE tbl_service_master.transaction_date between '$dtfrom' AND '$dtto'
+								$where
+								ORDER BY tbl_service_master.transaction_date DESC";
 					$qry_sh_master = mysql_query($sql_sh_master);
 
 					$ln .= "REPAIR HISTORY REPORT\r\n\r\n";

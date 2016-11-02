@@ -12,19 +12,30 @@
 		$totalparts = 0;
 		$totaldiscount = 0;
 		$ln = null;
-		$where = null;
+		$where = "WHERE 1";
 		$ptype = $_POST['txtptype'];
 		$cust = $_POST['txtcust'];
-		$from = dateFormat($_POST['txtdatefrom'],"Y-m-d");
-		$to = dateFormat($_POST['txtdateto'],"Y-m-d");
-		$dtfrom = $from . " 00:00:00";
-		$dtto = $to . " 23:59:59";
+		$from = dateFormat($_POST['txtdatefrom'],"Y-m-d") . " 00:00:00";
+		$to = dateFormat($_POST['txtdateto'],"Y-m-d") . " 23:59:59";
+		$dtfrom = date("Y-m-d") . " 00:00:00";
+		$dtto = date("Y-m-d") . " 23:59:59";
 		$dt = date("Ymdhis");
 
-		if(empty($dtfrom) && empty($dtto)){
+		if(empty($_POST['txtdatefrom']) && empty($_POST['txtdateto'])){
 			$dtfrom = date("Y-m-d 00:00:00");
 			$dtto = date("Y-m-d 23:59:59");
-		}
+		}else if(!empty($_POST['txtdatefrom']) && empty($_POST['txtdateto'])){
+			$dtfrom = $from;
+			$dtto = $from;
+		}else if(empty($_POST['txtdatefrom']) && !empty($_POST['txtdateto'])){
+			$dtfrom = $to;
+			$dtto = $to;
+		}else if(!empty($_POST['txtdatefrom']) && !empty($_POST['txtdateto'])){
+			$dtfrom = $from;
+			$dtto = $to;
+		}else{ }
+		
+		$where .= " AND billing_date BETWEEN '$dtfrom' AND '$dtto'";
 
 		if(!empty($cust)){
 			$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$cust'";
@@ -34,7 +45,7 @@
 				$custname = $rowcustomer['custname'];
 			}
 
-			$where .= "AND v_sales1.customer_id = '$cust'";
+			$where .= " AND customer_id = '$cust'";
 		}
 
 		if(!empty($ptype)){
@@ -45,50 +56,12 @@
 				$paymentmode = $rowpayment['payment'];
 			}
 
-			$where .= "AND v_sales1.payment_id = '$ptype'";
+			$where .= " AND payment_id = '$ptype'";
 		}
 
-		//$sql_lbs_master = "SELECT * FROM v_sales1
- 		//	WHERE 1 AND (v_sales1.transaction_date between '$dtfrom' AND '$dtto') $where
- 		//	ORDER BY v_sales1.transaction_date";
-		$sql_lbs_master = "SELECT
-					`tbl_service_master`.`estimate_refno`   AS `estimate_refno`,
-					`tbl_service_master`.transaction_date AS `transaction_date`,
-					`tbl_service_master`.`customer_id`      AS `customer_id`,
-					CONCAT(`tbl_customer`.`firstname`,' ',`tbl_customer`.`middlename`,' ',`tbl_customer`.`lastname`) AS `customername`,
-					`tbl_service_master`.`payment_id`       AS `payment_id`,
-					`tbl_payment`.`payment`                 AS `payment_mode`,
-					tbl_service_master.total_amount AS total_amount,
-					tbl_service_master.discount AS discount,
-					(SELECT
-					SUM(`tbl_service_detail`.`amount`)      AS `sum(tbl_service_detail.amount)`
-					FROM `tbl_service_detail`
-					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
-					  AND (`tbl_service_detail`.`type` = 'job'))) AS `labor`,
-					(SELECT
-					SUM(`tbl_service_detail`.`amount`)      AS `SUM(tbl_service_detail.amount)`
-					FROM `tbl_service_detail`
-					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
-					  AND (`tbl_service_detail`.`type` = 'accessory'))) AS `lubricants`,
-					(SELECT
-					SUM(`tbl_service_detail`.`amount`)      AS `SUM(tbl_service_detail.amount)`
-					FROM `tbl_service_detail`
-					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
-					  AND (`tbl_service_detail`.`type` = 'material'))) AS `sublet`,
-					(SELECT
-					SUM(`tbl_service_detail`.`amount`)      AS `SUM(tbl_service_detail.amount)`
-					FROM `tbl_service_detail`
-					WHERE ((`tbl_service_detail`.`estimate_refno` = `tbl_service_master`.`estimate_refno`)
-					  AND (`tbl_service_detail`.`type` = 'parts'))) AS `parts`
-				FROM ((`tbl_service_master`
-					JOIN `tbl_customer`
-						ON ((CONVERT(`tbl_customer`.`cust_id` USING latin1) = `tbl_service_master`.`customer_id`)))
-					JOIN `tbl_payment`
-						ON ((CONVERT(`tbl_payment`.`payment_id` USING latin1) = `tbl_service_master`.`payment_id`)))
-				WHERE `tbl_service_master`.`trans_status` = '7' AND (tbl_service_master.transaction_date BETWEEN '$dtfrom' AND '$dtto')
-				ORDER BY tbl_service_master.transaction_date";
+		$sql_lbs_master = new v_sales;
 		
-		$qry_lbs_master = mysql_query($sql_lbs_master);
+		$qry_lbs_master = mysql_query($sql_lbs_master->Query($where));
 		$qry_mst = mysql_query($sql_lbs_master);
 		
 		$ln .= "SALES SUMMARY REPORT\r\n\r\n";
@@ -117,7 +90,7 @@
 <? require_once('inc/datepicker.php'); ?>
 </head>
 <style>
-	div.divEstimateList{ height: 400px; width: 800px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
+	div.divEstimateList{ overflow: scroll; height: 400px; width: 800px; border-left: 1px solid #ddd; border-top: 1px solid #ddd; }
 	div.divEstimateList table{ border: 1px solid #ccc; font-size: 12px; }
 	div.divEstimateList table th{ border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; color: #fff; background: #0000ff; }
 </style>
@@ -196,18 +169,24 @@
 
 				$style = $bg;
 
-				$job = null;
-				$sql_lbs_detail = "SELECT job_name FROM v_service_detail_job WHERE estimate_refno = '$row[estimate_refno]'";
-				$qry_lbs_detail = mysql_query($sql_lbs_detail);
+				$jobs = null;
+				$sql_lbs_detail = new v_service_detail_job;
+				$qry_lbs_detail = mysql_query($sql_lbs_detail->Query("WHERE estimate_refno = '$row[estimate_refno]'"));
 				while($row_lbs_detail = mysql_fetch_array($qry_lbs_detail)){
-					$job .= $row_lbs_detail['job_name'] . "<br />,";
+					$job[] = $row_lbs_detail['job_name'];
 				}
-				$job = rtrim($job, "<br />,");
+
+				for($i=0;$i<count($job);$i++){
+					if($i > 0){
+						$jobs .= ",<br />";
+					}
+					$jobs .= $job[$i];
+				}
 		?>
 		<tr>
 			<td><?=$cnt;?></td>
 			<td style="<?=$style;?>"><?=$row['customername'];?></td>
-			<td style="<?=$style;?>"><?=$job;?></td>
+			<td style="<?=$style;?>"><?=$jobs;?></td>
 			<td style="<?=$style;?>"><?=$row['payment_mode'];?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['labor'],2);?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['lubricants'],2);?></td>
