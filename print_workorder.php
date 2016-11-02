@@ -7,23 +7,22 @@
 	$image = 'images/logo.png';
 	$estimaterefno = $_SESSION['estimaterefno'];
 	
-	$sqlwo_mst = "SELECT * FROM v_service_master WHERE estimate_refno = '$estimaterefno'";
-	$qrywo_mst = mysql_query($sqlwo_mst);
-	$numwo_mst = mysql_num_rows($qrywo_mst);
+	$sqlwo_mst = new v_service_master;
+	$qrywo_mst1 = $dbo->query($sqlwo_mst->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$qrywo_mst = mysql_query($sqlwo_mst->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$numwo_mst = count($qrywo_mst);
 	$rowwo_mst = mysql_fetch_array($qrywo_mst);
+
 	$servicemst = $rowwo_mst;
-	$customerid = $rowwo_mst['customer_id'];
-	$worefno = $rowwo_mst['wo_refno'];
-	$vehicle_id = $rowwo_mst['vehicle_id'];
-	$creaby = $rowwo_mst['created_by'];
+	foreach($qrywo_mst1 as $rowwo_mst){
+		$customerid = $rowwo_mst['customer_id'];
+		$worefno = $rowwo_mst['wo_refno'];
+		$creaby = $rowwo_mst['created_by'];
+	}
 	
 	$sql_cust = "SELECT * FROM tbl_customer WHERE cust_id = '$customerid'";
 	$qry_cust = mysql_query($sql_cust);
-	
-	$sql_vehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$vehicle_id'";
-	$qry_vehicle = mysql_query($sql_vehicle);
-	$vehicle = mysql_fetch_array($qry_vehicle);
-	
+		
 	$sql_jc = "SELECT * FROM v_jobclock_master WHERE wo_refno = '$worefno'";
 	$qry_jc = mysql_query($sql_jc);
 	$row_jc = mysql_fetch_array($qry_jc);
@@ -34,9 +33,9 @@
 		$user_fullname = $row_user['name'];
 	}
 	
-	$sql_histmst = "SELECT * FROM v_service_master WHERE customer_id = '$customerid' AND trans_status = '6' ORDER BY transaction_date DESC LIMIT 0,3";
-	$qry_histmst = mysql_query($sql_histmst);
-	while($row_histmst = mysql_fetch_array($qry_histmst)){
+	$sql_histmst = new v_service_master;
+	$qry_histmst = mysql_query($sql_histmst->Query("WHERE customer_id = '$customerid' AND trans_status = '6' ORDER BY transaction_date DESC LIMIT 0,3"));
+	foreach($qry_histmst as $row_histmst){
 		if(!empty($row_histmst)){
 			$historymst[] = array("rono" => $row_histmst['wo_refno'],
 								"rodate" => dateFormat($row_histmst['transaction_date'],"Y-m-d h:i:s"),
@@ -44,16 +43,11 @@
 		}
 	}
 	
-	$sql_histdtl = "SELECT *,v_job.job FROM v_service_master,v_service_detail,v_job
-				WHERE v_service_master.customer_id = '$customerid' AND 
-					v_service_master.estimate_refno = v_service_detail.estimate_refno AND
-					v_service_master.trans_status = '6' /*AND v_service_detail.type = 'job'*/ AND
-					v_service_detail.id = v_job.job_id";
-	$qry_histdtl = mysql_query($sql_histdtl);
+	$sql_histdtl = new v_job_history;
+	$qry_histdtl = $dbo->query($sql_histdtl->Query("WHERE customer_id = '$customerid'"));
 	
 	for($i=0;$i<count($historymst);$i++){
-		$cnt = 1;
-		while($row_histdtl = mysql_fetch_array($qry_histdtl)){
+		foreach($qry_histdtl as $row_histdtl){
 			if($row_histdtl['wo_refno'] == $historymst[$i]['rono']){
 				$job[] = $row_histdtl['job'];
 			}
@@ -123,7 +117,6 @@
 	$pdf->setJCMST($row_jc);
 	$pdf->setServiceAdvisor($user_fullname);
 	$pdf->setServiceDetail($servicedtl);
-	$pdf->setVehicleInfo($vehicle);
 	$pdf->setCustomerInfo($customer);
 	$pdf->setHistoryMST($historymst);
 	$pdf->setJobHistory($jobhistory);

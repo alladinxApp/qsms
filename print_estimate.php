@@ -7,8 +7,8 @@
 	$image = 'images/logo.png';
 	$estimaterefno = $_SESSION['estimaterefno'];
 	
-	$sqlwo_mst = "SELECT * FROM v_service_master WHERE estimate_refno = '$estimaterefno'";
-	$qrywo_mst = mysql_query($sqlwo_mst);
+	$sqlwo_mst = new v_service_master;
+	$qrywo_mst = mysql_query($sqlwo_mst->Query("WHERE estimate_refno = '$estimaterefno'"));
 	$numwo_mst = mysql_num_rows($qrywo_mst);
 	
 	while($rowwo_mst = mysql_fetch_array($qrywo_mst)){
@@ -97,15 +97,8 @@
 	$pdf = new PrintEstimate;
 	
 	// Data loading
-	//$pdf->setImageLogo($image);
 	$pdf->setCompanyInfo('FAST QUICK SERVICE','#100 President Ave. BF Home Paranaque, City','801-6291');
 	$pdf->setEstimateRefNo($estimaterefno,$transdate);
-	//$pdf->setAccessoryData($qrywo_dtl_accessory);
-	//$pdf->setJobData($qrywo_dtl_job);
-	//$pdf->setMakeData($qrywo_dtl_make);
-	//$pdf->setMaterialData($qrywo_dtl_material);
-	//$pdf->setPartsData($qrywo_dtl_parts);
-	//$pdf->setEstimateData($remarks,$discount);
 	$pdf->setMaster($servicemst);
 	$pdf->setDetails($servicedtl);
 	$pdf->setVehicleInfo($plateno,$model,$variant,$make,$color,$year);

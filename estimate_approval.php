@@ -6,12 +6,13 @@
 	$today = date("Y-m-d h:i:s");
 	$estimaterefno = $_GET['estimaterefno'];
 	
-	$qryestimate = "SELECT * FROM v_service_master WHERE estimate_refno = '$estimaterefno'";
-	$resestimate = $dbo->query($qryestimate);
+	$qryestimate = new v_service_master;
+	$resestimate = $dbo->query($qryestimate->Query("WHERE estimate_refno = '$estimaterefno'"));
 	
 	foreach($resestimate as $rowestimate){
 		$custid = $rowestimate['customer_id'];
 		$custname = $rowestimate['customername'];
+		$address = $rowestimate['cust_address'];
 		$vehicleid = $rowestimate['vehicle_id'];
 		$odometer = $rowestimate['odometer'];
 		$remarks = $rowestimate['remarks'];
@@ -31,47 +32,32 @@
 		$seniorcitizendesc = $rowestimate['senior_citizen_desc'];
 		$discount = $rowestimate['discount'];
 		$discprice = $rowestimate['discounted_price'];
+
+		$plateno = $rowestimate['plate_no'];
+		$makedesc = $rowestimate['make_desc'];
+		$yeardesc = $rowestimate['year_desc'];
+		$modeldesc = $rowestimate['model_desc'];
+		$colordesc = $rowestimate['color_desc'];
+		$variant = $rowestimate['variant'];
+		$engineno = $rowestimate['engine_no'];
+		$chassisno = $rowestimate['chassis_no'];
+		$serialno = $rowestimate['serial_no'];
 	}
 	
-	$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$custid'";
-	$rescustomer = $dbo->query($qrycustomer);
+	$qrycost_accessory = new v_service_detail_accessory;
+	$rescost_accessory = $dbo->query($qrycost_accessory->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$numrow1 = count($rescost_accessory);
 	
-	foreach($rescustomer as $rowcustomer){
-		$address = $rowcustomer['address'] . ', ' . $rowcustomer['city'] . ', ' . $rowcustomer['province'];
-	}
+	$qrycost_job = new v_service_detail_job;
+	$rescost_job = $dbo->query($qrycost_job->Query("WHERE estimate_refno = '$estimaterefno'"));
 	
-	$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$vehicleid'";
-	$resvehicle = $dbo->query($qryvehicle);
+	$qrycost_material = new v_service_detail_material;
+	$rescost_material = $dbo->query($qrycost_material->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$numrow2 = count($rescost_material);
 	
-	foreach($resvehicle as $rowvehicle){
-		$plateno = $rowvehicle['plate_no'];
-		$makedesc = $rowvehicle['make_desc'];
-		$yeardesc = $rowvehicle['year_desc'];
-		$modeldesc = $rowvehicle['model_desc'];
-		$colordesc = $rowvehicle['color_desc'];
-		$variant = $rowvehicle['variant'];
-		$engineno = $rowvehicle['engine_no'];
-		$chassisno = $rowvehicle['chassis_no'];
-		$serialno = $rowvehicle['serial_no'];
-	}
-	
-	$qrycost_accessory = "SELECT * FROM v_service_detail_accessory WHERE estimate_refno = '$estimaterefno'";
-	$rescost_accessory = $dbo->query($qrycost_accessory);
-	$result1 = mysql_query($qrycost_accessory);
-	$numrow1 = mysql_num_rows($result1);
-	
-	$qrycost_job = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
-	$rescost_job = $dbo->query($qrycost_job);
-	
-	$qrycost_material = "SELECT * FROM v_service_detail_material WHERE estimate_refno = '$estimaterefno'";
-	$rescost_material = $dbo->query($qrycost_material);
-	$result2 = mysql_query($qrycost_material);
-	$numrow2 = mysql_num_rows($result2);
-	
-	$qrycost_parts = "SELECT * FROM v_service_detail_parts WHERE estimate_refno = '$estimaterefno'";
-	$rescost_parts = $dbo->query($qrycost_parts);
-	$result = mysql_query($qrycost_parts);
-	$numrow = mysql_num_rows($result);
+	$qrycost_parts = new v_service_detail_parts;
+	$rescost_parts = $dbo->query($qrycost_parts->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$numrow = count($rescost_parts);
 	
 	$subtotal = 0;
 	
@@ -85,7 +71,8 @@
 					
 					// PARTS
 					if($numrow > 0){
-						while($row = mysql_fetch_array($result)){
+						// while($row = mysql_fetch_array($result)){
+						foreach($rescost_parts as $row){
 							$qty = $row['qty'];
 							$starting = $row['part_onhand'];
 							$ending = ($row['part_onhand'] - $qty);
@@ -97,7 +84,8 @@
 
 					// ACCESSORY or LUBRICANTS
 					if($numrow1 > 0){
-						while($row = mysql_fetch_array($result1)){
+						// while($row = mysql_fetch_array($result1)){
+						foreach($rescost_accessory as $row){
 							$qty = $row['qty'];
 							$starting = $row['accessory_onhand'];
 							$ending = ($row['accessory_onhand'] - $qty);
@@ -109,7 +97,8 @@
 
 					// MATERIAL
 					if($numrow2 > 0){
-						while($row = mysql_fetch_array($result2)){
+						// while($row = mysql_fetch_array($result2)){
+						foreach($rescost_material as $row){
 							$qty = $row['qty'];
 							$starting = $row['material_onhand'];
 							$ending = ($row['material_onhand'] - $qty);

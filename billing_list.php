@@ -2,8 +2,8 @@
 	require_once("conf/db_connection.php");
 	require_once("functions.php");
 	
-	$qrybillingmst = "SELECT * FROM v_for_billing_master WHERE transaction_counts > 0";
-	$resbillingmst = $dbo->query($qrybillingmst);
+	$qrybillingmst = new v_for_billing_master;
+	$resbillingmst = $dbo->query($qrybillingmst->Query());
 ?>
 <html>
 <head>

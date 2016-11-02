@@ -1,0 +1,13 @@
+<?
+	include_once("models/v_service_master.php");
+	include_once("models/v_service_detail_job.php");
+	include_once("models/v_service_detail_parts.php");
+	include_once("models/v_service_detail_accessory.php");
+	include_once("models/v_service_detail_material.php");
+	include_once("models/v_vehicleinfo.php");
+	include_once("models/v_job_history.php");
+	include_once("models/v_accessory.php");
+	include_once("models/v_material.php");
+	include_once("models/v_parts.php");
+	include_once("models/v_for_billing_master.php");
+?>

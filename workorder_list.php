@@ -14,13 +14,13 @@
 		if(!empty($datefrom) && !empty($dateto)){
 			$datefrom = dateFormat($datefrom,"Y-m-d");
 			$dateto = dateFormat($dateto,"Y-m-d");
-			$where .= " AND (transaction_date between '$datefrom 00:00' AND '$dateto 23:59')";
+			$where .= " AND (wo_trans_date between '$datefrom 00:00' AND '$dateto 23:59')";
 		}else if(empty($datefrom) && !empty($dateto)){
 			$dateto = dateFormat($dateto,"Y-m-d");
-			$where .= " AND transaction_date = '$dateto'";
+			$where .= " AND wo_trans_date = '$dateto'";
 		}else if(empty($dateto) && !empty($datefrom)){
 			$datefrom = dateFormat($datefrom,"Y-m-d");
-			$where .= " AND transaction_date = '$datefrom'";
+			$where .= " AND wo_trans_date = '$datefrom'";
 		}
 		if(!empty($plateno)){
 			$where .= " AND plate_no LIKE '$plateno%'";
@@ -35,8 +35,8 @@
 			$where .= " AND estimate_refno = '$estimateno'";
 		}
 		
-		$qryservices = "SELECT * FROM v_service_master " . $where;
-		$resservices = $dbo->query($qryservices);
+		$qryservices = new v_service_master;
+		$resservices = $dbo->query($qryservices->Query($where));
 	}
 ?>
 <html>

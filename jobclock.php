@@ -8,8 +8,8 @@
 	
 	$worefno = $_GET['worefno'];
 	
-	$qryservices = "SELECT * FROM v_service_master WHERE wo_refno = '$worefno'";
-	$resservices = $dbo->query($qryservices);
+	$qryservices = new v_service_master;
+	$resservices = $dbo->query($qryservices->Query("WHERE wo_refno = '$worefno'"));
 	
 	foreach($resservices as $rowSERVICES){
 		$estimaterefno = $rowSERVICES['estimate_refno'];

@@ -1,5 +1,6 @@
 <?
 	require_once("conf/db_connection.php");
+	require_once("conf/views.php");
 	
 	function formatNum($pano,$noOfDigit){
 		$length = strlen($pano);

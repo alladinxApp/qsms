@@ -6,8 +6,8 @@
 	$worefno = $_GET['worefno'];
 	
 	// QUERY GET ESTIMATE REF NO
-	$qrygetestimaterefno = "SELECT * FROM v_service_master WHERE wo_refno = '$worefno'";
-	$resgetestimaterefno = $dbo->query($qrygetestimaterefno);
+	$qrygetestimaterefno = new v_service_master;
+	$resgetestimaterefno = $dbo->query($qrygetestimaterefno->Query("WHERE wo_refno = '$worefno'"));
 	foreach($resgetestimaterefno as $rowgetestimaterefno){
 		$est_refno = $rowgetestimaterefno['estimate_refno'];
 	}

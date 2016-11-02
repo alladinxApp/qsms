@@ -8,12 +8,13 @@
 	
 	$estimaterefno = $_GET['estimaterefno'];
 	
-	$qryestimate = "SELECT * FROM v_service_master WHERE estimate_refno = '$estimaterefno'";
-	$resestimate = $dbo->query($qryestimate);
+	$qryestimate = new v_service_master;
+	$resestimate = $dbo->query($qryestimate->Query("WHERE estimate_refno = '$estimaterefno'"));
 	
 	foreach($resestimate as $rowestimate){
 		$custid = $rowestimate['customer_id'];
 		$custname = $rowestimate['customername'];
+		$address = $rowestimate['cust_address'];
 		$vehicleid = $rowestimate['vehicle_id'];
 		$remarks = $rowestimate['remarks'];
 		$paymentmode = $rowestimate['payment_mode'];
@@ -26,44 +27,29 @@
 		$empname = $rowestimate['tech_name'];
 		$promisetime = $rowestimate['promise_time'];
 		$promisedate = $rowestimate['promise_date'];
-	}
 
-	$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$custid'";
-	$rescustomer = $dbo->query($qrycustomer);
-	
-	foreach($rescustomer as $rowcustomer){
-		$address = $rowcustomer['address'] . ', ' . $rowcustomer['city'] . ', ' . $rowcustomer['province'];
+		$plateno = $rowestimate['plate_no'];
+		$makedesc = $rowestimate['make_desc'];
+		$yeardesc = $rowestimate['year_desc'];
+		$modeldesc = $rowestimate['model_desc'];
+		$colordesc = $rowestimate['color_desc'];
+		$variant = $rowestimate['variant'];
+		$engineno = $rowestimate['engine_no'];
+		$chassisno = $rowestimate['chassis_no'];
+		$serialno = $rowestimate['serial_no'];
 	}
 	
-	$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$vehicleid'";
-	$resvehicle = $dbo->query($qryvehicle);
+	$qrycost_accessory = new v_service_detail_accessory;
+	$rescost_accessory = $dbo->query($qrycost_accessory->Query("WHERE estimate_refno = '$estimaterefno'"));
 	
-	foreach($resvehicle as $rowvehicle){
-		$plateno = $rowvehicle['plate_no'];
-		$makedesc = $rowvehicle['make_desc'];
-		$yeardesc = $rowvehicle['year_desc'];
-		$modeldesc = $rowvehicle['model_desc'];
-		$colordesc = $rowvehicle['color_desc'];
-		$variant = $rowvehicle['variant'];
-		$engineno = $rowvehicle['engine_no'];
-		$chassisno = $rowvehicle['chassis_no'];
-		$serialno = $rowvehicle['serial_no'];
-	}
+	$qrycost_job = new v_service_detail_job;
+	$rescost_job = $dbo->query($qrycost_job->Query("WHERE estimate_refno = '$estimaterefno'"));
 	
-	$qrycost_accessory = "SELECT * FROM v_service_detail_accessory WHERE estimate_refno = '$estimaterefno'";
-	$rescost_accessory = $dbo->query($qrycost_accessory);
+	$qrycost_material = new v_service_detail_material;
+	$rescost_material = $dbo->query($qrycost_material->Query("WHERE estimate_refno = '$estimaterefno'"));
 	
-	$qrycost_job = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
-	$rescost_job = $dbo->query($qrycost_job);
-	
-	$qrycost_make = "SELECT * FROM v_service_detail_make WHERE estimate_refno = '$estimaterefno'";
-	$rescost_make = $dbo->query($qrycost_make);
-	
-	$qrycost_material = "SELECT * FROM v_service_detail_material WHERE estimate_refno = '$estimaterefno'";
-	$rescost_material = $dbo->query($qrycost_material);
-	
-	$qrycost_parts = "SELECT * FROM v_service_detail_parts WHERE estimate_refno = '$estimaterefno'";
-	$rescost_parts = $dbo->query($qrycost_parts);
+	$qrycost_parts = new v_service_detail_parts;
+	$rescost_parts = $dbo->query($qrycost_parts->Query("WHERE estimate_refno = '$estimaterefno'"));
 	
 	$subtotal = 0;
 	

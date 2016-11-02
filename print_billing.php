@@ -31,8 +31,8 @@
 		echo '<script>window.location="billing_main.php"</script>';
 	}
 	
-	$sql_wo = "SELECT * FROM v_service_master WHERE wo_refno IN('$wo_refno')";
-	$qry_wo = mysql_query($sql_wo);
+	$sql_wo = new v_service_master;
+	$qry_wo = mysql_query($sql_wo->Query("WHERE wo_refno IN('$wo_refno')"));
 	while($row_wo = mysql_fetch_array($qry_wo)){
 		$custid = $row_wo['customer_id'];
 		$vehicleid = $row_wo['vehicle_id'];

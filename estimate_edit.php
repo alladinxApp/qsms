@@ -6,46 +6,28 @@
 	
 	$estimaterefno = $_GET['estimaterefno'];
 	
-	$qryestimate = "SELECT * FROM v_service_master WHERE estimate_refno = '$estimaterefno'";
-	$resestimate = $dbo->query($qryestimate);
+	$qryestimate = new v_service_master;
+	$resestimate = $dbo->query($qryestimate->Query("WHERE tbl_service_master.estimate_refno = '$estimaterefno'"));
+	
+	$qrytempjob = new v_service_detail_job;
+	$restempjob = $dbo->query($qrytempjob->Query("WHERE estimate_refno = '$estimaterefno'"));
+	
+	$qrytempparts = new v_service_detail_parts;
+	$restempparts = $dbo->query($qrytempparts->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$numparts = count($restempparts);
+	
+	$qrytempaccessory = new v_service_detail_accessory;
+	$restempaccessory = $dbo->query($qrytempaccessory->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$numlubricant = count($restempaccessory);
 
-	$qryjob = "SELECT * FROM v_job";
-	$resjob = $dbo->query($qryjob);
-	
-	$qryparts = "SELECT * FROM v_parts";
-	$resparts = $dbo->query($qryparts);
-	
-	$qrymaterial = "SELECT * FROM v_material";
-	$resmaterial = $dbo->query($qrymaterial);
-	
-	$qryaccessory = "SELECT * FROM v_accessory";
-	$resaccessory = $dbo->query($qryaccessory);
-	
-	$qrypayment = "SELECT * FROM v_payment";
-	$respayment = $dbo->query($qrypayment);
-
-	$qrypackage = "SELECT * FROM v_package_master ORDER BY package_name";
-	$respackage = $dbo->query($qrypackage);
-	
-	$qrytempjob = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
-	$restempjob = $dbo->query($qrytempjob);
-	$numparts = mysql_num_rows(mysql_query($qrytempjob));
-	
-	$qrytempparts = "SELECT * FROM v_service_detail_parts WHERE estimate_refno = '$estimaterefno'";
-	$restempparts = $dbo->query($qrytempparts);
-	$numparts = mysql_num_rows(mysql_query($qrytempparts));
-	
-	$qrytempaccessory = "SELECT * FROM v_service_detail_accessory WHERE estimate_refno = '$estimaterefno'";
-	$restempaccessory = $dbo->query($qrytempaccessory);
-	$numlubricant = mysql_num_rows(mysql_query($qrytempaccessory));
-	
-	$qrytempmaterial = "SELECT * FROM v_service_detail_material WHERE estimate_refno = '$estimaterefno'";
-	$restempmaterial = $dbo->query($qrytempmaterial);
-	$nummaterial = mysql_num_rows(mysql_query($qrytempmaterial));
+	$qrytempmaterial = new v_service_detail_material;
+	$restempmaterial = $dbo->query($qrytempmaterial->Query("WHERE estimate_refno = '$estimaterefno'"));
+	$nummaterial = count($restempmaterial);
 	
 	foreach($resestimate as $rowestimate){
 		$custid = $rowestimate['customer_id'];
 		$custname = $rowestimate['customername'];
+		$address = $rowestimate['cust_address'];
 		$vehicleid = $rowestimate['vehicle_id'];
 		$odometer = $rowestimate['odometer'];
 		$remarks = $rowestimate['remarks'];
@@ -68,51 +50,19 @@
 		$odometer = $rowestimate['odometer'];
 		$recommendation = $rowestimate['recommendation'];
 		$remarks = $rowestimate['remarks'];
-	}
-	
-	$isSenior = null;
 
-	$qrycustomer = "SELECT * FROM v_customer WHERE cust_id = '$custid'";
-	$rescustomer = $dbo->query($qrycustomer);
-	
-	foreach($rescustomer as $rowcustomer){
-		$address = $rowcustomer['address'] . ', ' . $rowcustomer['city'] . ', ' . $rowcustomer['province'];
+		$plateno = $rowestimate['plate_no'];
+		$makedesc = $rowestimate['make_desc'];
+		$yeardesc = $rowestimate['year_desc'];
+		$modeldesc = $rowestimate['model_desc'];
+		$colordesc = $rowestimate['color_desc'];
+		$variant = $rowestimate['variant'];
+		$engineno = $rowestimate['engine_no'];
+		$chassisno = $rowestimate['chassis_no'];
+		$serialno = $rowestimate['serial_no'];
 	}
 	
-	$qryvehicle = "SELECT * FROM v_vehicleinfo WHERE vehicle_id = '$vehicleid'";
-	$resvehicle = $dbo->query($qryvehicle);
-	
-	foreach($resvehicle as $rowvehicle){
-		$plateno = $rowvehicle['plate_no'];
-		$makedesc = $rowvehicle['make_desc'];
-		$yeardesc = $rowvehicle['year_desc'];
-		$modeldesc = $rowvehicle['model_desc'];
-		$colordesc = $rowvehicle['color_desc'];
-		$variant = $rowvehicle['variant'];
-		$engineno = $rowvehicle['engine_no'];
-		$chassisno = $rowvehicle['chassis_no'];
-		$serialno = $rowvehicle['serial_no'];
-	}
-	
-	$qrycost_make = "SELECT * FROM v_service_detail_make WHERE estimate_refno = '$estimaterefno'";
-	$rescost_make = $dbo->query($qrycost_make);
-
-	$qrycost_accessory = "SELECT * FROM v_service_detail_accessory WHERE estimate_refno = '$estimaterefno'";
-	$rescost_accessory = $dbo->query($qrycost_accessory);
-	$numlubricants = mysql_num_rows(mysql_query($qrycost_accessory));
-	
-	$qrycost_job = "SELECT * FROM v_service_detail_job WHERE estimate_refno = '$estimaterefno'";
-	$rescost_job = $dbo->query($qrycost_job);
-	$numlabor = mysql_num_rows(mysql_query($qrycost_job));
-	
-	$qrycost_material = "SELECT * FROM v_service_detail_material WHERE estimate_refno = '$estimaterefno'";
-	$rescost_material = $dbo->query($qrycost_material);
-	$numtempmaterial = mysql_num_rows(mysql_query($qrycost_material));
-	
-	$qrycost_parts = "SELECT * FROM v_service_detail_parts WHERE estimate_refno = '$estimaterefno'";
-	$rescost_parts = $dbo->query($qrycost_parts);
-	$numparts = mysql_num_rows(mysql_query($qrycost_parts));
-	
+	$isSenior = null;	
 	$subtotal = 0;
 	
 	if(isset($_POST['option']) && !empty($_POST['option']) && $_POST['option'] == 1){
@@ -590,32 +540,6 @@
 				?>
 			</div></td>
 		</tr>
-		<!-- <tr>
-			<td><div align="center"><select name="job" id="job" style="width: 120px;" onChange="return AddCost('job',this.value,'<?=$estimaterefno;?>');">
-				<option value=""></option>
-				<? foreach($resjob as $rowjob){ ?>
-				<option value="<?=$rowjob['job_id'];?>"><?=$rowjob['job'];?></option>
-				<? } ?>
-			</select></div></td>
-			<td><div align="center"><select name="parts" id="parts" style="width: 120px;" onChange="return AddCost('parts',this.value,'<?=$estimaterefno;?>');">
-				<option value=""></option>
-				<? foreach($resparts as $rowparts){ ?>
-				<option value="<?=$rowparts['parts_id'];?>"><?=$rowparts['parts'];?></option>
-				<? } ?>
-			</select></div></td>
-			<td><div align="center"><select name="material" id="material" style="width: 120px;" onChange="return AddCost('material',this.value,'<?=$estimaterefno;?>');">
-				<option value=""></option>
-				<? foreach($resmaterial as $rowmaterial){ ?>
-				<option value="<?=$rowmaterial['material_id'];?>"><?=$rowmaterial['material'];?></option>
-				<? } ?>
-			</select></div></td>
-			<td><div align="center"><select name="accessory" id="accessory" style="width: 120px;" onChange="return AddCost('accessory',this.value,'<?=$estimaterefno;?>');">
-				<option value=""></option>
-				<? foreach($resaccessory as $rowaccessory){ ?>
-				<option value="<?=$rowaccessory['accessory_id'];?>"><?=$rowaccessory['accessory'];?></option>
-				<? } ?>
-			</select></div></td>
-		</tr> -->
     </table>
 	</div>
 	<form method="Post" name="estimate_form" onSubmit="return ValidateMe();">
@@ -696,16 +620,6 @@
 			<td class="input"><input type="text" name="discount" readonly id="discount" value="<?=$discount;?>" onBlur="return getTotalAmount();" style="width: 200px; text-align: right;"></td>
 			<td></td>
 		</tr>
-		<!-- <tr>
-			<td class="label">Payment Mode:</td>
-			<td class="input"><select name="paymentmode" id="paymentmode" style="width: 200px;">
-				<option value=""></option>
-				<? foreach($respayment as $rowpayment){ ?>
-				<option value="<?=$rowpayment['payment_id'];?>"><?=$rowpayment['payment'];?></option>
-				<? } ?>
-			</select></td>
-			<td></td>
-		</tr> -->
 		<tr>
 			<td class="label">Discounted Price:</td>
 			<td class="input"><input type="text" name="discounted_price" id="discounted_price" value="<?=$discprice;?>" readonly style="width: 200px; text-align: right;"></td> 

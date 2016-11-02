@@ -5,8 +5,8 @@
 	
 	$worefno = $_GET['worefno'];
 	
-	$getempqry = "SELECT * FROM v_service_master WHERE wo_refno = '$worefno'";
-	$getempres = $dbo->query($getempqry);
+	$getempqry = new v_service_master;
+	$getempres = $dbo->query($getempqry->Query("WHERE wo_refno = '$worefno'"));
 	foreach($getempres as $rowEMP){
 		$empid = $rowEMP['emp_id'];
 		$estimaterefno = $rowEMP['estimate_refno'];

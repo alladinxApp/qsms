@@ -23,9 +23,6 @@
 			$this->seniorcitizen = $this->mst['senior_citizen'];
 			$this->totalamount = $this->mst['total_amount'];
 		}
-		public function setVehicleInfo($vehicle){
-			$this->vehicle = $vehicle;
-		}
 		public function setJCMST($jobclock){
 			$this->jc = $jobclock;
 		}
@@ -139,9 +136,9 @@
 			$this->Cell(50,4,'Frame No/ VIN',"TRL",0,'L');
 			$this->Ln();
 			$this->SetFont('Courier','',8);
-			$this->Cell(38,4,$this->vehicle['plate_no'],"BRL",0,'L');
-			$this->Cell(57,4,$this->vehicle['make_desc'] . ' - ' . $this->vehicle['model_desc'],"BRL",0,'L');
-			$this->Cell(45,4,$this->vehicle['model'],"BRL",0,'L');
+			$this->Cell(38,4,$this->mst['plate_no'],"BRL",0,'L');
+			$this->Cell(57,4,$this->mst['make_desc'] . ' - ' . $this->mst['model_desc'],"BRL",0,'L');
+			$this->Cell(45,4,$this->mst['model'],"BRL",0,'L');
 			$this->Cell(50,4,'',"BRL",0,'L');
 			$this->Ln();
 			$this->SetFont('Courier','B',8);
@@ -151,8 +148,8 @@
 			$this->Cell(50,4,'Odometer',"TRL",0,'L');
 			$this->Ln();
 			$this->SetFont('Courier','',8);
-			$this->Cell(38,4,$this->vehicle['engine_no'],"BRL",0,'L');
-			$this->Cell(57,4,$this->vehicle['color_desc'] . ' - ' . $this->vehicle['color'],"BRL",0,'L');
+			$this->Cell(38,4,$this->mst['engine_no'],"BRL",0,'L');
+			$this->Cell(57,4,$this->mst['color_desc'] . ' - ' . $this->mst['color'],"BRL",0,'L');
 			$this->Cell(45,4,'',"BRL",0,'L');
 			$this->Cell(50,4,$this->mst['odometer'],"BRL",0,'L');
 			$this->Ln();
