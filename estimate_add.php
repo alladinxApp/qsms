@@ -216,8 +216,6 @@
 		$sql .= " UPDATE tbl_controlno SET lastseqno = (lastseqno + 1) WHERE control_type = 'ESTIMATEREFNO'; ";
 		
 		$sql .= " DELETE FROM tbl_temp_estimate WHERE ses_id = '$ses_id'; ";
-		echo $sql;
-		exit();
 		$qry = $dbo->query($sql);
 		
 		if(!$qry){

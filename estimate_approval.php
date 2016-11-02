@@ -74,8 +74,8 @@
 						// while($row = mysql_fetch_array($result)){
 						foreach($rescost_parts as $row){
 							$qty = $row['qty'];
-							$starting = $row['part_onhand'];
-							$ending = ($row['part_onhand'] - $qty);
+							$starting = $row['parts_onhand'];
+							$ending = ($row['parts_onhand'] - $qty);
 							$qry .= "UPDATE tbl_parts SET part_onhand = (part_onhand - $qty), parts_used = (parts_used + $qty) WHERE parts_id = '$row[id]'; ";
 							$qry .= "INSERT INTO tbl_po_inventory(item_code,beginning_balance,issued,issued_date,ending_balance,remarks,reference_no,item_type,created_date,created_by)
 									VALUES('$row[item_code]','$starting','$qty','$today','$ending','$new_refno','$new_refno','parts','$today','$_SESSION[username]'); ";
@@ -87,8 +87,8 @@
 						// while($row = mysql_fetch_array($result1)){
 						foreach($rescost_accessory as $row){
 							$qty = $row['qty'];
-							$starting = $row['accessory_onhand'];
-							$ending = ($row['accessory_onhand'] - $qty);
+							$starting = $row['access_onhand'];
+							$ending = ($row['access_onhand'] - $qty);
 							$qry .= "UPDATE tbl_accessory SET access_onhand = (access_onhand - $qty), access_used = (access_used + $qty) WHERE accessory_id = '$row[id]'; ";
 							$qry .= "INSERT INTO tbl_po_inventory(item_code,beginning_balance,issued,issued_date,ending_balance,remarks,reference_no,item_type,created_date,created_by)
 									VALUES('$row[item_code]','$starting','$qty','$today','$ending','$new_refno','$new_refno','lubricants','$today','$_SESSION[username]'); ";
