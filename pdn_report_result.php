@@ -19,10 +19,9 @@
 		$sql = "SELECT tbl_rr_dtl.*,tbl_items.SAP_item_code,tbl_items.item_description FROM tbl_rr_dtl
 					JOIN tbl_rr_mst ON tbl_rr_mst.rr_reference_no = tbl_rr_dtl.rr_reference_no
 					JOIN tbl_items ON tbl_items.item_code = tbl_rr_dtl.item_code
-	 			WHERE 1 AND tbl_rr_dtl.rr_date between '$dtfrom' AND '$dtto' $where
-	 			ORDER BY tbl_rr_dtl.rr_date";
+	 			WHERE 1 AND tbl_rr_mst.rr_date between '$dtfrom' AND '$dtto' $where
+	 			ORDER BY tbl_rr_mst.rr_date";
 		$qry = mysql_query($sql);
-
 		$ln .= "PDN REPORT\r\n\r\n";
 		
 		$ln .= "From: ," . $dtfrom . "\r\n";

@@ -228,7 +228,7 @@
 		<tr>
 			<td align="center" style="<?=$style;?>"><?=$cnt;?></td>
 			<td style="<?=$style;?>"></td>
-			<td style="<?=$style;?>"></td>
+			<td style="<?=$style;?>"><?=$row['remarks'];?></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
@@ -239,7 +239,6 @@
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"><?=$row['billing_refno'];?></td>
 			<td align="right" style="<?=$style;?>"><?=number_format($row['billing_amount'],2);?></td>
-			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
@@ -278,6 +277,7 @@
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>">SUC</td>
+			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
 			<td style="<?=$style;?>"></td>
